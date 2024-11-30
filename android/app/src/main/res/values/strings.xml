@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Pawsome</string>
+    <string name="facebook_app_id">950655860271287</string>
+    <string name="fb_login_protocol_scheme">fb950655860271287</string>
+    <string name="facebook_client_token">08ad598f463ae4173516641ccdb06960</string>
+</resources>

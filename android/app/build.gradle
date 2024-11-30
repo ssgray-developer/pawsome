@@ -1,0 +1,66 @@
+plugins {
+    id "com.android.application"
+    // START: FlutterFire Configuration
+    id 'com.google.gms.google-services'  // For Firebase and Google services
+    // END: FlutterFire Configuration
+    id "kotlin-android"  // For Kotlin support
+    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+    id "dev.flutter.flutter-gradle-plugin"  // For Flutter-specific Gradle configuration
+}
+
+android {
+    namespace = "com.ssgray.pawsome"  // Replace with your own app's namespace
+    compileSdk = flutter.compileSdkVersion  // Use the version from Flutter configuration
+    ndkVersion = "25.1.8937393"  // Use the version from Flutter configuration
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_17
+    }
+
+    defaultConfig {
+        applicationId = "com.ssgray.pawsome"  // Unique Application ID for your app
+        minSdk = 23  // Minimum SDK version your app supports
+        targetSdk = flutter.targetSdkVersion  // Target SDK version from Flutter config
+        versionCode = flutter.versionCode  // App version code from Flutter
+        versionName = flutter.versionName  // App version name from Flutter
+    }
+
+    signingConfigs {
+        debug {
+            // Configure debug signing configuration (only needed for release builds)
+            storeFile file(System.getenv("USERPROFILE") + "/.android/debug.keystore")  // Keystore path (Windows example)
+            storePassword "android"  // Default debug keystore password
+            keyAlias "mykey"  // Keystore alias (you can modify this if you use a custom alias)
+            keyPassword "android"  // Default key password
+        }
+    }
+
+
+    buildTypes {
+        release {
+            // Add your own signing config for the release build
+            signingConfig signingConfigs.debug  // Use the debug signing config (or replace with your own release key)
+        }
+    }
+
+    // Optional: If you want to set up ProGuard or R8 for minification
+    buildTypes {
+        release {
+            minifyEnabled true  // Enable minification for release build (set to false for no minification)
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'  // Proguard rules file
+        }
+    }
+}
+
+flutter {
+    source = "../.."  // Path to your Flutter source (default is one level up)
+}
+
+dependencies{
+    implementation 'com.facebook.android:facebook-android-sdk:latest.release'
+}
