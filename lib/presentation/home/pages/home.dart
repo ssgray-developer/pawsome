@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pawsome/core/theme/app_colors.dart';
+import 'package:pawsome/presentation/adoption/pages/adoption.dart';
 import 'package:pawsome/presentation/home/widgets/paw_button.dart';
 import '../widgets/bnb_custom_painter.dart';
 
@@ -20,34 +22,34 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   // Method to get content based on the selected index
-  // Widget _getContentWidget(int index) {
-  //   switch (index) {
-  //     case 0:
-  //       return _HomeContent();
-  //     case 1:
-  //       return ReelScreen();
-  //     case 2:
-  //       return AdoptionScreen();
-  //     case 3:
-  //       return MessageScreen();
-  //     default:
-  //       return SettingsScreen();
-  //   }
-  // }
+  Widget _getContentWidget(int index) {
+    switch (index) {
+      case 0:
+        return AdoptionScreen();
+      case 1:
+        return AdoptionScreen();
+      case 2:
+        return const AdoptionScreen();
+      case 3:
+        return AdoptionScreen();
+      default:
+        return AdoptionScreen();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: Colors.white.withAlpha(55),
+      // backgroundColor: Colors.white,
       body: Stack(
         children: [
           // AnimatedSwitcher for smooth content change
           Positioned.fill(
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
-              // child: _getContentWidget(
-              //     currentIndex), // Get content based on the current index
+              child: _getContentWidget(
+                  currentIndex), // Get content based on the current index
             ),
           ),
           Positioned(
@@ -78,6 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         IconButton(
                           icon: Icon(
                             Icons.home,
+                            size: 30,
                             color: currentIndex == 0
                                 ? AppColors.primary
                                 : Colors.grey.shade400,
@@ -89,7 +92,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         IconButton(
                             icon: Icon(
-                              Icons.restaurant_menu,
+                              Icons.play_circle_outline_outlined,
+                              size: 30,
                               color: currentIndex == 1
                                   ? AppColors.primary
                                   : Colors.grey.shade400,
@@ -102,7 +106,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         IconButton(
                             icon: Icon(
-                              Icons.bookmark,
+                              Icons.message,
+                              size: 30,
                               color: currentIndex == 3
                                   ? AppColors.primary
                                   : Colors.grey.shade400,
@@ -111,8 +116,16 @@ class _HomeScreenState extends State<HomeScreen> {
                               setBottomBarIndex(3);
                             }),
                         IconButton(
-                            icon: Icon(
-                              Icons.notifications,
+                            icon:
+                                // FaIcon(
+                                //   FontAwesomeIcons.,
+                                //   color: currentIndex == 4
+                                //       ? AppColors.primary
+                                //       : Colors.grey.shade400,
+                                // ),
+                                Icon(
+                              Icons.account_circle_outlined,
+                              size: 30,
                               color: currentIndex == 4
                                   ? AppColors.primary
                                   : Colors.grey.shade400,

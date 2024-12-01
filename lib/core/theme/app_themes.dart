@@ -28,6 +28,11 @@ class AppTheme {
     ),
     radioTheme: RadioThemeData(
         fillColor: WidgetStateColor.resolveWith((states) => AppColors.primary)),
+    iconButtonTheme: IconButtonThemeData(
+      style: IconButton.styleFrom(
+        enableFeedback: false,
+      )
+    ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         textStyle:
@@ -68,6 +73,11 @@ class AppTheme {
     ),
     radioTheme: RadioThemeData(
         fillColor: WidgetStateColor.resolveWith((states) => AppColors.primary)),
+    iconButtonTheme: IconButtonThemeData(
+        style: IconButton.styleFrom(
+          enableFeedback: false,
+        )
+    ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         textStyle:

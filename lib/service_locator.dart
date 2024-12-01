@@ -4,6 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:pawsome/data/auth/source/auth_firebase_service.dart';
 import 'package:pawsome/domain/auth/usecases/listen_to_auth_changes.dart';
+import 'package:pawsome/presentation/adoption/bloc/pet_list_view_selection_cubit.dart';
 import 'package:pawsome/presentation/auth/bloc/auth_cubit.dart';
 import 'package:pawsome/presentation/bloc/connectivity_cubit.dart';
 import 'data/auth/repository/auth_repository_impl.dart';
@@ -30,6 +31,7 @@ Future<void> initializeDependencies() async {
   sl.registerFactory<AuthCubit>(
       () => AuthCubit(sl(), sl(), sl(), sl(), sl(), sl(), sl()));
   sl.registerFactory(() => ConnectivityCubit());
+  sl.registerFactory(() => PetListViewSelectionCubit());
 
   // Usecases
   sl.registerLazySingleton<ListenToAuthChangesUseCase>(
