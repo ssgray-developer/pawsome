@@ -34,6 +34,7 @@ class AppTheme {
             getRegularStyle(color: AppColors.white, fontSize: AppSize.s16),
         backgroundColor: AppColors.primary,
         elevation: AppSize.s0,
+        enableFeedback: false,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppSize.s28),
         ),
@@ -72,6 +73,7 @@ class AppTheme {
         textStyle:
             getRegularStyle(color: AppColors.white, fontSize: AppSize.s16),
         backgroundColor: AppColors.primary,
+        enableFeedback: false,
         elevation: AppSize.s0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppSize.s28),

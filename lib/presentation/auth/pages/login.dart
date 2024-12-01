@@ -131,6 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       height: AppSize.s40,
                     ),
                     AuthForm(
+                      globalKey: _emailFormKey,
                       controller: _emailTextEditingController,
                       focusNode: _emailNode,
                       validatorText: context.tr(AppStrings.enterValidEmail),
@@ -141,10 +142,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       height: AppSize.s20,
                     ),
                     AuthForm(
+                      globalKey: _passwordFormKey,
                       controller: _passwordTextEditingController,
                       focusNode: _passwordNode,
                       validatorText: context.tr(AppStrings.enterYourPassword),
-                      obscureText: true,
+                      obscureText: !_passwordVisible,
                       enableInteractiveSelection: false,
                       letterSpacing: AppSize.s1_5,
                       labelText: context.tr(AppStrings.password),

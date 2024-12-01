@@ -83,7 +83,10 @@ class AuthCubit extends Cubit<AuthState> {
 
       result.fold(
         (message) => emit(AuthUnauthenticated()),
-        (_) => emit(AuthAuthenticated()),
+        (_) {
+          print('shit');
+          emit(AuthAuthenticated());
+        },
       );
     } catch (e) {
       emit(AuthError('An error occurred: ${e.toString()}'));

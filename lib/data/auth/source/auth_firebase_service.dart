@@ -80,18 +80,26 @@ class AuthFirebaseServiceImpl extends AuthFirebaseService {
   @override
   Future<Either> signInWithGoogle() async {
     try {
+      print('shit1');
       GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
+
+      print('shit2');
 
       GoogleSignInAuthentication googleSignInAuthentication =
           await googleSignInAccount!.authentication;
+
+      print('shit3');
 
       OAuthCredential oAuthCredential = GoogleAuthProvider.credential(
         accessToken: googleSignInAuthentication.accessToken,
         idToken: googleSignInAuthentication.idToken,
       );
 
+      print('shit4');
+
       await firebaseAuth.signInWithCredential(oAuthCredential);
 
+      print('shit5');
       return Right(googleSignInAccount);
     } catch (e) {
       return const Left('Google sign in failure');
@@ -101,8 +109,10 @@ class AuthFirebaseServiceImpl extends AuthFirebaseService {
   @override
   Future<Either> signOutFromGoogle() async {
     try {
+
       await googleSignIn.signOut();
       return const Right('Google sign out successful');
+
     } catch (e) {
       return const Left('Google sign out failure');
     }

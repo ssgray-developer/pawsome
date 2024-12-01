@@ -4,6 +4,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_values.dart';
 
 class AuthForm extends StatelessWidget {
+  final GlobalKey globalKey;
   final TextEditingController controller;
   final FocusNode focusNode;
   final bool? enableInteractiveSelection;
@@ -21,13 +22,13 @@ class AuthForm extends StatelessWidget {
     this.letterSpacing,
     required this.obscureText,
     required this.labelText,
-    this.suffixIcon,
+    this.suffixIcon, required this.globalKey,
   });
 
   @override
   Widget build(BuildContext context) {
     return Form(
-      key: key,
+      key: globalKey,
       child: TextFormField(
         controller: controller,
         focusNode: focusNode,
