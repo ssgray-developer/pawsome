@@ -40,107 +40,106 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-    return Scaffold(
-      // backgroundColor: Colors.white,
-      body: Stack(
-        children: [
-          // AnimatedSwitcher for smooth content change
-          Positioned.fill(
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 300),
-              child: _getContentWidget(
-                  currentIndex), // Get content based on the current index
-            ),
-          ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            child: SizedBox(
-              width: size.width,
-              height: 80,
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  CustomPaint(
-                    size: Size(size.width, 80),
-                    painter: BNBCustomPainter(),
-                  ),
-                  Center(
-                    heightFactor: 0.6,
-                    child: PawButton(onPressed: () {
-                      setBottomBarIndex(2);
-                    }),
-                  ),
-                  SizedBox(
-                    width: size.width,
-                    height: 80,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        IconButton(
-                          icon: Icon(
-                            Icons.home,
-                            size: 30,
-                            color: currentIndex == 0
-                                ? AppColors.primary
-                                : Colors.grey.shade400,
-                          ),
-                          onPressed: () {
-                            setBottomBarIndex(0);
-                          },
-                          splashColor: Colors.white,
-                        ),
-                        IconButton(
-                            icon: Icon(
-                              Icons.play_circle_outline_outlined,
-                              size: 30,
-                              color: currentIndex == 1
-                                  ? AppColors.primary
-                                  : Colors.grey.shade400,
-                            ),
-                            onPressed: () {
-                              setBottomBarIndex(1);
-                            }),
-                        Container(
-                          width: size.width * 0.20,
-                        ),
-                        IconButton(
-                            icon: Icon(
-                              Icons.message,
-                              size: 30,
-                              color: currentIndex == 3
-                                  ? AppColors.primary
-                                  : Colors.grey.shade400,
-                            ),
-                            onPressed: () {
-                              setBottomBarIndex(3);
-                            }),
-                        IconButton(
-                            icon:
-                                // FaIcon(
-                                //   FontAwesomeIcons.,
-                                //   color: currentIndex == 4
-                                //       ? AppColors.primary
-                                //       : Colors.grey.shade400,
-                                // ),
-                                Icon(
-                              Icons.account_circle_outlined,
-                              size: 30,
-                              color: currentIndex == 4
-                                  ? AppColors.primary
-                                  : Colors.grey.shade400,
-                            ),
-                            onPressed: () {
-                              setBottomBarIndex(4);
-                            }),
-                      ],
-                    ),
-                  )
-                ],
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        // backgroundColor: Colors.white,
+        resizeToAvoidBottomInset: false,
+        body: Stack(
+          children: [
+            // AnimatedSwitcher for smooth content change
+            Positioned.fill(
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+                child: _getContentWidget(
+                    currentIndex), // Get content based on the current index
               ),
             ),
-          )
-        ],
+            Positioned(
+              bottom: 0,
+              left: 0,
+              child: SizedBox(
+                width: size.width,
+                height: 80,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    CustomPaint(
+                      size: Size(size.width, 80),
+                      painter: BNBCustomPainter(),
+                    ),
+                    Center(
+                      heightFactor: 0.7,
+                      child: PawButton(onPressed: () {
+                        setBottomBarIndex(2);
+                      }),
+                    ),
+                    SizedBox(
+                      width: size.width,
+                      height: 80,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          IconButton(
+                            icon: Icon(
+                              Icons.home,
+                              size: 30,
+                              color: currentIndex == 0
+                                  ? AppColors.primary
+                                  : Colors.grey.shade400,
+                            ),
+                            onPressed: () {
+                              setBottomBarIndex(0);
+                            },
+                            splashColor: Colors.white,
+                          ),
+                          IconButton(
+                              icon: Icon(
+                                Icons.play_circle_outline_outlined,
+                                size: 30,
+                                color: currentIndex == 1
+                                    ? AppColors.primary
+                                    : Colors.grey.shade400,
+                              ),
+                              onPressed: () {
+                                setBottomBarIndex(1);
+                              }),
+                          Container(
+                            width: size.width * 0.20,
+                          ),
+                          IconButton(
+                              icon: Icon(
+                                Icons.message,
+                                size: 30,
+                                color: currentIndex == 3
+                                    ? AppColors.primary
+                                    : Colors.grey.shade400,
+                              ),
+                              onPressed: () {
+                                setBottomBarIndex(3);
+                              }),
+                          IconButton(
+                              icon: Icon(
+                                Icons.account_circle_outlined,
+                                size: 30,
+                                color: currentIndex == 4
+                                    ? AppColors.primary
+                                    : Colors.grey.shade400,
+                              ),
+                              onPressed: () {
+                                setBottomBarIndex(4);
+                              }),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

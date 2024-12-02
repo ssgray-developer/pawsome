@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:pawsome/core/theme/app_colors.dart';
 import 'package:pawsome/presentation/adoption/bloc/pet_list_view_selection_cubit.dart';
-import 'package:pawsome/presentation/adoption/pages/pet_list_view.dart';
+import 'package:pawsome/presentation/adoption/widgets/pet_list_view.dart';
+import 'package:pawsome/presentation/adoption/widgets/search_textfield.dart';
 
 import '../../../core/theme/app_strings.dart';
 import '../../../service_locator.dart';
@@ -54,7 +56,7 @@ class _AdoptionScreenState extends State<AdoptionScreen>
 
   @override
   void dispose() {
-    // _controller.dispose();
+    animatedIconController.dispose();
     _scrollController.dispose();
     // _scrollController.removeListener(_scrollListener);
     super.dispose();
@@ -143,7 +145,16 @@ class _AdoptionScreenState extends State<AdoptionScreen>
     return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.white.withAlpha(700),
+
       key: _scaffoldKey,
+      // appBar: PreferredSize(
+      //   preferredSize: const Size.fromHeight(0),
+      //   // Set height to 0 to remove the space
+      //   child: AppBar(
+      //     backgroundColor: Colors.transparent,
+      //     elevation: 0,
+      //   ),
+      // ),
       // appBar: CustomAppBar(
       //   appBar: AppBar(
       //     centerTitle: true,
@@ -249,65 +260,78 @@ class _AdoptionScreenState extends State<AdoptionScreen>
             create: (context) => sl<PetListViewSelectionCubit>(),
           ),
         ],
-        child: RefreshIndicator(
-          color: Theme.of(context).primaryColor,
-          edgeOffset: 90,
-          onRefresh: _refresh,
-          child: SingleChildScrollView(
-            controller: _scrollController,
-            physics: _physics,
-            child: Container(
-              margin: EdgeInsets.only(
-                  top: MediaQuery.of(context).size.height * 0.13),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20.0),
-                color: Theme.of(context).colorScheme.secondaryContainer,
-              ),
+        child: SafeArea(
+          child: RefreshIndicator(
+            color: Theme.of(context).primaryColor,
+            edgeOffset: 90,
+            onRefresh: _refresh,
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              physics: _physics,
               child: Column(
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                    height: 60,
+                  const Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 30.0, vertical: 10),
                     child: Row(
                       children: [
-                        BlocBuilder<PetListViewSelectionCubit, int?>(
-                          builder: (context, selectedIndex) {
-                            return AnimatedContainer(
-                              duration: const Duration(milliseconds: 300),
-                              width: selectedIndex != null ? 50 : 0,
-                              child: GestureDetector(
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10.0),
+                        Expanded(
+                          child: SearchTextfield(),
+                        ),
+                      ],
+                    ),
+                  ),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Container(
+                      padding: const EdgeInsets.only(left: 10),
+                      // margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                      height: 60,
+                      child: Row(
+                        children: [
+                          BlocBuilder<PetListViewSelectionCubit, int?>(
+                            builder: (context, selectedIndex) {
+                              return AnimatedContainer(
+                                duration: const Duration(milliseconds: 300),
+                                width: selectedIndex != null ? 20 : 0,
+                                child: GestureDetector(
                                   child: AnimatedIcon(
                                       color: selectedIndex != null
                                           ? Colors.red
                                           : Colors.transparent,
                                       icon: AnimatedIcons.menu_close,
                                       progress: animatedIconController),
+                                  onTap: () {
+                                    HapticFeedback.mediumImpact();
+                                    animatedIconController.reverse();
+                                    context
+                                        .read<PetListViewSelectionCubit>()
+                                        .selectPet(null);
+                                  },
                                 ),
-                                onTap: () {
-                                  HapticFeedback.mediumImpact();
-                                  animatedIconController.reverse();
-                                  context
-                                      .read<PetListViewSelectionCubit>()
-                                      .selectPet(null);
-                                },
-                              ),
-                            );
-                          },
-                        ),
-                        Flexible(
-                          child: PetListView(
-                            triggerAnimation: () {
-                              // petData.setAnimatedIconColor = Colors.red;
-                              animatedIconController.forward();
+                              );
                             },
                           ),
-                        ),
-                      ],
+                          Flexible(
+                            child: PetListView(
+                              triggerAnimation: () {
+                                // petData.setAnimatedIconColor = Colors.red;
+                                animatedIconController.forward();
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
+
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Divider(
+                    thickness: 2,
+                    color: Colors.grey[400],
+                  )
                   // FirestoreListView(
                   //   query: queryPost,
                   //   itemBuilder: (context, snapshot) {
@@ -405,3 +429,10 @@ class _AdoptionScreenState extends State<AdoptionScreen>
     );
   }
 }
+
+// margin: EdgeInsets.only(
+//     top: MediaQuery.of(context).size.height * 0.13),
+// decoration: BoxDecoration(
+//   borderRadius: BorderRadius.circular(20.0),
+//   color: Theme.of(context).colorScheme.secondaryContainer,
+// ),

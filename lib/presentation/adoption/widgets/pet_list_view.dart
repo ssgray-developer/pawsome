@@ -1,12 +1,13 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pawsome/presentation/adoption/bloc/pet_list_view_selection_cubit.dart';
 
 import '../../../core/theme/app_strings.dart';
 import '../../../domain/pet/entity/pet_item.dart';
 import '../../../service_locator.dart';
-import '../widgets/pet_button.dart';
+import 'pet_button.dart';
 
 class PetListView extends StatelessWidget {
   final VoidCallback triggerAnimation;
@@ -94,6 +95,7 @@ class PetListView extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         itemCount: petCategory.length,
         physics: const ClampingScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         itemBuilder: (context, index) {
           final pet = petCategory[index];
           return BlocBuilder<PetListViewSelectionCubit, int?>(
@@ -107,6 +109,7 @@ class PetListView extends StatelessWidget {
                   imagePath: pet.imagePath,
                   title: context.tr(pet.name),
                   onPressed: () {
+                    HapticFeedback.mediumImpact();
                     context.read<PetListViewSelectionCubit>().selectPet(index);
                     triggerAnimation();
                   },
