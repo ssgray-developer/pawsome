@@ -16,7 +16,7 @@ import '../widgets/adoption_card.dart';
 import '../widgets/custom_app_bar.dart';
 
 class AdoptionScreen extends StatefulWidget {
-  const AdoptionScreen({Key? key}) : super(key: key);
+  const AdoptionScreen({super.key});
 
   @override
   State<AdoptionScreen> createState() => _AdoptionScreenState();
@@ -122,17 +122,6 @@ class _AdoptionScreenState extends State<AdoptionScreen>
   Widget build(BuildContext context) {
     // final PetData petData = Provider.of<PetData>(context);
     // final LanguageData languageData = Provider.of<LanguageData>(context);
-    // _collectionReference = _firestore
-    //     .collection('registeredPets')
-    //     .where('petClass', isEqualTo: petData.selectedPetClass);
-    // _center = _geo.point(
-    //     latitude: LocationModel.origin!.latitude,
-    //     longitude: LocationModel.origin!.longitude);
-    // _stream = _geo.collection(collectionRef: _collectionReference).within(
-    //     center: _center,
-    //     radius: petData.radius.toDouble(),
-    //     field: 'location',
-    //     strictMode: true);
 
     // if (petData.controller == null) {
     //   petData.controller = AnimationController(
@@ -325,80 +314,73 @@ class _AdoptionScreenState extends State<AdoptionScreen>
                     ),
                   ),
 
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   Divider(
                     thickness: 2,
                     color: Colors.grey[400],
-                  )
-                  // FirestoreListView(
-                  //   query: queryPost,
-                  //   itemBuilder: (context, snapshot) {
-                  //     final post = snapshot.data();
-                  //     if (snapshot.)
-                  //   },
-                  // ),
-                  // StreamBuilder(
-                  //   stream: _stream,
-                  //   builder: (context,
-                  //       AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
-                  //     if (snapshot.connectionState == ConnectionState.waiting) {
-                  //       return Center(
-                  //         child: Padding(
-                  //           padding: const EdgeInsets.symmetric(
-                  //               horizontal: 25, vertical: 10),
-                  //           child: Container(
-                  //               padding: const EdgeInsets.all(10.0),
-                  //               height: 120.0,
-                  //               decoration: BoxDecoration(
-                  //                 borderRadius: BorderRadius.circular(15.0),
-                  //                 color: Theme.of(context).colorScheme.background,
-                  //               ),
-                  //               child: Center(
-                  //                 child: SpinKitThreeBounce(
-                  //                   color: Theme.of(context).primaryColor,
-                  //                 ),
-                  //               )),
-                  //         ),
-                  //       );
-                  //     } else if (snapshot.connectionState ==
-                  //         ConnectionState.active) {
-                  //       if (snapshot.hasData) {
-                  //         if (snapshot.data!.isNotEmpty) {
-                  //           adoptionCardList = snapshot.data!;
-                  //           sortAdoptionList();
-                  //           // for (DocumentSnapshot document in adoptionCardList!) {
-                  //           //   print(document.data());
-                  //           // }
-                  //           return ListView.builder(
-                  //             padding: const EdgeInsets.all(0),
-                  //             physics: const NeverScrollableScrollPhysics(),
-                  //             itemCount: snapshot.data!.length,
-                  //             scrollDirection: Axis.vertical,
-                  //             cacheExtent: 9999,
-                  //             shrinkWrap: true,
-                  //             itemBuilder: (context, index) {
-                  //               return AdoptionCard(
-                  //                 snap: adoptionCardList![index].data()
-                  //                 as Map<String, dynamic>,
-                  //                 index: index,
-                  //               );
-                  //             },
-                  //           );
-                  //         } else {
-                  //           return SizedBox(
-                  //             height: MediaQuery.of(context).size.height - 140,
-                  //             child: Center(
-                  //               child: const Text(AppStrings.noPetsNearby).tr(),
-                  //             ),
-                  //           );
-                  //         }
-                  //       }
-                  //     }
-                  //     return Container();
-                  //   },
-                  // ),
+                  ),
+                  StreamBuilder(
+                    stream: _stream,
+                    builder: (context,
+                        AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 25, vertical: 10),
+                            child: Container(
+                                padding: const EdgeInsets.all(10.0),
+                                height: 120.0,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  color: Theme.of(context).colorScheme.surface,
+                                ),
+                                child: Center(
+                                  child: SpinKitThreeBounce(
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                )),
+                          ),
+                        );
+                      } else if (snapshot.connectionState ==
+                          ConnectionState.active) {
+                        if (snapshot.hasData) {
+                          if (snapshot.data!.isNotEmpty) {
+                            adoptionCardList = snapshot.data!;
+                            sortAdoptionList();
+                            // for (DocumentSnapshot document in adoptionCardList!) {
+                            //   print(document.data());
+                            // }
+                            return ListView.builder(
+                              padding: const EdgeInsets.all(0),
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: snapshot.data!.length,
+                              scrollDirection: Axis.vertical,
+                              cacheExtent: 9999,
+                              shrinkWrap: true,
+                              itemBuilder: (context, index) {
+                                return AdoptionCard(
+                                  snap: adoptionCardList![index].data()
+                                      as Map<String, dynamic>,
+                                  index: index,
+                                );
+                              },
+                            );
+                          } else {
+                            return SizedBox(
+                              height: MediaQuery.of(context).size.height - 140,
+                              child: Center(
+                                child: const Text(AppStrings.noPetsNearby).tr(),
+                              ),
+                            );
+                          }
+                        }
+                      }
+                      return Container();
+                    },
+                  ),
                   // petData.shouldShowLoadingCard
                   //     ? Padding(
                   //   padding: const EdgeInsets.symmetric(

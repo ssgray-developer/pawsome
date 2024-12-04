@@ -7,42 +7,6 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:110844056238:android:814421ff1145623902d33f",
-        "android_client_info": {
-          "package_name": "com.seangray.pawsome"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "110844056238-dorud45ct9lfj565sva2tv7hbkmabb0j.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDcNjZG16IEUCp5vVpIJnd6KJTpNUvgugk"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "110844056238-dorud45ct9lfj565sva2tv7hbkmabb0j.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "110844056238-4j3it427nskh0900jgmvqf25igsljof8.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.ssgray.pawsome"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
         "mobilesdk_app_id": "1:110844056238:android:d666e5ad39e5b7dd02d33f",
         "android_client_info": {
           "package_name": "com.ssgray.pawsome"
@@ -50,7 +14,15 @@
       },
       "oauth_client": [
         {
-          "client_id": "110844056238-dorud45ct9lfj565sva2tv7hbkmabb0j.apps.googleusercontent.com",
+          "client_id": "110844056238-oi379ihbp8l31nbhsuvf5r4jb5p6loes.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ssgray.pawsome",
+            "certificate_hash": "2e9ce504b5bbfdfbfee0a597eaa90b87c5eabcc2"
+          }
+        },
+        {
+          "client_id": "110844056238-f6fv2d7r7n1e72q8f10duv4od2i03duk.apps.googleusercontent.com",
           "client_type": 3
         }
       ],

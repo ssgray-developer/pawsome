@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 
 class PetItem {
   final String name;
@@ -14,4 +15,4 @@ class PetItem {
     required this.borderColor,
     required this.boxColor,
   });
-  }
+}
