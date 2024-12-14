@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:pawsome/core/theme/app_themes.dart';
 import 'package:pawsome/presentation/auth/bloc/auth_cubit.dart';
 import 'package:pawsome/presentation/auth/pages/login.dart';
@@ -25,7 +26,9 @@ Future<void> main() async {
       supportedLocales: const [ENGLISH_LOCAL, CHINESE_LOCAL],
       startLocale: ENGLISH_LOCAL,
       fallbackLocale: ENGLISH_LOCAL,
-      child: const MyApp(),
+      child: Phoenix(
+        child: const MyApp(),
+      ),
     ),
   );
 
@@ -46,7 +49,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         // themeMode: themeViewModel.themeMode,
-        themeMode: ThemeMode.system,
+        themeMode: ThemeMode.dark,
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
         localizationsDelegates: context.localizationDelegates,

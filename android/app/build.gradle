@@ -10,7 +10,7 @@ plugins {
 
 android {
     namespace = "com.ssgray.pawsome"  // Replace with your own app's namespace
-    compileSdk = flutter.compileSdkVersion  // Use the version from Flutter configuration
+    compileSdk = 34  // Use the version from Flutter configuration
     ndkVersion = "25.1.8937393"  // Use the version from Flutter configuration
 
     compileOptions {

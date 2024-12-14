@@ -6,7 +6,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:pawsome/core/theme/app_colors.dart';
+import 'package:pawsome/presentation/adoption/bloc/adoption_cubit.dart';
 import 'package:pawsome/presentation/adoption/bloc/pet_list_view_selection_cubit.dart';
+import 'package:pawsome/presentation/adoption/models/registered_pet_view_model.dart';
 import 'package:pawsome/presentation/adoption/widgets/pet_list_view.dart';
 import 'package:pawsome/presentation/adoption/widgets/search_textfield.dart';
 
@@ -248,6 +250,9 @@ class _AdoptionScreenState extends State<AdoptionScreen>
           BlocProvider<PetListViewSelectionCubit>(
             create: (context) => sl<PetListViewSelectionCubit>(),
           ),
+          BlocProvider<AdoptionCubit>(
+            create: (context) => sl<AdoptionCubit>()..updateLocation(),
+          ),
         ],
         child: SafeArea(
           child: RefreshIndicator(
@@ -265,7 +270,7 @@ class _AdoptionScreenState extends State<AdoptionScreen>
                     child: Row(
                       children: [
                         Expanded(
-                          child: SearchTextfield(),
+                          child: SearchTextField(),
                         ),
                       ],
                     ),
@@ -321,64 +326,85 @@ class _AdoptionScreenState extends State<AdoptionScreen>
                     thickness: 2,
                     color: Colors.grey[400],
                   ),
-                  StreamBuilder(
-                    stream: _stream,
-                    builder: (context,
-                        AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 25, vertical: 10),
-                            child: Container(
-                                padding: const EdgeInsets.all(10.0),
-                                height: 120.0,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15.0),
-                                  color: Theme.of(context).colorScheme.surface,
-                                ),
-                                child: Center(
-                                  child: SpinKitThreeBounce(
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                )),
-                          ),
-                        );
-                      } else if (snapshot.connectionState ==
-                          ConnectionState.active) {
-                        if (snapshot.hasData) {
-                          if (snapshot.data!.isNotEmpty) {
-                            adoptionCardList = snapshot.data!;
-                            sortAdoptionList();
-                            // for (DocumentSnapshot document in adoptionCardList!) {
-                            //   print(document.data());
-                            // }
-                            return ListView.builder(
-                              padding: const EdgeInsets.all(0),
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: snapshot.data!.length,
-                              scrollDirection: Axis.vertical,
-                              cacheExtent: 9999,
-                              shrinkWrap: true,
-                              itemBuilder: (context, index) {
-                                return AdoptionCard(
-                                  snap: adoptionCardList![index].data()
-                                      as Map<String, dynamic>,
-                                  index: index,
-                                );
-                              },
-                            );
-                          } else {
-                            return SizedBox(
-                              height: MediaQuery.of(context).size.height - 140,
-                              child: Center(
-                                child: const Text(AppStrings.noPetsNearby).tr(),
+                  BlocBuilder<AdoptionCubit, AdoptionState>(
+                    builder: (context, state) {
+                      if (state is AdoptionLoading) {}
+
+                      if (state is AdoptionFailure) {}
+
+                      return StreamBuilder<List<RegisteredPetViewModel>>(
+                        stream: context.read<AdoptionCubit>().petStream,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 25, vertical: 10),
+                                child: Container(
+                                    padding: const EdgeInsets.all(10.0),
+                                    height: 120.0,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15.0),
+                                      color:
+                                          Theme.of(context).colorScheme.surface,
+                                    ),
+                                    child: Center(
+                                      child: SpinKitThreeBounce(
+                                        color: Theme.of(context).primaryColor,
+                                      ),
+                                    )),
                               ),
                             );
+                          } else if (snapshot.hasError) {
+                            return Center(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 25, vertical: 10),
+                                child: Text(
+                                  'Please ensure location services is enabled for Pawsome',
+                                  style: TextStyle(color: AppColors.black),
+                                ),
+                              ),
+                            );
+                          } else if (snapshot.connectionState ==
+                              ConnectionState.active) {
+                            if (snapshot.hasData) {
+                              if (snapshot.data!.isNotEmpty) {
+                                final pets = snapshot.data ?? [];
+                                // sortAdoptionList();
+                                // for (DocumentSnapshot document in adoptionCardList!) {
+                                //   print(document.data());
+                                // }
+                                return ListView.builder(
+                                  padding: const EdgeInsets.all(0),
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: pets.length,
+                                  scrollDirection: Axis.vertical,
+                                  cacheExtent: 9999,
+                                  shrinkWrap: true,
+                                  itemBuilder: (context, index) {
+                                    return AdoptionCard(
+                                      registeredPetViewModel: pets[index],
+                                      index: index,
+                                    );
+                                  },
+                                );
+                              } else {
+                                return SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height - 140,
+                                  child: Center(
+                                    child: Text(
+                                        context.tr(AppStrings.noPetsNearby)),
+                                  ),
+                                );
+                              }
+                            }
                           }
-                        }
-                      }
-                      return Container();
+                          return Container();
+                        },
+                      );
                     },
                   ),
                   // petData.shouldShowLoadingCard

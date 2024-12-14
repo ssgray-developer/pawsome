@@ -1,13 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:geoflutterfire_plus/geoflutterfire_plus.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:pawsome/domain/pet/entity/pet_item.dart';
 
 import '../models/nearby_pet_req.dart';
 
 abstract class PetService {
-  Stream<Either> listenToPetAdoption(NearbyPetReq pet);
+  Stream<Either> listenToPetAdoption(NearbyPetReq nearbyPet);
 }
 
 class PetServiceImpl extends PetService {
@@ -16,15 +14,15 @@ class PetServiceImpl extends PetService {
   PetServiceImpl(this.firebaseFirestore);
 
   @override
-  Stream<Either> listenToPetAdoption(NearbyPetReq pet) {
+  Stream<Either> listenToPetAdoption(NearbyPetReq nearbyPet) {
     try {
       CollectionReference collectionReference =
           firebaseFirestore.collection('registeredPets');
       GeoPoint location =
-          GeoPoint(pet.position.latitude, pet.position.longitude);
+          GeoPoint(nearbyPet.position.latitude, nearbyPet.position.longitude);
       GeoFirePoint center = GeoFirePoint(location);
       queryBuilder(Query<Object?> query) {
-        return query.where('petClass', isEqualTo: pet);
+        return query.where('petClass', isEqualTo: nearbyPet.pet);
       }
 
       GeoPoint geopointFrom(Object? data) {
@@ -36,7 +34,7 @@ class PetServiceImpl extends PetService {
       Stream stream = GeoCollectionReference(collectionReference)
           .subscribeWithinWithDistance(
               center: center,
-              radiusInKm: pet.radius.toDouble(),
+              radiusInKm: nearbyPet.radius.toDouble(),
               field: 'location',
               strictMode: true,
               queryBuilder: queryBuilder,

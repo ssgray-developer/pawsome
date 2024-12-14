@@ -2,20 +2,21 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
 
-class SearchTextfield extends StatefulWidget {
-  const SearchTextfield({super.key});
+class SearchTextField extends StatefulWidget {
+  const SearchTextField({super.key});
 
   @override
-  State<SearchTextfield> createState() => _SearchTextfieldState();
+  State<SearchTextField> createState() => _SearchTextFieldState();
 }
 
-class _SearchTextfieldState extends State<SearchTextfield> {
-  late FocusNode _focusNode = FocusNode();
+class _SearchTextFieldState extends State<SearchTextField> {
+  late FocusNode _focusNode;
   bool _isFocused = false;
 
   @override
   void initState() {
     super.initState();
+    _focusNode = FocusNode();
     // Listen for focus changes
     _focusNode.addListener(() {
       setState(() {

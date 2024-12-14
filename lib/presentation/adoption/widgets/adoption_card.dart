@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:pawsome/presentation/adoption/models/registered_pet_view_model.dart';
 
 import '../../../core/theme/app_strings.dart';
 import '../../../core/utils/functions.dart';
@@ -10,9 +11,10 @@ import '../pages/pet_details.dart';
 import 'like_animation.dart';
 
 class AdoptionCard extends StatefulWidget {
-  final Map<String, dynamic> snap;
+  final RegisteredPetViewModel registeredPetViewModel;
   final int index;
-  const AdoptionCard({super.key, required this.snap, required this.index});
+  const AdoptionCard(
+      {super.key, required this.registeredPetViewModel, required this.index});
 
   @override
   State<AdoptionCard> createState() => _AdoptionCardState();
@@ -21,7 +23,6 @@ class AdoptionCard extends StatefulWidget {
 class _AdoptionCardState extends State<AdoptionCard> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     // DefaultCacheManager().emptyCache();
     // imageCache.clear();
@@ -45,8 +46,9 @@ class _AdoptionCardState extends State<AdoptionCard> {
         onTap: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) =>
-                  PetDetails(snap: widget.snap, index: widget.index),
+              builder: (context) => PetDetails(
+                  registeredPetViewModel: widget.registeredPetViewModel,
+                  index: widget.index),
             ),
           );
         },
@@ -55,7 +57,7 @@ class _AdoptionCardState extends State<AdoptionCard> {
           height: 120.0,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15.0),
-            color: Theme.of(context).colorScheme.background,
+            color: Theme.of(context).colorScheme.surface,
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,7 +74,7 @@ class _AdoptionCardState extends State<AdoptionCard> {
                     child: CachedNetworkImage(
                       // key: UniqueKey(),
                       cacheManager: customCacheManager,
-                      imageUrl: widget.snap['photoUrl'],
+                      imageUrl: widget.registeredPetViewModel.photoUrl,
                       // maxHeightDiskCache: 50,
                       // height: 100,
                       // width: 100,
@@ -87,8 +89,8 @@ class _AdoptionCardState extends State<AdoptionCard> {
                         ),
                       ),
                     )
-                  // Image.network(widget.snap['photoUrl']),
-                ),
+                    // Image.network(widget.snap['photoUrl']),
+                    ),
               ),
               const SizedBox(
                 width: 10.0,
@@ -105,21 +107,22 @@ class _AdoptionCardState extends State<AdoptionCard> {
                     //   ),
                     // ),
                     Text(
-                      widget.snap['name'],
+                      widget.registeredPetViewModel.name,
                       style: const TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 16),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
-                      getName(context, widget.snap['petSpecies']),
+                      getName(
+                          context, widget.registeredPetViewModel.petSpecies),
                       style: const TextStyle(fontSize: 12),
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
-                      (AppStrings.yearOld
-                          .plural(int.parse(widget.snap['age']))),
+                      (AppStrings.yearOld.plural(
+                          int.parse(widget.registeredPetViewModel.age))),
                       style: const TextStyle(color: Colors.grey, fontSize: 12),
                     ),
                     Expanded(
@@ -146,15 +149,15 @@ class _AdoptionCardState extends State<AdoptionCard> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  widget.snap['gender'] == 'Male'
+                  widget.registeredPetViewModel.gender == 'Male'
                       ? const Icon(
-                    Icons.male_rounded,
-                    color: Colors.blue,
-                  )
+                          Icons.male_rounded,
+                          color: Colors.blue,
+                        )
                       : const Icon(
-                    Icons.female_rounded,
-                    color: Colors.pink,
-                  ),
+                          Icons.female_rounded,
+                          color: Colors.pink,
+                        ),
                   Expanded(
                     child: Container(),
                   ),
@@ -185,7 +188,7 @@ class _AdoptionCardState extends State<AdoptionCard> {
                     ),
                   ),
                   Text(
-                    k_m_b_generator(widget.snap['likes'].length),
+                    k_m_b_generator(widget.registeredPetViewModel.likes.length),
                   ),
                 ],
               ),

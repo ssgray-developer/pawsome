@@ -5,8 +5,12 @@ import '../../../service_locator.dart';
 import '../repository/auth.dart';
 
 class GoogleSignInUseCase implements UseCase<Either, NoParams> {
+  final AuthRepository authRepository;
+
+  GoogleSignInUseCase(this.authRepository);
+
   @override
   Future<Either> call({NoParams? params}) async {
-    return await sl<AuthRepository>().signInWithGoogle();
+    return await authRepository.signInWithGoogle();
   }
 }

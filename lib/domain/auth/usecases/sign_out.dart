@@ -4,12 +4,12 @@ import '../../../core/usecase/usecase.dart';
 import '../repository/auth.dart';
 
 class SignOutUseCase implements UseCase<Either, NoParams> {
-  final AuthRepository repository;
+  final AuthRepository authRepository;
 
-  SignOutUseCase(this.repository);
+  SignOutUseCase(this.authRepository);
 
   @override
   Future<Either> call({NoParams? params}) async {
-    return await repository.signOut();
+    return await authRepository.signOut();
   }
 }

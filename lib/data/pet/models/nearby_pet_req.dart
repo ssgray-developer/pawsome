@@ -2,8 +2,7 @@ import 'package:geolocator/geolocator.dart';
 
 class NearbyPetReq {
   Position position;
-  String pet;
+  String? pet;
   int radius;
-  NearbyPetReq(
-      {required this.position, required this.pet, required this.radius});
+  NearbyPetReq({required this.position, this.pet, required this.radius});
 }

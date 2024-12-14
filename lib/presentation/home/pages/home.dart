@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pawsome/core/theme/app_colors.dart';
 import 'package:pawsome/presentation/adoption/pages/adoption.dart';
@@ -40,6 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
+    // Phoenix.rebirth(context);
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();

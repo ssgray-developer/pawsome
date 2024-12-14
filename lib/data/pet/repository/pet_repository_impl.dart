@@ -10,7 +10,7 @@ class PetRepositoryImpl implements PetRepository {
   PetRepositoryImpl(this.petService);
 
   @override
-  Stream<Either> listenToPetAdoption(NearbyPetReq pet) {
-    return petService.listenToPetAdoption(pet);
+  Stream<Either> listenToPetAdoption(NearbyPetReq nearbyPet) {
+    return petService.listenToPetAdoption(nearbyPet);
   }
 }

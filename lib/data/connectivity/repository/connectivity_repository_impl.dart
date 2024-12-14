@@ -1,4 +1,3 @@
-import 'package:connectivity_plus_platform_interface/src/enums.dart';
 import 'package:dartz/dartz.dart';
 import 'package:pawsome/domain/connectivity/repository/connectivity_repository.dart';
 

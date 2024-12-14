@@ -4,13 +4,13 @@ import 'package:pawsome/core/utils/no_params.dart';
 import '../repository/auth.dart';
 
 class ListenToAuthChangesUseCase implements StreamUseCase<Either, NoParams> {
-  final AuthRepository repository;
+  final AuthRepository authRepository;
 
-  ListenToAuthChangesUseCase(this.repository);
+  ListenToAuthChangesUseCase(this.authRepository);
 
   @override
   Stream<Either> call({NoParams params = const NoParams()}) {
-    return repository
+    return authRepository
         .listenToAuthChanges()
         .map(
           (user) => Right(user),

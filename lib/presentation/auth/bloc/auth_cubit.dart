@@ -84,7 +84,6 @@ class AuthCubit extends Cubit<AuthState> {
       result.fold(
         (message) => emit(AuthUnauthenticated()),
         (_) {
-          print('shit');
           emit(AuthAuthenticated());
         },
       );
