@@ -359,10 +359,10 @@ class _AdoptionScreenState extends State<AdoptionScreen>
                           } else if (snapshot.hasError) {
                             return Center(
                               child: Padding(
-                                padding: EdgeInsets.symmetric(
+                                padding: const EdgeInsets.symmetric(
                                     horizontal: 25, vertical: 10),
                                 child: Text(
-                                  'Please ensure location services is enabled for Pawsome',
+                                  'Please ensure location services is enabled for Pawsome.',
                                   style: TextStyle(color: AppColors.black),
                                 ),
                               ),

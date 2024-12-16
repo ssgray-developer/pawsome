@@ -83,56 +83,125 @@ class _HomeScreenState extends State<HomeScreen> {
                       height: 80,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          IconButton(
-                            icon: Icon(
-                              Icons.home,
-                              size: 30,
-                              color: currentIndex == 0
-                                  ? AppColors.primary
-                                  : Colors.grey.shade400,
-                            ),
-                            onPressed: () {
-                              setBottomBarIndex(0);
-                            },
-                            splashColor: Colors.white,
-                          ),
-                          IconButton(
-                              icon: Icon(
-                                Icons.play_circle_outline_outlined,
-                                size: 30,
-                                color: currentIndex == 1
-                                    ? AppColors.primary
-                                    : Colors.grey.shade400,
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                padding: EdgeInsets.zero,
+                                constraints:
+                                    const BoxConstraints(maxHeight: 20),
+                                icon: Icon(
+                                  Icons.home,
+                                  size: 30,
+                                  color: currentIndex == 0
+                                      ? AppColors.primary
+                                      : Colors.grey.shade400,
+                                ),
+                                onPressed: () {
+                                  setBottomBarIndex(0);
+                                },
+                                splashColor: Colors.white,
                               ),
-                              onPressed: () {
-                                setBottomBarIndex(1);
-                              }),
+                              Text(
+                                'Home',
+                                style: TextStyle(
+                                  color: currentIndex == 0
+                                      ? AppColors.primary
+                                      : Colors.grey.shade400,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                  padding: EdgeInsets.zero,
+                                  constraints:
+                                      const BoxConstraints(maxHeight: 20),
+                                  icon: Icon(
+                                    Icons.play_circle_outline_outlined,
+                                    size: 30,
+                                    color: currentIndex == 1
+                                        ? AppColors.primary
+                                        : Colors.grey.shade400,
+                                  ),
+                                  onPressed: () {
+                                    setBottomBarIndex(1);
+                                  }),
+                              Text(
+                                'Shorts',
+                                style: TextStyle(
+                                  color: currentIndex == 1
+                                      ? AppColors.primary
+                                      : Colors.grey.shade400,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
                           Container(
                             width: size.width * 0.20,
                           ),
-                          IconButton(
-                              icon: Icon(
-                                Icons.message,
-                                size: 30,
-                                color: currentIndex == 3
-                                    ? AppColors.primary
-                                    : Colors.grey.shade400,
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                  padding: EdgeInsets.zero,
+                                  constraints:
+                                      const BoxConstraints(maxHeight: 20),
+                                  icon: Icon(
+                                    Icons.message,
+                                    size: 30,
+                                    color: currentIndex == 3
+                                        ? AppColors.primary
+                                        : Colors.grey.shade400,
+                                  ),
+                                  onPressed: () {
+                                    setBottomBarIndex(3);
+                                  }),
+                              Text(
+                                'Messages',
+                                style: TextStyle(
+                                  color: currentIndex == 3
+                                      ? AppColors.primary
+                                      : Colors.grey.shade400,
+                                  fontSize: 12,
+                                ),
                               ),
-                              onPressed: () {
-                                setBottomBarIndex(3);
-                              }),
-                          IconButton(
-                              icon: Icon(
-                                Icons.account_circle_outlined,
-                                size: 30,
-                                color: currentIndex == 4
-                                    ? AppColors.primary
-                                    : Colors.grey.shade400,
+                            ],
+                          ),
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                  padding: EdgeInsets.zero,
+                                  constraints:
+                                      const BoxConstraints(maxHeight: 20),
+                                  icon: Icon(
+                                    Icons.account_circle_outlined,
+                                    size: 30,
+                                    color: currentIndex == 4
+                                        ? AppColors.primary
+                                        : Colors.grey.shade400,
+                                  ),
+                                  onPressed: () {
+                                    setBottomBarIndex(4);
+                                  }),
+                              Text(
+                                'Profile',
+                                style: TextStyle(
+                                  color: currentIndex == 4
+                                      ? AppColors.primary
+                                      : Colors.grey.shade400,
+                                  fontSize: 12,
+                                ),
                               ),
-                              onPressed: () {
-                                setBottomBarIndex(4);
-                              }),
+                            ],
+                          ),
                         ],
                       ),
                     )
