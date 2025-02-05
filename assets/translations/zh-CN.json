@@ -519,5 +519,13 @@
   "current_password": "当前密码",
   "new_password": "新密码",
   "verify_new_password": "验证新密码",
-  "change_password_successful": "密码更换成功。"
+  "change_password_successful": "密码更换成功。",
+  "profile": "个人主页",
+  "pet_adoption": "宠物收养",
+  "list_your_pet": "注册你的宠物",
+  "view_your_pets": "查看您的宠物",
+  "login_and_security": "登录和安全",
+  "support": "支持",
+  "give_us_feedback": "给我们反馈",
+  "privacy": "隐私"
 }

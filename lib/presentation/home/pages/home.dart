@@ -4,6 +4,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pawsome/core/theme/app_colors.dart';
 import 'package:pawsome/presentation/adoption/pages/adoption.dart';
 import 'package:pawsome/presentation/home/widgets/paw_button.dart';
+import 'package:pawsome/presentation/message/pages/message.dart';
+import 'package:pawsome/presentation/profile/pages/profile.dart';
+import 'package:pawsome/presentation/shorts/pages/shorts.dart';
+import 'package:pawsome/presentation/store/pages/store.dart';
 import '../widgets/bnb_custom_painter.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -26,15 +30,15 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _getContentWidget(int index) {
     switch (index) {
       case 0:
-        return AdoptionScreen();
+        return const StoreScreen();
       case 1:
-        return AdoptionScreen();
+        return const ShortsScreen();
       case 2:
         return const AdoptionScreen();
       case 3:
-        return AdoptionScreen();
+        return const MessageScreen();
       default:
-        return AdoptionScreen();
+        return const ProfileScreen();
     }
   }
 
@@ -93,11 +97,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                 constraints:
                                     const BoxConstraints(maxHeight: 20),
                                 icon: Icon(
-                                  Icons.home,
+                                  Icons.store_rounded,
                                   size: 30,
                                   color: currentIndex == 0
                                       ? AppColors.primary
-                                      : Colors.grey.shade400,
+                                      : Colors.grey[600],
                                 ),
                                 onPressed: () {
                                   setBottomBarIndex(0);
@@ -105,11 +109,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                 splashColor: Colors.white,
                               ),
                               Text(
-                                'Home',
+                                'Store',
                                 style: TextStyle(
                                   color: currentIndex == 0
                                       ? AppColors.primary
-                                      : Colors.grey.shade400,
+                                      : Colors.grey[600],
                                   fontSize: 12,
                                 ),
                               ),
@@ -127,7 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     size: 30,
                                     color: currentIndex == 1
                                         ? AppColors.primary
-                                        : Colors.grey.shade400,
+                                        : Colors.grey[600],
                                   ),
                                   onPressed: () {
                                     setBottomBarIndex(1);
@@ -137,7 +141,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 style: TextStyle(
                                   color: currentIndex == 1
                                       ? AppColors.primary
-                                      : Colors.grey.shade400,
+                                      : Colors.grey[600],
                                   fontSize: 12,
                                 ),
                               ),
@@ -158,7 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     size: 30,
                                     color: currentIndex == 3
                                         ? AppColors.primary
-                                        : Colors.grey.shade400,
+                                        : Colors.grey[600],
                                   ),
                                   onPressed: () {
                                     setBottomBarIndex(3);
@@ -168,7 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 style: TextStyle(
                                   color: currentIndex == 3
                                       ? AppColors.primary
-                                      : Colors.grey.shade400,
+                                      : Colors.grey[600],
                                   fontSize: 12,
                                 ),
                               ),
@@ -186,7 +190,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     size: 30,
                                     color: currentIndex == 4
                                         ? AppColors.primary
-                                        : Colors.grey.shade400,
+                                        : Colors.grey[600],
                                   ),
                                   onPressed: () {
                                     setBottomBarIndex(4);
@@ -196,7 +200,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 style: TextStyle(
                                   color: currentIndex == 4
                                       ? AppColors.primary
-                                      : Colors.grey.shade400,
+                                      : Colors.grey[600],
                                   fontSize: 12,
                                 ),
                               ),

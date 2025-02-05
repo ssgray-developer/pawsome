@@ -6,7 +6,7 @@ abstract class AdoptionState {}
 class AdoptionLoading extends AdoptionState {}
 
 class AdoptionSuccess extends AdoptionState {
-  final List<RegisteredPetViewModel> pets;
+  final List<RegisteredPetModel> pets;
 
   AdoptionSuccess(this.pets);
 }

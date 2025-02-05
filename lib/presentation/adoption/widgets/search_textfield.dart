@@ -51,7 +51,7 @@ class _SearchTextFieldState extends State<SearchTextField> {
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: IconButton(
                 onPressed: () {},
-                icon: const Icon(Icons.social_distance_rounded)),
+                icon: const Icon(Icons.filter_alt_off_rounded)),
           ),
           suffixIconColor: Colors.black,
           filled: true,

@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         // themeMode: themeViewModel.themeMode,
-        themeMode: ThemeMode.dark,
+        themeMode: ThemeMode.light,
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
         localizationsDelegates: context.localizationDelegates,
@@ -59,12 +59,14 @@ class MyApp extends StatelessWidget {
         title: 'Pawsome',
         home: BlocBuilder<AuthCubit, AuthState>(
           builder: (context, state) {
-            if (state is AuthInitial) {
+            if (state is AuthInitial || state is AuthLoading) {
               return Scaffold(
+                backgroundColor: Colors.white,
                 body: Center(
-                    child: CircularProgressIndicator(
-                  color: AppColors.primary,
-                )),
+                  child: CircularProgressIndicator(
+                    color: AppColors.primary,
+                  ),
+                ),
               );
             } else if (state is AuthAuthenticated) {
               return const HomeScreen();

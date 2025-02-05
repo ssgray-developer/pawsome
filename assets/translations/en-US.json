@@ -525,5 +525,13 @@
   "current_password": "Current Password",
   "new_password": "New Password",
   "verify_new_password": "Verify New Password",
-  "change_password_successful": "Password changed successfully."
+  "change_password_successful": "Password changed successfully.",
+  "profile": "Profile",
+  "pet_adoption": "Pet Adoption",
+  "list_your_pet": "List your pet",
+  "view_your_pets": "View your pets",
+  "login_and_security": "Login & security",
+  "support": "Support",
+  "give_us_feedback": "Give us feedback",
+  "privacy": "Privacy"
 }

@@ -528,7 +528,7 @@ class AppStrings {
   static const today = 'today';
   static const yesterday = 'yesterday';
 
-  //Personal Info screen
+  //Profile screen
   static const done = 'done';
   static const profilePictureUsername = 'profile_picture_username';
   static const security = 'security';
@@ -541,6 +541,15 @@ class AppStrings {
   static const newPassword = 'new_password';
   static const verifyNewPassword = 'verify_new_password';
   static const changePasswordSuccessful = 'change_password_successful';
+
+  static const profile = 'profile';
+  static const petAdoption = 'pet_adoption';
+  static const listYourPet = 'list_your_pet';
+  static const viewYourPets = 'view_your_pets';
+  static const loginAndSecurity = 'login_and_security';
+  static const support = 'support';
+  static const giveUsFeedback = 'give_us_feedback';
+  static const privacy = 'privacy';
 }
 
 final List<String> distanceItem = [

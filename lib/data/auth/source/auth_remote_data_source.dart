@@ -4,7 +4,7 @@ import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import '../models/user_sign_in_req.dart';
 
-abstract class AuthFirebaseService {
+abstract class AuthRemoteDataSource {
   Stream<User?> listenToAuthChanges();
   Future<Either> getUser();
   Future<Either> signOut();
@@ -15,12 +15,12 @@ abstract class AuthFirebaseService {
   Future<Either> signOutFromFacebook();
 }
 
-class AuthFirebaseServiceImpl extends AuthFirebaseService {
+class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
   final GoogleSignIn googleSignIn;
   final FirebaseAuth firebaseAuth;
   final FacebookAuth facebookAuth;
 
-  AuthFirebaseServiceImpl(
+  AuthRemoteDataSourceImpl(
       this.googleSignIn, this.firebaseAuth, this.facebookAuth);
 
   @override

@@ -8,7 +8,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:pawsome/core/theme/app_colors.dart';
 import 'package:pawsome/presentation/adoption/bloc/adoption_cubit.dart';
 import 'package:pawsome/presentation/adoption/bloc/pet_list_view_selection_cubit.dart';
-import 'package:pawsome/presentation/adoption/models/registered_pet_view_model.dart';
+import 'package:pawsome/data/pet/models/registered_pet_model.dart';
 import 'package:pawsome/presentation/adoption/widgets/pet_list_view.dart';
 import 'package:pawsome/presentation/adoption/widgets/search_textfield.dart';
 
@@ -135,7 +135,7 @@ class _AdoptionScreenState extends State<AdoptionScreen>
 
     return Scaffold(
       extendBodyBehindAppBar: true,
-      backgroundColor: Colors.white.withAlpha(700),
+      // backgroundColor: Colors.white.withAlpha(700),
 
       key: _scaffoldKey,
       // appBar: PreferredSize(
@@ -332,7 +332,7 @@ class _AdoptionScreenState extends State<AdoptionScreen>
 
                       if (state is AdoptionFailure) {}
 
-                      return StreamBuilder<List<RegisteredPetViewModel>>(
+                      return StreamBuilder<List<RegisteredPetModel>>(
                         stream: context.read<AdoptionCubit>().petStream,
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
@@ -357,12 +357,13 @@ class _AdoptionScreenState extends State<AdoptionScreen>
                               ),
                             );
                           } else if (snapshot.hasError) {
+                            print(snapshot.error);
                             return Center(
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 25, vertical: 10),
                                 child: Text(
-                                  'Please ensure location services is enabled for Pawsome.',
+                                  'Oops, seems like an error has occurred.',
                                   style: TextStyle(color: AppColors.black),
                                 ),
                               ),
@@ -385,7 +386,7 @@ class _AdoptionScreenState extends State<AdoptionScreen>
                                   shrinkWrap: true,
                                   itemBuilder: (context, index) {
                                     return AdoptionCard(
-                                      registeredPetViewModel: pets[index],
+                                      registeredPetModel: pets[index],
                                       index: index,
                                     );
                                   },
@@ -393,10 +394,12 @@ class _AdoptionScreenState extends State<AdoptionScreen>
                               } else {
                                 return SizedBox(
                                   height:
-                                      MediaQuery.of(context).size.height - 140,
+                                      MediaQuery.of(context).size.height / 2,
                                   child: Center(
                                     child: Text(
-                                        context.tr(AppStrings.noPetsNearby)),
+                                      context.tr(AppStrings.noPetsNearby),
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
                                   ),
                                 );
                               }

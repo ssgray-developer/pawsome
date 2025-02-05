@@ -12,4 +12,6 @@ abstract class AuthRepository {
   Future<Either> signOutFromGoogle();
   Future<Either> signInWithFacebook();
   Future<Either> signOutFromFacebook();
+  Future<Either> saveAuthProvider(String provider);
+  Future<Either> getAuthProvider();
 }

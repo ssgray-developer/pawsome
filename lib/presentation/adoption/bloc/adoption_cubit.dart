@@ -4,7 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:pawsome/data/pet/models/nearby_pet_req.dart';
 import 'package:pawsome/domain/location/usecases/get_location.dart';
 import 'package:pawsome/domain/pet/usecases/listen_to_pet_adoption.dart';
-import 'package:pawsome/presentation/adoption/models/registered_pet_view_model.dart';
+import 'package:pawsome/data/pet/models/registered_pet_model.dart';
 import 'package:flutter/material.dart';
 part 'adoption_state.dart';
 
@@ -13,7 +13,7 @@ class AdoptionCubit extends Cubit<AdoptionState> {
   final GetLocationUseCase getLocationUseCase;
 
   // Internal stream controller for holding the message stream
-  late Stream<List<RegisteredPetViewModel>> petStream = const Stream.empty();
+  late Stream<List<RegisteredPetModel>> petStream = const Stream.empty();
   int distance = 5;
   late Position position;
 
@@ -50,8 +50,12 @@ class AdoptionCubit extends Cubit<AdoptionState> {
             },
             (registeredPets) {
               // Transform the successful response into a list of RegisteredPetViewModel
+              if (registeredPets.isEmpty) {
+                return [];
+              }
               return registeredPets
-                  .map((pets) => RegisteredPetViewModel.fromEntity(pets))
+                  .map((pets) => RegisteredPetModel.fromJson(
+                      pets)) // Mapping each pet data
                   .toList();
             },
           );
