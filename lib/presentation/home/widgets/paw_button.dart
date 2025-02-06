@@ -4,10 +4,14 @@ import '../../../core/theme/app_colors.dart';
 
 class PawButton extends StatelessWidget {
   final VoidCallback onPressed;
+  final Color? pawBackgroundColor;
+  final Color? pawIconColor;
 
   const PawButton({
     super.key,
     required this.onPressed,
+    required this.pawBackgroundColor,
+    required this.pawIconColor,
   });
 
   @override
@@ -17,12 +21,12 @@ class PawButton extends StatelessWidget {
       style: ElevatedButton.styleFrom(
           shape: const CircleBorder(),
           padding: EdgeInsets.zero,
-          backgroundColor: AppColors.primary,
+          backgroundColor: pawBackgroundColor,
           fixedSize: const Size(60, 60)),
       child: Image.asset(
         'assets/images/icon_image.png',
         width: 30,
-        color: AppColors.white,
+        color: pawIconColor,
       ),
     );
   }
