@@ -64,6 +64,9 @@ dependencies:
 
   # network packages
   connectivity_plus: ^6.1.0
+
+
+  # cache packages
   cached_network_image: ^3.4.1
   flutter_cache_manager: ^3.4.1
 
@@ -80,6 +83,7 @@ dependencies:
   flutter_phoenix: ^1.1.1
   package_info_plus: ^8.2.0
   flutter_svg: ^2.0.14
+  marquee: ^2.3.0
 #  font_awesome_flutter: ^9.2.0
 
 dev_dependencies:

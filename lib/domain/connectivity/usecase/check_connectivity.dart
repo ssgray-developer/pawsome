@@ -1,4 +1,3 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dartz/dartz.dart';
 import '../../../core/usecase/usecase.dart';
 import '../../../service_locator.dart';

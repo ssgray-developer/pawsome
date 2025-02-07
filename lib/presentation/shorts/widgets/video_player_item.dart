@@ -1,11 +1,22 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
+import 'package:marquee/marquee.dart';
 import 'package:pawsome/core/theme/app_colors.dart';
+import 'package:pawsome/core/theme/app_values.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoPlayerItem extends StatefulWidget {
   final String videoUrl;
-  const VideoPlayerItem({super.key, required this.videoUrl});
+  final String title;
+  final String description;
+  final String profileUrl;
+  const VideoPlayerItem(
+      {super.key,
+      required this.videoUrl,
+      required this.title,
+      required this.description,
+      required this.profileUrl});
 
   @override
   State<VideoPlayerItem> createState() => _VideoPlayerItemState();
@@ -13,7 +24,7 @@ class VideoPlayerItem extends StatefulWidget {
 
 class _VideoPlayerItemState extends State<VideoPlayerItem> {
   late VideoPlayerController videoPlayerController;
-  late ChewieController chewieController;
+  ChewieController? chewieController;
   bool isLiked = false;
 
   @override
@@ -47,7 +58,7 @@ class _VideoPlayerItemState extends State<VideoPlayerItem> {
   @override
   void dispose() {
     videoPlayerController.dispose();
-    chewieController.dispose();
+    chewieController?.dispose();
     super.dispose();
   }
 
@@ -80,8 +91,67 @@ class _VideoPlayerItemState extends State<VideoPlayerItem> {
               child: SizedBox(
                 height: MediaQuery.of(context).size.height - 120,
                 child: AspectRatio(
-                    aspectRatio: videoPlayerController.value.aspectRatio,
-                    child: Chewie(controller: chewieController)),
+                  aspectRatio: videoPlayerController.value.aspectRatio,
+                  child: chewieController != null
+                      ? Chewie(controller: chewieController!)
+                      : const SizedBox.shrink(),
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            left: 10,
+            bottom: 170,
+            child: SizedBox(
+              height: 40,
+              width: 200,
+              child: ListTile(
+                contentPadding: const EdgeInsets.only(top: 10),
+                dense: true,
+                horizontalTitleGap: 5,
+                visualDensity: VisualDensity.comfortable,
+                leading: CircleAvatar(
+                  radius: 30,
+                  backgroundImage:
+                      CachedNetworkImageProvider(widget.profileUrl),
+                ),
+                title: widget.title.isEmpty
+                    ? const Text(
+                        'Nil',
+                        style: TextStyle(fontSize: AppSize.s14),
+                      )
+                    : widget.title.length < 20
+                        ? Text(
+                            widget.title,
+                            style: const TextStyle(fontSize: AppSize.s14),
+                          )
+                        : Marquee(
+                            text: widget.title,
+                            velocity: 10,
+                            blankSpace: 20,
+                            numberOfRounds: 1,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            style: const TextStyle(fontSize: AppSize.s14),
+                          ),
+                subtitle: widget.description.isEmpty
+                    ? const Text(
+                        'Nil',
+                        style: TextStyle(fontSize: AppSize.s14),
+                      )
+                    : widget.description.length < 20
+                        ? Text(
+                            widget.description,
+                            style: const TextStyle(fontSize: AppSize.s12),
+                          )
+                        : Marquee(
+                            text: widget.description,
+                            velocity: 20,
+                            blankSpace: 20,
+                            numberOfRounds: 2,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            style: const TextStyle(fontSize: AppSize.s12),
+                          ),
+                subtitleTextStyle: const TextStyle(fontSize: AppSize.s12),
               ),
             ),
           ),

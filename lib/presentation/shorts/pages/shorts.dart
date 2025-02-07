@@ -17,7 +17,11 @@ class ShortsScreen extends StatelessWidget {
         scrollDirection: Axis.vertical,
         itemCount: videoUrls.length,
         itemBuilder: (context, index) {
-          return VideoPlayerItem(videoUrl: videoUrls[index]);
+          return VideoPlayerItem(
+            videoUrl: videoUrls[index],
+            title: 'hsdbfiugubfiouseboifvodiadiufewiofaorfihaoifuh',
+            description: 'adsiouvnidunvpoaidvbiaudsbis',
+          );
         });
   }
 }

@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_phoenix/flutter_phoenix.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pawsome/core/theme/app_colors.dart';
 import 'package:pawsome/presentation/adoption/pages/adoption.dart';
 import 'package:pawsome/presentation/home/widgets/paw_button.dart';

@@ -6,7 +6,6 @@ import 'package:pawsome/presentation/adoption/bloc/pet_list_view_selection_cubit
 
 import '../../../core/theme/app_strings.dart';
 import '../../../domain/pet/entity/pet_item.dart';
-import '../../../service_locator.dart';
 import 'pet_button.dart';
 
 class PetListView extends StatelessWidget {
