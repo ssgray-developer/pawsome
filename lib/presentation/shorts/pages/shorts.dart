@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pawsome/presentation/shorts/widgets/video_player_item.dart';
 
-class ShortsScreen extends StatelessWidget {
+class ShortsScreen extends StatefulWidget {
   const ShortsScreen({super.key});
 
   static List<String> videoUrls = [
@@ -12,15 +12,24 @@ class ShortsScreen extends StatelessWidget {
   ];
 
   @override
+  State<ShortsScreen> createState() => _ShortsScreenState();
+}
+
+class _ShortsScreenState extends State<ShortsScreen> {
+  bool isLoading = false;
+
+  @override
   Widget build(BuildContext context) {
     return PageView.builder(
         scrollDirection: Axis.vertical,
-        itemCount: videoUrls.length,
+        itemCount: ShortsScreen.videoUrls.length,
+        physics: isLoading ? const NeverScrollableScrollPhysics() : null,
         itemBuilder: (context, index) {
           return VideoPlayerItem(
-            videoUrl: videoUrls[index],
+            videoUrl: ShortsScreen.videoUrls[index],
             title: 'hsdbfiugubfiouseboifvodiadiufewiofaorfihaoifuh',
             description: 'adsiouvnidunvpoaidvbiaudsbis',
+            profileUrl: 'https://pixhost.icu/avaxhome/ae/42/00a642ae.jpg',
           );
         });
   }

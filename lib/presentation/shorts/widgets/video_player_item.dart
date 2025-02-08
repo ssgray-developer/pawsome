@@ -1,22 +1,25 @@
+import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
-import 'package:flutter/material.dart';
+import 'package:video_player/video_player.dart';
 import 'package:marquee/marquee.dart';
 import 'package:pawsome/core/theme/app_colors.dart';
 import 'package:pawsome/core/theme/app_values.dart';
-import 'package:video_player/video_player.dart';
 
 class VideoPlayerItem extends StatefulWidget {
   final String videoUrl;
   final String title;
   final String description;
   final String profileUrl;
-  const VideoPlayerItem(
-      {super.key,
-      required this.videoUrl,
-      required this.title,
-      required this.description,
-      required this.profileUrl});
+
+  const VideoPlayerItem({
+    super.key,
+    required this.videoUrl,
+    required this.title,
+    required this.description,
+    required this.profileUrl,
+  });
 
   @override
   State<VideoPlayerItem> createState() => _VideoPlayerItemState();
@@ -32,26 +35,22 @@ class _VideoPlayerItemState extends State<VideoPlayerItem> {
     super.initState();
     videoPlayerController =
         VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl));
-    // await controller.initialize();
-    // Initialize video player controller asynchronously
+    // Initialize the video player controller asynchronously
     videoPlayerController.initialize().then((_) {
-      // Once video is initialized, setup Chewie controller
+      // Once the video is initialized, set up the Chewie controller
       chewieController = ChewieController(
         videoPlayerController: videoPlayerController,
         autoPlay: true,
-        // autoInitialize: true,
         looping: true,
-        // showControls: true,
         allowFullScreen: false,
         materialProgressColors: ChewieProgressColors(
-          playedColor: Colors.white, // Change the played color to red
-          handleColor: AppColors.primary, // Change the handle color to green
-          backgroundColor:
-              Colors.black, // Set background color for progress bar
+          playedColor: Colors.white,
+          handleColor: AppColors.primary,
+          backgroundColor: Colors.black,
           bufferedColor: Colors.white12,
         ),
       );
-      setState(() {});
+      setState(() {}); // Rebuild once the Chewie controller is ready
     });
   }
 
@@ -74,11 +73,23 @@ class _VideoPlayerItemState extends State<VideoPlayerItem> {
 
   @override
   Widget build(BuildContext context) {
-    // Wait until the video is initialized before showing Chewie
+    // Show shimmer effect while the video is initializing
     if (!videoPlayerController.value.isInitialized) {
-      return const Center(
-          child:
-              CircularProgressIndicator()); // Show loading while initializing
+      return Center(
+        child: Shimmer.fromColors(
+          baseColor: Colors.grey[300]!,
+          highlightColor: Colors.grey[100]!,
+          child: Container(
+            color: Colors.black,
+            height: MediaQuery.of(context).size.height - 120,
+            width: double.infinity,
+            child: const Center(
+              // Empty center since we don't want any loading spinner
+              child: SizedBox.shrink(),
+            ),
+          ),
+        ),
+      );
     }
 
     return Container(
