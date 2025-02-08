@@ -169,7 +169,7 @@ class _HomeScreenState extends State<HomeScreen>
                                   color: currentIndex == 0
                                       ? AppColors.primary
                                       : Colors.grey[600],
-                                  fontSize: 12,
+                                  fontSize: 10,
                                 ),
                               ),
                             ],
@@ -200,13 +200,48 @@ class _HomeScreenState extends State<HomeScreen>
                                   color: currentIndex == 1
                                       ? AppColors.primary
                                       : Colors.grey[600],
-                                  fontSize: 12,
+                                  fontSize: 10,
                                 ),
                               ),
                             ],
                           ),
-                          Container(
-                            width: size.width * 0.20,
+                          IgnorePointer(
+                            ignoring: navBarController.status !=
+                                AnimationStatus.completed,
+                            child: Opacity(
+                              opacity: navBarController.status ==
+                                      AnimationStatus.completed
+                                  ? 1
+                                  : 0,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                      padding: EdgeInsets.zero,
+                                      // iconSize: 50,
+                                      constraints:
+                                          const BoxConstraints(maxHeight: 20),
+                                      icon: Image.asset(
+                                        'assets/images/icon_image.png',
+                                        // width: 30,
+                                        color: Colors.transparent,
+                                      ),
+                                      onPressed: () {
+                                        if (navBarController.isCompleted) {
+                                          navBarController.reverse();
+                                        }
+                                        setBottomBarIndex(2);
+                                      }),
+                                  Text(
+                                    'Home',
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                      fontSize: 10,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                           Column(
                             mainAxisSize: MainAxisSize.min,
@@ -234,7 +269,7 @@ class _HomeScreenState extends State<HomeScreen>
                                   color: currentIndex == 3
                                       ? AppColors.primary
                                       : Colors.grey[600],
-                                  fontSize: 12,
+                                  fontSize: 10,
                                 ),
                               ),
                             ],
@@ -265,7 +300,7 @@ class _HomeScreenState extends State<HomeScreen>
                                   color: currentIndex == 4
                                       ? AppColors.primary
                                       : Colors.grey[600],
-                                  fontSize: 12,
+                                  fontSize: 10,
                                 ),
                               ),
                             ],
