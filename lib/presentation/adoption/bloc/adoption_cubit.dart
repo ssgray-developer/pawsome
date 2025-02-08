@@ -32,7 +32,7 @@ class AdoptionCubit extends Cubit<AdoptionState> {
     locationResult.fold(
       (failure) {
         // If location fetching fails, emit the failure state
-        emit(AdoptionFailure(failure));
+        if (!isClosed) emit(AdoptionFailure(failure));
       },
       (newPosition) {
         // If location fetch is successful, update the position
@@ -45,11 +45,11 @@ class AdoptionCubit extends Cubit<AdoptionState> {
           return either.fold(
             (failure) {
               // Handle the failure case (you can return an empty list or other handling logic)
-              emit(AdoptionFailure(failure));
+              if (!isClosed) emit(AdoptionFailure(failure));
               return [];
             },
             (registeredPets) {
-              // Transform the successful response into a list of RegisteredPetViewModel
+              // Transform the successful response into a list of RegisteredPetModel
               if (registeredPets.isEmpty) {
                 return [];
               }
@@ -63,7 +63,7 @@ class AdoptionCubit extends Cubit<AdoptionState> {
 
         // Optionally emit success with initial empty list if you want to show
         // initial loading before stream starts emitting results
-        emit(AdoptionLoading());
+        if (!isClosed) emit(AdoptionLoading());
       },
     );
   }
@@ -79,6 +79,10 @@ class AdoptionCubit extends Cubit<AdoptionState> {
     );
   }
 
-  // Expose the stream to the UI
-  // Stream<List<RegisteredPetViewModel>> get petStream => _petStream;
+  @override
+  Future<void> close() {
+    // Close the stream properly and perform any necessary cleanup
+    petStream = const Stream.empty();
+    return super.close();
+  }
 }

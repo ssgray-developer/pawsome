@@ -16,6 +16,9 @@ class VideoPlayerItem extends StatefulWidget {
   final double? savedPosition;
   final Function(String, double)
       onPositionChanged; // Callback to update position
+  final VideoPlayerController
+      videoPlayerController; // Pre-initialized controller
+  final bool isInitialized; // Track whether the controller is initialized
 
   const VideoPlayerItem({
     super.key,
@@ -25,6 +28,8 @@ class VideoPlayerItem extends StatefulWidget {
     required this.profileUrl,
     this.savedPosition,
     required this.onPositionChanged,
+    required this.videoPlayerController,
+    required this.isInitialized,
   });
 
   @override
@@ -33,7 +38,6 @@ class VideoPlayerItem extends StatefulWidget {
 
 class _VideoPlayerItemState extends State<VideoPlayerItem>
     with AutomaticKeepAliveClientMixin {
-  late VideoPlayerController videoPlayerController;
   ChewieController? chewieController;
   bool isLiked = false;
   bool isPaused = false;
@@ -41,65 +45,39 @@ class _VideoPlayerItemState extends State<VideoPlayerItem>
   @override
   void initState() {
     super.initState();
-    videoPlayerController =
-        VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl));
 
-    // Initialize the video player controller asynchronously
-    videoPlayerController.initialize().then((_) {
-      // If there's a saved position, seek to it
-      if (widget.savedPosition != null) {
-        videoPlayerController
-            .seekTo(Duration(seconds: widget.savedPosition!.toInt()));
-      }
-
-      // Set up the Chewie controller
-      chewieController = ChewieController(
-        videoPlayerController: videoPlayerController,
-        autoPlay: false, // Disable autoPlay, we'll handle it manually
-        looping: true,
-        allowFullScreen: false,
-        showControlsOnInitialize: false,
-        materialProgressColors: ChewieProgressColors(
-          playedColor: Colors.white,
-          handleColor: AppColors.primary,
-          backgroundColor: Colors.black,
-          bufferedColor: Colors.white12,
-        ),
-      );
-      setState(() {}); // Rebuild once the Chewie controller is ready
-    });
+    // Initialize the Chewie controller only when the VideoPlayerController is ready
+    chewieController = ChewieController(
+      videoPlayerController: widget.videoPlayerController,
+      autoPlay: false,
+      looping: true,
+      allowFullScreen: false,
+      showControlsOnInitialize: false,
+      materialProgressColors: ChewieProgressColors(
+        playedColor: Colors.white,
+        handleColor: AppColors.primary,
+        backgroundColor: Colors.black,
+        bufferedColor: Colors.white12,
+      ),
+    );
   }
 
   @override
   void dispose() {
-    // Save the current position when the video is disposed
-    widget.onPositionChanged(widget.videoUrl,
-        videoPlayerController.value.position.inSeconds.toDouble());
-    videoPlayerController.dispose();
+    // Do NOT dispose the video controller here, it is managed in the parent widget
     chewieController?.dispose();
     super.dispose();
   }
 
   @override
-  bool get wantKeepAlive => true; // Ensure that the widget is kept alive
-
-  void toggleLike() {
-    setState(() {
-      isLiked = !isLiked;
-    });
-  }
-
-  void shareVideo() {
-    print("Sharing the video...");
-  }
+  bool get wantKeepAlive => true;
 
   // Manually play/pause when the video becomes visible
   void onVisibilityChanged(VisibilityInfo visibilityInfo) {
-    final isCurrentlyPlaying =
-        chewieController?.videoPlayerController.value.isPlaying ?? false;
+    final isCurrentlyPlaying = widget.videoPlayerController.value.isPlaying;
 
     if (visibilityInfo.visibleFraction >= 0.7 && !isCurrentlyPlaying) {
-      chewieController?.videoPlayerController.play();
+      widget.videoPlayerController.play();
       if (mounted) {
         setState(() {
           isPaused = false;
@@ -107,7 +85,7 @@ class _VideoPlayerItemState extends State<VideoPlayerItem>
       }
     } else if (visibilityInfo.visibleFraction < 0.7 && isCurrentlyPlaying) {
       if (mounted) {
-        chewieController?.videoPlayerController.pause();
+        widget.videoPlayerController.pause();
         setState(() {
           isPaused = false;
         });
@@ -118,8 +96,9 @@ class _VideoPlayerItemState extends State<VideoPlayerItem>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    // Show shimmer effect while the video is initializing
-    if (!videoPlayerController.value.isInitialized) {
+
+    // Show shimmer effect if the video is not initialized yet
+    if (!widget.isInitialized) {
       return Center(
         child: Shimmer.fromColors(
           baseColor: Colors.grey[300]!,
@@ -128,9 +107,7 @@ class _VideoPlayerItemState extends State<VideoPlayerItem>
             color: Colors.black,
             height: MediaQuery.of(context).size.height - 120,
             width: double.infinity,
-            child: const Center(
-              child: SizedBox.shrink(),
-            ),
+            child: const Center(child: SizedBox.shrink()),
           ),
         ),
       );
@@ -149,10 +126,8 @@ class _VideoPlayerItemState extends State<VideoPlayerItem>
                 child: SizedBox(
                   height: MediaQuery.of(context).size.height - 120,
                   child: AspectRatio(
-                    aspectRatio: videoPlayerController.value.aspectRatio,
-                    child: chewieController != null
-                        ? Chewie(controller: chewieController!)
-                        : const SizedBox.shrink(),
+                    aspectRatio: widget.videoPlayerController.value.aspectRatio,
+                    child: Chewie(controller: chewieController!),
                   ),
                 ),
               ),
@@ -242,5 +217,15 @@ class _VideoPlayerItemState extends State<VideoPlayerItem>
         ),
       ),
     );
+  }
+
+  void toggleLike() {
+    setState(() {
+      isLiked = !isLiked;
+    });
+  }
+
+  void shareVideo() {
+    print("Sharing the video...");
   }
 }
