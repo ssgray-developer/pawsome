@@ -8,7 +8,7 @@ class UserModel {
   final List chatId;
   final String username;
   final List petList;
-  final List missingPetList;
+  final bool isSuspended;
 
   UserModel(
       {required this.email,
@@ -17,23 +17,17 @@ class UserModel {
       required this.chatId,
       required this.username,
       required this.petList,
-      required this.missingPetList});
+      required this.isSuspended});
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       email: json["email"],
       uid: json["uid"],
       photoUrl: json["photoUrl"],
-      chatId: List.of(json["chatId"])
-          .map((i) => i /* can't generate it properly yet */)
-          .toList(),
+      chatId: json["chatId"],
       username: json["username"],
-      petList: List.of(json["petList"])
-          .map((i) => i /* can't generate it properly yet */)
-          .toList(),
-      missingPetList: List.of(json["missingPetList"])
-          .map((i) => i /* can't generate it properly yet */)
-          .toList(),
+      petList: json["petList"],
+      isSuspended: json["isSuspended"],
     );
   }
 
@@ -45,7 +39,6 @@ class UserModel {
       "chatId": jsonEncode(chatId),
       "username": username,
       "petList": jsonEncode(petList),
-      "missingPetList": jsonEncode(missingPetList),
     };
   }
 }
@@ -59,6 +52,6 @@ extension UserXModel on UserModel {
         chatId: chatId,
         username: username,
         petList: petList,
-        missingPetList: missingPetList);
+        isSuspended: isSuspended);
   }
 }

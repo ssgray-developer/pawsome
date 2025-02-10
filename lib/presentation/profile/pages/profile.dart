@@ -22,10 +22,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    _getAppVersion();
+    getAppVersion();
   }
 
-  Future<void> _getAppVersion() async {
+  Future<void> getAppVersion() async {
     final PackageInfo packageInfo = await PackageInfo.fromPlatform();
     setState(() {
       appVersion = packageInfo.version;
@@ -38,7 +38,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(30),
+          padding:
+              const EdgeInsets.only(top: 30, left: 20, right: 20, bottom: 100),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -58,6 +59,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     size: 40,
                   )
                 ],
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              SizedBox(
+                  width: double.infinity,
+                  height: 60,
+                  child: ProfileListTile(
+                    leadingWidget: CircleAvatar(
+                      radius: 30,
+                    ),
+                    title: 'Sean',
+                    subtitle: 'Show profile',
+                  )),
+              Divider(
+                color: Colors.grey[500],
               ),
               const SizedBox(
                 height: 30,

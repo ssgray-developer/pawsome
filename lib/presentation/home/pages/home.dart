@@ -134,9 +134,10 @@ class _HomeScreenState extends State<HomeScreen>
                         pawIconColor: pawIconColorAnimation.value,
                       ),
                     ),
-                    SizedBox(
+                    Container(
                       width: size.width,
                       height: 80,
+                      margin: const EdgeInsets.only(top: 5),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -250,12 +251,15 @@ class _HomeScreenState extends State<HomeScreen>
                                   padding: EdgeInsets.zero,
                                   constraints:
                                       const BoxConstraints(maxHeight: 20),
-                                  icon: Icon(
-                                    Icons.message,
-                                    size: 30,
-                                    color: currentIndex == 3
-                                        ? AppColors.primary
-                                        : Colors.grey[600],
+                                  icon: Badge(
+                                    smallSize: 10,
+                                    child: Icon(
+                                      Icons.message,
+                                      size: 30,
+                                      color: currentIndex == 3
+                                          ? AppColors.primary
+                                          : Colors.grey[600],
+                                    ),
                                   ),
                                   onPressed: () {
                                     if (navBarController.isCompleted) {

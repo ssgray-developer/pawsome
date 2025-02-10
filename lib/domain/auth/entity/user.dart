@@ -5,7 +5,7 @@ class UserEntity {
   final List chatId;
   final String username;
   final List petList;
-  final List missingPetList;
+  final bool isSuspended;
 
   UserEntity(
       {required this.email,
@@ -14,5 +14,5 @@ class UserEntity {
       required this.chatId,
       required this.username,
       required this.petList,
-      required this.missingPetList});
+      required this.isSuspended});
 }

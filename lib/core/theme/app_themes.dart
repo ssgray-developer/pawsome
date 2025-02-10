@@ -8,7 +8,7 @@ class AppTheme {
   static final lightTheme = ThemeData(
     primaryColor: AppColors.primary,
     secondaryHeaderColor: AppColors.secondary,
-    scaffoldBackgroundColor: Colors.white.withAlpha(400),
+    scaffoldBackgroundColor: Colors.grey[100],
     colorScheme: ColorScheme.dark(
       secondaryContainer: Colors.grey[900],
     ),

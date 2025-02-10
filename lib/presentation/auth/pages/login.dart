@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -71,6 +73,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void loginWithFacebook(BuildContext context) async {
     await context.read<AuthCubit>().signInWithFacebook();
+  }
+
+  // TODO: Implement sign in with Apple
+  void loginWithApple(BuildContext context) async {
+    // await context.read<AuthCubit>().signInWithApple();
   }
 
   @override
@@ -277,6 +284,24 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                     ),
                   ),
+                  const SizedBox(
+                    height: AppSize.s16,
+                  ),
+                  if (Platform.isIOS)
+                    SizedBox(
+                      width: double.infinity,
+                      height: AppSize.s50,
+                      child: SignInButton(
+                        Buttons.Apple,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(AppSize.s10)),
+                        padding:
+                            const EdgeInsets.symmetric(vertical: AppSize.s8),
+                        onPressed: () {
+                          loginWithApple(context);
+                        },
+                      ),
+                    ),
                 ],
               ),
             ),

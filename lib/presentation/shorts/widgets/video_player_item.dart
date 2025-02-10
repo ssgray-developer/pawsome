@@ -192,7 +192,6 @@ class _VideoPlayerItemState extends State<VideoPlayerItem>
               bottom: 140,
               right: 20,
               child: Column(
-                spacing: 10,
                 children: [
                   IconButton(
                     icon: Icon(
@@ -201,6 +200,10 @@ class _VideoPlayerItemState extends State<VideoPlayerItem>
                       size: 35,
                     ),
                     onPressed: toggleLike,
+                  ),
+                  Text('999.9K'),
+                  const Divider(
+                    height: 10,
                   ),
                   IconButton(
                     icon: const Icon(

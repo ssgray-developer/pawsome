@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:pawsome/app/app_update_cubit.dart';
 import 'package:pawsome/core/theme/app_themes.dart';
 import 'package:pawsome/presentation/auth/bloc/auth_cubit.dart';
 import 'package:pawsome/presentation/auth/pages/login.dart';
@@ -46,6 +47,9 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => sl<AuthCubit>()..listenToAuthChanges(),
         ),
+        // BlocProvider(
+        //   create: (context) => sl<AppUpdateCubit>()..checkForUpdate(),
+        // ),
       ],
       child: MaterialApp(
         // themeMode: themeViewModel.themeMode,
