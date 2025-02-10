@@ -79,7 +79,6 @@ dependencies:
   shared_preferences: ^2.5.1
 
   # misc packages
-
   easy_localization: ^3.0.7
   email_validator: ^3.0.0
   full_screen_image: ^2.0.0
@@ -89,6 +88,7 @@ dependencies:
   package_info_plus: ^8.2.0
   flutter_svg: ^2.0.14
   marquee: ^2.3.0
+  upgrader: ^11.3.1
 #  font_awesome_flutter: ^9.2.0
 
 dev_dependencies:

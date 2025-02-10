@@ -9,7 +9,7 @@ class AppTheme {
     primaryColor: AppColors.primary,
     secondaryHeaderColor: AppColors.secondary,
     scaffoldBackgroundColor: Colors.grey[100],
-    colorScheme: ColorScheme.dark(
+    colorScheme: ColorScheme.light(
       secondaryContainer: Colors.grey[900],
     ),
     // appBarTheme: AppBarTheme(
@@ -46,6 +46,11 @@ class AppTheme {
       selectionColor: AppColors.primary,
       cursorColor: AppColors.primary,
       selectionHandleColor: AppColors.primary,
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(
+        foregroundColor: AppColors.primary, // Button text color (purple)
+      ),
     ),
   );
 
