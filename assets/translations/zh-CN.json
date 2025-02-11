@@ -399,12 +399,18 @@
   "name": "名称",
   "next": "确认",
   "enter_valid_email": "请输入有效的电子邮件地址",
+  "enter_your_email": "请输入您的电子邮件地址",
   "enter_your_password": "请输入您的密码",
   "enter_username": "请填入一个用户名",
   "enter_strong_password": "请输入强密码",
   "sign_up_facebook": "用 Facebook 注册",
   "sign_up_google": "用 Google 注册",
   "adoption": "收养",
+  "username": "用户名",
+  "confirm_password": "确认密码",
+  "confirm_your_password": "确认您的密码",
+  "back": "返回",
+  "passwords_not_match": "密码不匹配",
 
 
   "register_adoption": "登记收养",

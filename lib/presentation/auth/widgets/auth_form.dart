@@ -8,21 +8,28 @@ class AuthForm extends StatelessWidget {
   final TextEditingController controller;
   final FocusNode focusNode;
   final bool? enableInteractiveSelection;
-  final String validatorText;
+  final TextInputAction textInputAction;
+  final TextInputType textInputType;
+  final FormFieldValidator validator;
   final double? letterSpacing;
   final bool obscureText;
   final String labelText;
   final Widget? suffixIcon;
+  final VoidCallback? onEditingComplete;
   const AuthForm({
     super.key,
     required this.controller,
     required this.focusNode,
-    required this.validatorText,
+    required this.validator,
     this.enableInteractiveSelection,
+    required this.textInputAction,
+    required this.textInputType,
     this.letterSpacing,
     required this.obscureText,
     required this.labelText,
-    this.suffixIcon, required this.globalKey,
+    this.suffixIcon,
+    required this.globalKey,
+    this.onEditingComplete,
   });
 
   @override
@@ -33,12 +40,9 @@ class AuthForm extends StatelessWidget {
         controller: controller,
         focusNode: focusNode,
         enableInteractiveSelection: enableInteractiveSelection,
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return validatorText;
-          }
-          return null;
-        },
+        textInputAction: textInputAction,
+        keyboardType: textInputType,
+        validator: validator,
         style: TextStyle(letterSpacing: letterSpacing, color: AppColors.black),
         maxLines: 1,
         obscureText: obscureText,
@@ -67,6 +71,7 @@ class AuthForm extends StatelessWidget {
           contentPadding: const EdgeInsets.symmetric(
               vertical: AppSize.s16, horizontal: AppSize.s10),
         ),
+        onEditingComplete: onEditingComplete,
       ),
     );
   }

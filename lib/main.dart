@@ -20,7 +20,7 @@ Future<void> main() async {
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await initializeDependencies();
-  await Upgrader.clearSavedSettings();
+  // await Upgrader.clearSavedSettings();
   await EasyLocalization.ensureInitialized();
 
   runApp(
@@ -77,7 +77,7 @@ class MyApp extends StatelessWidget {
           showIgnore: false,
           showLater: false,
           upgrader: Upgrader(
-            debugDisplayAlways: true,
+            // debugDisplayAlways: true,
             messages: UpgraderMessages(code: context.locale.languageCode),
             languageCode: context.locale.languageCode,
             countryCode: getCountryCodeFromDevice(),

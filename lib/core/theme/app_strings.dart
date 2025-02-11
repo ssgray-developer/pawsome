@@ -409,12 +409,18 @@ class AppStrings {
   static const name = 'name';
   static const next = 'next';
   static const enterValidEmail = 'enter_valid_email';
+  static const enterYourEmail = 'enter_your_email';
   static const enterYourPassword = 'enter_your_password';
   static const enterUsername = 'enter_username';
   static const enterStrongPassword = 'enter_strong_password';
   static const signUpFacebook = 'sign_up_facebook';
   static const signUpGoogle = 'sign_up_google';
   static const adoption = 'adoption';
+  static const username = 'username';
+  static const confirmPassword = 'confirm_password';
+  static const confirmYourPassword = 'confirm_your_password';
+  static const back = 'back';
+  static const passwordsNotMatch = 'passwords_not_match';
 
   static const registerAdoption = 'register_adoption';
   static const male = 'male';

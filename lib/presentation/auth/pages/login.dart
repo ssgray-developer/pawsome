@@ -9,7 +9,9 @@ import 'package:flutter_signin_button/button_view.dart';
 import 'package:pawsome/core/theme/app_colors.dart';
 import 'package:pawsome/core/theme/app_fonts.dart';
 import 'package:pawsome/data/auth/models/user_sign_in_req.dart';
+import 'package:pawsome/presentation/auth/pages/register.dart';
 import 'package:pawsome/presentation/auth/widgets/auth_form.dart';
+import '../../../common/validator.dart';
 import '../../../core/theme/app_strings.dart';
 import '../../../core/theme/app_values.dart';
 import '../bloc/auth_cubit.dart';
@@ -24,46 +26,46 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _emailFormKey = GlobalKey<FormState>();
-  final _passwordFormKey = GlobalKey<FormState>();
+  final emailFormKey = GlobalKey<FormState>();
+  final passwordFormKey = GlobalKey<FormState>();
 
-  late FocusNode _emailNode;
-  late FocusNode _passwordNode;
+  late FocusNode emailNode;
+  late FocusNode passwordNode;
 
-  late TextEditingController _emailTextEditingController;
-  late TextEditingController _passwordTextEditingController;
+  late TextEditingController emailTextEditingController;
+  late TextEditingController passwordTextEditingController;
 
-  bool _passwordVisible = false;
+  bool passwordVisible = false;
 
   @override
   void initState() {
     super.initState();
-    _emailNode = FocusNode();
-    _passwordNode = FocusNode();
+    emailNode = FocusNode();
+    passwordNode = FocusNode();
 
-    _emailTextEditingController = TextEditingController();
-    _passwordTextEditingController = TextEditingController();
+    emailTextEditingController = TextEditingController();
+    passwordTextEditingController = TextEditingController();
 
     Future.delayed(const Duration(milliseconds: 100), () {
-      _emailNode.requestFocus();
+      emailNode.requestFocus();
     });
   }
 
   @override
   void dispose() {
-    _emailTextEditingController.dispose();
-    _passwordTextEditingController.dispose();
-    _emailNode.dispose();
-    _passwordNode.dispose();
+    emailTextEditingController.dispose();
+    passwordTextEditingController.dispose();
+    emailNode.dispose();
+    passwordNode.dispose();
     super.dispose();
   }
 
   void loginUser(BuildContext context) async {
-    if (_emailFormKey.currentState!.validate() &&
-        _passwordFormKey.currentState!.validate()) {
+    if (emailFormKey.currentState!.validate() &&
+        passwordFormKey.currentState!.validate()) {
       await context.read<AuthCubit>().signIn(UserSignInReq(
-          email: _emailTextEditingController.text.trim(),
-          password: _passwordTextEditingController.text.trim()));
+          email: emailTextEditingController.text.trim(),
+          password: passwordTextEditingController.text.trim()));
     }
   }
 
@@ -127,7 +129,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: AppSize.s20,
                   ),
                   Text(
-                    'Welcome to Pawsome',
+                    context.tr(AppStrings.welcomeToPawsome),
                     style: TextStyle(
                         color: AppColors.black,
                         fontSize: FontSize.s30,
@@ -138,33 +140,54 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: AppSize.s40,
                   ),
                   AuthForm(
-                    globalKey: _emailFormKey,
-                    controller: _emailTextEditingController,
-                    focusNode: _emailNode,
-                    validatorText: context.tr(AppStrings.enterValidEmail),
+                    globalKey: emailFormKey,
+                    controller: emailTextEditingController,
+                    focusNode: emailNode,
+                    textInputAction: TextInputAction.next,
+                    textInputType: TextInputType.emailAddress,
                     labelText: context.tr(AppStrings.email),
                     obscureText: false,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return AppStrings.enterYourEmail.tr();
+                      } else if (!Validator.isEmailValid(value)) {
+                        return AppStrings.enterValidEmail.tr();
+                      }
+                      return null;
+                    },
+                    onEditingComplete: () {
+                      FocusScope.of(context).requestFocus(passwordNode);
+                    },
                   ),
                   const SizedBox(
                     height: AppSize.s20,
                   ),
                   AuthForm(
-                    globalKey: _passwordFormKey,
-                    controller: _passwordTextEditingController,
-                    focusNode: _passwordNode,
-                    validatorText: context.tr(AppStrings.enterYourPassword),
-                    obscureText: !_passwordVisible,
+                    globalKey: passwordFormKey,
+                    controller: passwordTextEditingController,
+                    focusNode: passwordNode,
+                    textInputAction: TextInputAction.done,
+                    textInputType: TextInputType.text,
+                    obscureText: !passwordVisible,
                     enableInteractiveSelection: false,
                     letterSpacing: AppSize.s1_5,
                     labelText: context.tr(AppStrings.password),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return AppStrings.enterYourPassword.tr();
+                      } else if (!Validator.isPasswordValid(value)) {
+                        return AppStrings.enterStrongPassword.tr();
+                      }
+                      return null;
+                    },
                     suffixIcon: IconButton(
-                      icon: Icon(_passwordVisible
+                      icon: Icon(passwordVisible
                           ? Icons.visibility
                           : Icons.visibility_off),
                       color: Colors.grey[600]!,
                       onPressed: () {
                         setState(() {
-                          _passwordVisible = !_passwordVisible;
+                          passwordVisible = !passwordVisible;
                         });
                       },
                     ),
@@ -211,10 +234,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       TextButton(
                         onPressed: () {
-                          // Navigator.of(context).push(
-                          //     MaterialPageRoute(
-                          //         builder: (context) =>
-                          //             RegisterScreen()));
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => const RegisterScreen()));
                         },
                         child: Text(
                           context.tr(AppStrings.signUp),
