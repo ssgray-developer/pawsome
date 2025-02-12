@@ -1,11 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
-import '../../../common/validator.dart';
+import 'package:pawsome/presentation/auth/pages/login.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_fonts.dart';
 import '../../../core/theme/app_strings.dart';
 import '../../../core/theme/app_values.dart';
+import '../../../core/utils/validator.dart';
 import '../widgets/auth_form.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -110,7 +110,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   obscureText: false,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return AppStrings.enterUsername.tr();
+                      return context.tr(AppStrings.enterUsername);
                     }
                     return null;
                   },
@@ -131,9 +131,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   obscureText: false,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return AppStrings.enterYourEmail.tr();
+                      return context.tr(AppStrings.enterYourEmail);
                     } else if (!Validator.isEmailValid(value)) {
-                      return AppStrings.enterValidEmail.tr();
+                      return context.tr(AppStrings.enterValidEmail);
                     }
                     return null;
                   },
@@ -156,9 +156,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   labelText: context.tr(AppStrings.password),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return AppStrings.enterYourPassword.tr();
+                      return context.tr(AppStrings.enterYourPassword);
                     } else if (!Validator.isPasswordValid(value)) {
-                      return AppStrings.enterStrongPassword.tr();
+                      return context.tr(AppStrings.enterStrongPassword);
                     }
                     return null;
                   },
@@ -181,11 +181,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   labelText: context.tr(AppStrings.confirmPassword),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return AppStrings.confirmYourPassword.tr();
+                      return context.tr(AppStrings.confirmYourPassword);
                     } else if (confirmPasswordTextEditingController.text
                             .trim() !=
                         passwordTextEditingController.text.trim()) {
-                      return AppStrings.passwordsNotMatch.tr();
+                      return context.tr(AppStrings.passwordsNotMatch);
                     }
                     return null;
                   },
@@ -226,7 +226,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           WidgetStateProperty.all(Colors.grey[800]),
                     ),
                     onPressed: () {
-                      Navigator.pop(context);
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => const LoginScreen()));
                     },
                     child: Text(
                       context.tr(AppStrings.back),

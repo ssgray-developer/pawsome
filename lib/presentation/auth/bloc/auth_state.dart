@@ -18,3 +18,13 @@ class AuthError extends AuthState {
   final String message;
   AuthError(this.message);
 }
+
+class AuthPasswordResetEmailSent extends AuthState {
+  final String message;
+  AuthPasswordResetEmailSent(this.message);
+}
+
+class AuthPasswordResetEmailError extends AuthState {
+  final String message;
+  AuthPasswordResetEmailError(this.message);
+}

@@ -14,4 +14,5 @@ abstract class AuthRepository {
   Future<Either> signOutFromFacebook();
   Future<Either> saveAuthProvider(String provider);
   Future<Either> getAuthProvider();
+  Future<Either> sendPasswordResetEmail(String email);
 }

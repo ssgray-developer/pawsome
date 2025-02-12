@@ -7,6 +7,7 @@ import 'package:pawsome/domain/auth/usecases/get_auth_provider.dart';
 import 'package:pawsome/domain/auth/usecases/google_sign_in.dart';
 import 'package:pawsome/domain/auth/usecases/google_sign_out.dart';
 import 'package:pawsome/domain/auth/usecases/save_auth_provider.dart';
+import 'package:pawsome/domain/auth/usecases/send_password_reset_email.dart';
 import 'package:pawsome/domain/auth/usecases/sign_in.dart';
 import 'package:pawsome/domain/auth/usecases/sign_out.dart';
 import '../../../domain/auth/usecases/listen_to_auth_changes.dart';
@@ -23,6 +24,7 @@ class AuthCubit extends Cubit<AuthState> {
   final FacebookSignOutUseCase facebookSignOutUseCase;
   final SaveAuthProviderUseCase saveAuthProviderUseCase;
   final GetAuthProviderUseCase getAuthProviderUseCase;
+  final SendPasswordResetEmailUseCase sendPasswordResetEmailUseCase;
 
   AuthCubit(
       this.listenToAuthChangesUseCase,
@@ -33,7 +35,8 @@ class AuthCubit extends Cubit<AuthState> {
       this.facebookSignInUseCase,
       this.facebookSignOutUseCase,
       this.saveAuthProviderUseCase,
-      this.getAuthProviderUseCase)
+      this.getAuthProviderUseCase,
+      this.sendPasswordResetEmailUseCase)
       : super(AuthInitial()) {
     // listenToAuthChanges();
   }
@@ -129,28 +132,6 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  // Future<void> signOutFromGoogle() async {
-  //   try {
-  //     emit(AuthLoading());
-  //     final result = await googleSignOutUseCase.call();
-  //
-  //     result.fold((message) => emit(AuthError(message)), (_) async {
-  //       try {
-  //         // Sign out from Firebase
-  //         final result = await signOutUseCase.call();
-  //
-  //         // Emit unauthenticated state once both Google and Firebase sign-out are successful
-  //         emit(AuthUnauthenticated());
-  //       } catch (e) {
-  //         // Catch any errors that happen during Firebase sign-out
-  //         emit(AuthError('Failed to sign out: ${e.toString()}'));
-  //       }
-  //     });
-  //   } catch (e) {
-  //     emit(AuthError('An error occurred: ${e.toString()}'));
-  //   }
-  // }
-
   Future<void> signInWithFacebook() async {
     try {
       emit(AuthLoading());
@@ -167,6 +148,41 @@ class AuthCubit extends Cubit<AuthState> {
       emit(AuthError('An error occurred: ${e.toString()}'));
     }
   }
+
+  Future<void> sendPasswordResetEmail(String email) async {
+    try {
+      final result = await sendPasswordResetEmailUseCase.call(params: email);
+
+      result.fold(
+        (message) => emit(AuthPasswordResetEmailError(message)),
+        (message) => emit(AuthPasswordResetEmailSent(message)),
+      );
+    } catch (e) {
+      emit(AuthPasswordResetEmailError('An error occurred: ${e.toString()}'));
+    }
+  }
+
+// Future<void> signOutFromGoogle() async {
+//   try {
+//     emit(AuthLoading());
+//     final result = await googleSignOutUseCase.call();
+//
+//     result.fold((message) => emit(AuthError(message)), (_) async {
+//       try {
+//         // Sign out from Firebase
+//         final result = await signOutUseCase.call();
+//
+//         // Emit unauthenticated state once both Google and Firebase sign-out are successful
+//         emit(AuthUnauthenticated());
+//       } catch (e) {
+//         // Catch any errors that happen during Firebase sign-out
+//         emit(AuthError('Failed to sign out: ${e.toString()}'));
+//       }
+//     });
+//   } catch (e) {
+//     emit(AuthError('An error occurred: ${e.toString()}'));
+//   }
+// }
 
   // Future<void> signOutFromFacebook() async {
   //   try {

@@ -52,6 +52,14 @@ class AppTheme {
         foregroundColor: AppColors.primary, // Button text color (purple)
       ),
     ),
+    snackBarTheme: SnackBarThemeData(
+      backgroundColor: AppColors.grey,
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      contentTextStyle: TextStyle(color: AppColors.white),
+    ),
   );
 
   static final darkTheme = ThemeData(

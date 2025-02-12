@@ -90,6 +90,7 @@ dependencies:
   marquee: ^2.3.0
   upgrader: ^11.3.1
   uuid: ^4.5.1
+  uni_links5: ^0.5.4
 #  font_awesome_flutter: ^9.2.0
 
 dev_dependencies:

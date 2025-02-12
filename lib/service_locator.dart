@@ -15,6 +15,7 @@ import 'package:pawsome/domain/app/repository/app.dart';
 import 'package:pawsome/domain/app/usecases/remote_version_check.dart';
 import 'package:pawsome/domain/auth/usecases/get_auth_provider.dart';
 import 'package:pawsome/domain/auth/usecases/listen_to_auth_changes.dart';
+import 'package:pawsome/domain/auth/usecases/send_password_reset_email.dart';
 import 'package:pawsome/domain/auth/usecases/save_auth_provider.dart';
 import 'package:pawsome/domain/location/repository/location.dart';
 import 'package:pawsome/domain/location/usecases/get_location.dart';
@@ -68,8 +69,8 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<AppRepository>(AppRepositoryImpl(sl(), sl()));
 
   // Cubit
-  sl.registerFactory<AuthCubit>(
-      () => AuthCubit(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()));
+  sl.registerFactory<AuthCubit>(() =>
+      AuthCubit(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()));
   sl.registerFactory(() => ConnectivityCubit());
   sl.registerFactory(() => PetListViewSelectionCubit());
   sl.registerFactory(() => AdoptionCubit(sl(), sl()));
@@ -101,4 +102,6 @@ Future<void> initializeDependencies() async {
       () => RemoteVersionCheckUseCase(sl()));
   sl.registerLazySingleton<LocalVersionCheckUseCase>(
       () => LocalVersionCheckUseCase(sl()));
+  sl.registerLazySingleton<SendPasswordResetEmailUseCase>(
+      () => SendPasswordResetEmailUseCase(sl()));
 }

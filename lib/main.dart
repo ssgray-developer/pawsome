@@ -100,7 +100,7 @@ class MyApp extends StatelessWidget {
               } else if (state is AuthError) {
                 return const LoginScreen();
               }
-              return Container();
+              return const LoginScreen();
             },
           ),
         ),

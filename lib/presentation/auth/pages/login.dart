@@ -11,9 +11,9 @@ import 'package:pawsome/core/theme/app_fonts.dart';
 import 'package:pawsome/data/auth/models/user_sign_in_req.dart';
 import 'package:pawsome/presentation/auth/pages/register.dart';
 import 'package:pawsome/presentation/auth/widgets/auth_form.dart';
-import '../../../common/validator.dart';
 import '../../../core/theme/app_strings.dart';
 import '../../../core/theme/app_values.dart';
+import '../../../core/utils/validator.dart';
 import '../bloc/auth_cubit.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -28,12 +28,17 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final emailFormKey = GlobalKey<FormState>();
   final passwordFormKey = GlobalKey<FormState>();
+  final forgotPasswordFormKey = GlobalKey<FormState>();
 
   late FocusNode emailNode;
   late FocusNode passwordNode;
+  late FocusNode forgotPasswordNode;
 
   late TextEditingController emailTextEditingController;
   late TextEditingController passwordTextEditingController;
+  late TextEditingController forgotPasswordTextEditingController;
+
+  // late DeepLinkHandler deepLinkHandler;
 
   bool passwordVisible = false;
 
@@ -42,21 +47,30 @@ class _LoginScreenState extends State<LoginScreen> {
     super.initState();
     emailNode = FocusNode();
     passwordNode = FocusNode();
+    forgotPasswordNode = FocusNode();
 
     emailTextEditingController = TextEditingController();
     passwordTextEditingController = TextEditingController();
+    forgotPasswordTextEditingController = TextEditingController();
 
     Future.delayed(const Duration(milliseconds: 100), () {
       emailNode.requestFocus();
     });
+
+    // deepLinkHandler =
+    //     DeepLinkHandler(resetPasswordCubit: context.read<ResetPasswordCubit>());
+    // deepLinkHandler.initDeepLinkListener();
   }
 
   @override
   void dispose() {
     emailTextEditingController.dispose();
     passwordTextEditingController.dispose();
+    forgotPasswordTextEditingController.dispose();
     emailNode.dispose();
     passwordNode.dispose();
+    forgotPasswordNode.dispose();
+    // deepLinkHandler.dispose();
     super.dispose();
   }
 
@@ -69,16 +83,20 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  void loginWithGoogle(BuildContext context) async {
+  void signInWithGoogle(BuildContext context) async {
     await context.read<AuthCubit>().signInWithGoogle();
   }
 
-  void loginWithFacebook(BuildContext context) async {
+  void signInWithFacebook(BuildContext context) async {
     await context.read<AuthCubit>().signInWithFacebook();
   }
 
   // TODO: Implement sign in with Apple
-  void loginWithApple(BuildContext context) async {
+  void signInWithApple(BuildContext context) async {
+    // await context.read<AuthCubit>().signInWithApple();
+  }
+
+  void resetPassword(BuildContext context) async {
     // await context.read<AuthCubit>().signInWithApple();
   }
 
@@ -92,26 +110,42 @@ class _LoginScreenState extends State<LoginScreen> {
         backgroundColor: AppColors.white,
         body: SingleChildScrollView(
           physics: const NeverScrollableScrollPhysics(),
-          child: BlocListener<AuthCubit, AuthState>(
-            listener: (context, state) {
-              if (state is AuthError) {
-                var snackBar = SnackBar(
-                  content: Text(
-                    state.message,
-                    style: TextStyle(color: AppColors.white),
-                  ),
-                  backgroundColor: AppColors.grey,
-                  behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                );
+          child: MultiBlocListener(
+            listeners: [
+              BlocListener<AuthCubit, AuthState>(
+                listener: (context, state) {
+                  if (state is AuthError) {
+                    var snackBar = SnackBar(
+                      content: Text(
+                        state.message,
+                      ),
+                    );
 
-                HapticFeedback.heavyImpact();
+                    HapticFeedback.heavyImpact();
 
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
-              }
-            },
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  } else if (state is AuthPasswordResetEmailSent) {
+                    var snackBar = SnackBar(
+                      duration: const Duration(seconds: 5),
+                      content: Text(
+                        state.message,
+                      ),
+                    );
+
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  } else if (state is AuthPasswordResetEmailError) {
+                    var snackBar = SnackBar(
+                      duration: const Duration(seconds: 5),
+                      content: Text(
+                        state.message,
+                      ),
+                    );
+
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  }
+                },
+              ),
+            ],
             child: Container(
               padding: const EdgeInsets.only(top: 100, left: 40, right: 40),
               child: Column(
@@ -149,9 +183,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     obscureText: false,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return AppStrings.enterYourEmail.tr();
+                        return context.tr(AppStrings.enterYourEmail);
                       } else if (!Validator.isEmailValid(value)) {
-                        return AppStrings.enterValidEmail.tr();
+                        return context.tr(AppStrings.enterValidEmail);
                       }
                       return null;
                     },
@@ -174,9 +208,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     labelText: context.tr(AppStrings.password),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return AppStrings.enterYourPassword.tr();
+                        return context.tr(AppStrings.enterYourPassword);
                       } else if (!Validator.isPasswordValid(value)) {
-                        return AppStrings.enterStrongPassword.tr();
+                        return context.tr(AppStrings.enterStrongPassword);
                       }
                       return null;
                     },
@@ -196,8 +230,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: AppSize.s16,
                   ),
                   GestureDetector(
-                    // onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                    //     builder: (context) => const ForgotPasswordScreen())),
+                    onTap: () => showModalBottomSheet(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return ResetPasswordBottomSheet(
+                              forgotPasswordTextEditingController:
+                                  forgotPasswordTextEditingController,
+                              forgotPasswordNode: forgotPasswordNode,
+                              forgotPasswordFormKey: forgotPasswordFormKey);
+                        }),
                     child: Text(
                       context.tr(AppStrings.forgotPassword),
                       style: TextStyle(color: AppColors.black),
@@ -234,8 +275,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       TextButton(
                         onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const RegisterScreen()));
+                          Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const RegisterScreen()));
                         },
                         child: Text(
                           context.tr(AppStrings.signUp),
@@ -285,7 +328,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           borderRadius: BorderRadius.circular(AppSize.s10)),
                       padding: const EdgeInsets.symmetric(vertical: AppSize.s8),
                       onPressed: () {
-                        loginWithFacebook(context);
+                        signInWithFacebook(context);
                       },
                     ),
                   ),
@@ -301,7 +344,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           borderRadius: BorderRadius.circular(AppSize.s10)),
                       padding: const EdgeInsets.symmetric(vertical: AppSize.s8),
                       onPressed: () {
-                        loginWithGoogle(context);
+                        signInWithGoogle(context);
                       },
                     ),
                   ),
@@ -319,7 +362,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         padding:
                             const EdgeInsets.symmetric(vertical: AppSize.s8),
                         onPressed: () {
-                          loginWithApple(context);
+                          signInWithApple(context);
                         },
                       ),
                     ),
@@ -327,6 +370,92 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class ResetPasswordBottomSheet extends StatefulWidget {
+  const ResetPasswordBottomSheet({
+    super.key,
+    required this.forgotPasswordTextEditingController,
+    required this.forgotPasswordNode,
+    required this.forgotPasswordFormKey,
+  });
+
+  final TextEditingController forgotPasswordTextEditingController;
+  final FocusNode forgotPasswordNode;
+  final GlobalKey<FormState> forgotPasswordFormKey;
+
+  @override
+  State<ResetPasswordBottomSheet> createState() =>
+      _ResetPasswordBottomSheetState();
+}
+
+class _ResetPasswordBottomSheetState extends State<ResetPasswordBottomSheet> {
+  void sendPasswordResetEmail(String email) async {
+    if (widget.forgotPasswordFormKey.currentState!.validate()) {
+      await context.read<AuthCubit>().sendPasswordResetEmail(email);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // if (mounted) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      FocusScope.of(context).requestFocus(widget.forgotPasswordNode);
+    });
+    // }
+
+    return SizedBox(
+      height: MediaQuery.of(context).size.height,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 30),
+        child: Column(
+          spacing: 20,
+          children: [
+            AuthForm(
+                controller: widget.forgotPasswordTextEditingController,
+                focusNode: widget.forgotPasswordNode,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return context.tr(AppStrings.enterYourEmail);
+                  } else if (!Validator.isEmailValid(value)) {
+                    return context.tr(AppStrings.enterValidEmail);
+                  }
+                  Navigator.pop(context);
+                  return null;
+                },
+                textInputAction: TextInputAction.done,
+                textInputType: TextInputType.emailAddress,
+                obscureText: false,
+                labelText: context.tr(AppStrings.email),
+                globalKey: widget.forgotPasswordFormKey),
+            SizedBox(
+              width: double.infinity,
+              height: 55,
+              child: ElevatedButton(
+                style: ButtonStyle(
+                  shape: WidgetStateProperty.all(
+                    RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(AppSize.s10)),
+                  ),
+                  backgroundColor: WidgetStateProperty.all(AppColors.primary),
+                ),
+                onPressed: () {
+                  sendPasswordResetEmail(
+                      widget.forgotPasswordTextEditingController.text.trim());
+                  // Navigator.pop(context);
+                },
+                child: Text(
+                  context.tr(AppStrings.resetPassword),
+                  style:
+                      TextStyle(color: AppColors.white, fontSize: FontSize.s20),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

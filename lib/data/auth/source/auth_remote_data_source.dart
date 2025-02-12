@@ -13,6 +13,7 @@ abstract class AuthRemoteDataSource {
   Future<Either> signOutFromGoogle();
   Future<Either> signInWithFacebook();
   Future<Either> signOutFromFacebook();
+  Future<Either> sendPasswordResetEmail(String email);
 }
 
 class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
@@ -138,6 +139,42 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
       return const Right('Facebook sign out successfully.');
     } catch (e) {
       return const Left('An unknown error has occurred.');
+    }
+  }
+
+  @override
+  Future<Either> sendPasswordResetEmail(String email) async {
+    try {
+      await firebaseAuth.sendPasswordResetEmail(email: email);
+      return const Right('Password reset email sent!');
+    } on FirebaseAuthException catch (e) {
+      String message = '';
+
+      if (e.code == 'invalid-email') {
+        message =
+            'The email address you entered is invalid. Please check the format and try again.';
+      } else if (e.code == 'missing-android-pkg-name') {
+        message =
+            'There seems to be an issue with the Android app setup. Please try again later.';
+      } else if (e.code == 'missing-continue-uri') {
+        message =
+            'We couldn’t complete the password reset request. Please try again later.';
+      } else if (e.code == 'missing-ios-bundle-id') {
+        message =
+            'There seems to be an issue with the iOS app setup. Please try again later.';
+      } else if (e.code == 'invalid-continue-uri') {
+        message =
+            'There was an issue with the password reset link. Please request a new link or try again.';
+      } else if (e.code == 'unauthorized-continue-uri') {
+        message =
+            'The link you followed is not authorized. Please try again or contact support.';
+      } else if (e.code == 'user-not-found') {
+        message =
+            'No account found with this email. Please check your email or sign up.';
+      } else {
+        message = 'Error sending password reset email: ${e.message}';
+      }
+      return Left(message);
     }
   }
 }

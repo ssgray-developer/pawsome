@@ -61,4 +61,9 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either> saveAuthProvider(String provider) async {
     return await authLocalDataSource.saveAuthProvider(provider);
   }
+
+  @override
+  Future<Either> sendPasswordResetEmail(String email) async {
+    return await authRemoteDataSource.sendPasswordResetEmail(email);
+  }
 }
