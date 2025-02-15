@@ -51,21 +51,7 @@ class AuthCubit extends Cubit<AuthState> {
       listenToAuthChangesUseCase().listen((event) {
         event.fold((message) => emit(AuthError(message)), (user) async {
           if (user != null) {
-            final result = await getUserDetailsUseCase.call();
-
-            result.fold(
-              (message) {
-                // If error occurs during fetching details, emit an error state
-                emit(AuthError(message));
-              },
-              (userDetails) {
-                // Once user details are fetched, emit the authenticated state with the user
-                emit(AuthAuthenticated(userDetails));
-              },
-            );
-
-            // Emit the authenticated state with the user
-            emit(AuthAuthenticated(user));
+            final result = await getUserDetails();
           } else {
             // Emit unauthenticated state if no user
             emit(AuthUnauthenticated());
