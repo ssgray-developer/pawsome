@@ -1,12 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:pawsome/data/auth/models/user.dart';
 import '../models/user_sign_in_req.dart';
 
 abstract class AuthRemoteDataSource {
   Stream<User?> listenToAuthChanges();
-  Future<Either> getUser();
+  Future<Either> getUserDetails();
   Future<Either> signOut();
   Future<Either> signIn(UserSignInReq user);
   Future<Either> signInWithGoogle();
@@ -20,14 +22,22 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
   final GoogleSignIn googleSignIn;
   final FirebaseAuth firebaseAuth;
   final FacebookAuth facebookAuth;
+  final FirebaseFirestore firebaseFirestore;
 
-  AuthRemoteDataSourceImpl(
-      this.googleSignIn, this.firebaseAuth, this.facebookAuth);
+  AuthRemoteDataSourceImpl(this.googleSignIn, this.firebaseAuth,
+      this.facebookAuth, this.firebaseFirestore);
 
   @override
-  Future<Either> getUser() {
-    // TODO: implement getUser
-    throw UnimplementedError();
+  Future<Either> getUserDetails() async {
+    try {
+      String userID = firebaseAuth.currentUser?.uid ?? '';
+      if (userID.isEmpty) return const Left('User is not logged in.');
+      DocumentSnapshot snapshot =
+          await firebaseFirestore.collection('users').doc(userID).get();
+      return Right(snapshot);
+    } catch (e) {
+      return const Left('An unknown error has occurred.');
+    }
   }
 
   @override

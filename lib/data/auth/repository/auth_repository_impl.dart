@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:pawsome/data/auth/models/user.dart';
 import 'package:pawsome/data/auth/source/auth_local_data_source.dart';
 import '../../../domain/auth/repository/auth.dart';
 import '../models/user_sign_in_req.dart';
@@ -12,9 +13,14 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl(this.authRemoteDataSource, this.authLocalDataSource);
 
   @override
-  Future<Either> getUser() {
-    // TODO: implement getUser
-    throw UnimplementedError();
+  Future<Either> getUserDetails() async {
+    final result = await authRemoteDataSource.getUserDetails();
+
+    return result.fold((error) {
+      return Left(error);
+    }, (data) {
+      return Right(UserModel.fromJson(data).toEntity());
+    });
   }
 
   @override

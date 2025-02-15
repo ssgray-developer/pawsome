@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pawsome/domain/auth/entity/user.dart';
 
 class UserModel {
@@ -19,15 +20,16 @@ class UserModel {
       required this.petList,
       required this.isSuspended});
 
-  factory UserModel.fromJson(Map<String, dynamic> json) {
+  factory UserModel.fromJson(DocumentSnapshot snapshot) {
+    var snap = snapshot.data() as Map<String, dynamic>;
     return UserModel(
-      email: json["email"],
-      uid: json["uid"],
-      photoUrl: json["photoUrl"],
-      chatId: json["chatId"],
-      username: json["username"],
-      petList: json["petList"],
-      isSuspended: json["isSuspended"],
+      email: snap["email"],
+      uid: snap["uid"],
+      photoUrl: snap["photoUrl"],
+      chatId: snap["chatId"],
+      username: snap["username"],
+      petList: snap["petList"],
+      isSuspended: snap["isSuspended"],
     );
   }
 
@@ -36,9 +38,10 @@ class UserModel {
       "email": email,
       "uid": uid,
       "photoUrl": photoUrl,
-      "chatId": jsonEncode(chatId),
+      "chatId": chatId,
       "username": username,
-      "petList": jsonEncode(petList),
+      "petList": chatId,
+      "isSuspended": isSuspended
     };
   }
 }

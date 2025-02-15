@@ -396,6 +396,7 @@ class ResetPasswordBottomSheet extends StatefulWidget {
 class _ResetPasswordBottomSheetState extends State<ResetPasswordBottomSheet> {
   void sendPasswordResetEmail(String email) async {
     if (widget.forgotPasswordFormKey.currentState!.validate()) {
+      // TODO: Update email template
       await context.read<AuthCubit>().sendPasswordResetEmail(email);
     }
   }

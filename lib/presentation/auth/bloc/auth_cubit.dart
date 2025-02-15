@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pawsome/data/auth/models/user_sign_in_req.dart';
+import 'package:pawsome/domain/auth/entity/user.dart';
 import 'package:pawsome/domain/auth/usecases/facebook_sign_in.dart';
 import 'package:pawsome/domain/auth/usecases/facebook_sign_out.dart';
 import 'package:pawsome/domain/auth/usecases/get_auth_provider.dart';
+import 'package:pawsome/domain/auth/usecases/get_user_details.dart';
 import 'package:pawsome/domain/auth/usecases/google_sign_in.dart';
 import 'package:pawsome/domain/auth/usecases/google_sign_out.dart';
 import 'package:pawsome/domain/auth/usecases/save_auth_provider.dart';
@@ -25,6 +27,7 @@ class AuthCubit extends Cubit<AuthState> {
   final SaveAuthProviderUseCase saveAuthProviderUseCase;
   final GetAuthProviderUseCase getAuthProviderUseCase;
   final SendPasswordResetEmailUseCase sendPasswordResetEmailUseCase;
+  final GetUserDetailsUseCase getUserDetailsUseCase;
 
   AuthCubit(
       this.listenToAuthChangesUseCase,
@@ -36,7 +39,8 @@ class AuthCubit extends Cubit<AuthState> {
       this.facebookSignOutUseCase,
       this.saveAuthProviderUseCase,
       this.getAuthProviderUseCase,
-      this.sendPasswordResetEmailUseCase)
+      this.sendPasswordResetEmailUseCase,
+      this.getUserDetailsUseCase)
       : super(AuthInitial()) {
     // listenToAuthChanges();
   }
@@ -45,10 +49,23 @@ class AuthCubit extends Cubit<AuthState> {
   void listenToAuthChanges() {
     try {
       listenToAuthChangesUseCase().listen((event) {
-        event.fold((message) => emit(AuthError(message)), (user) {
+        event.fold((message) => emit(AuthError(message)), (user) async {
           if (user != null) {
+            final result = await getUserDetailsUseCase.call();
+
+            result.fold(
+              (message) {
+                // If error occurs during fetching details, emit an error state
+                emit(AuthError(message));
+              },
+              (userDetails) {
+                // Once user details are fetched, emit the authenticated state with the user
+                emit(AuthAuthenticated(userDetails));
+              },
+            );
+
             // Emit the authenticated state with the user
-            emit(AuthAuthenticated());
+            emit(AuthAuthenticated(user));
           } else {
             // Emit unauthenticated state if no user
             emit(AuthUnauthenticated());
@@ -159,6 +176,20 @@ class AuthCubit extends Cubit<AuthState> {
       );
     } catch (e) {
       emit(AuthPasswordResetEmailError('An error occurred: ${e.toString()}'));
+    }
+  }
+
+  Future<void> getUserDetails() async {
+    emit(AuthLoading());
+    try {
+      final result = await getUserDetailsUseCase.call();
+
+      result.fold(
+        (message) => emit(AuthError(message)),
+        (user) => emit(AuthAuthenticated(user)),
+      );
+    } catch (e) {
+      emit(AuthError('An error occurred: ${e.toString()}'));
     }
   }
 
