@@ -18,6 +18,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
   int currentIndex = 2;
+  Color pawBackgroundColorBegin = AppColors.primary;
 
   late AnimationController navBarController;
   late Animation<double> navBarAnimation;
@@ -48,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen>
     ));
 
     pawBackgroundColorAnimation = ColorTween(
-      begin: AppColors.primary, // Starting color
+      begin: pawBackgroundColorBegin, // Starting color
       end: Colors.transparent, // Ending color
     ).animate(navBarController);
 
@@ -65,6 +66,28 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   setBottomBarIndex(index) {
+    if (index == 0 || index == 3 || index == 4) {
+      if (pawBackgroundColorBegin != Colors.grey[600]) {
+        pawBackgroundColorBegin = Colors.grey[600]!;
+        if (navBarController.status != AnimationStatus.reverse) {
+          navBarController.reverse();
+        }
+      }
+    } else if (index == 1) {
+      if (pawBackgroundColorBegin != Colors.transparent) {
+        pawBackgroundColorBegin = Colors.transparent;
+        if (navBarController.status != AnimationStatus.forward) {
+          navBarController.forward();
+        }
+      }
+    } else if (index == 2) {
+      if (pawBackgroundColorBegin != AppColors.primary) {
+        pawBackgroundColorBegin = AppColors.primary;
+        if (navBarController.status != AnimationStatus.reverse) {
+          navBarController.reverse();
+        }
+      }
+    }
     setState(() {
       currentIndex = index;
     });
@@ -125,12 +148,9 @@ class _HomeScreenState extends State<HomeScreen>
                       heightFactor: pawButtonPositionAnimation.value,
                       child: PawButton(
                         onPressed: () {
-                          if (navBarController.isCompleted) {
-                            navBarController.reverse();
-                          }
                           setBottomBarIndex(2);
                         },
-                        pawBackgroundColor: pawBackgroundColorAnimation.value,
+                        pawBackgroundColor: pawBackgroundColorBegin,
                         pawIconColor: pawIconColorAnimation.value,
                       ),
                     ),
@@ -190,9 +210,6 @@ class _HomeScreenState extends State<HomeScreen>
                                         : Colors.grey[600],
                                   ),
                                   onPressed: () {
-                                    if (!navBarController.isCompleted) {
-                                      navBarController.forward();
-                                    }
                                     setBottomBarIndex(1);
                                   }),
                               Text(

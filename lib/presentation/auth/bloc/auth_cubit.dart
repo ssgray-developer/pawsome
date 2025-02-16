@@ -51,7 +51,7 @@ class AuthCubit extends Cubit<AuthState> {
       listenToAuthChangesUseCase().listen((event) {
         event.fold((message) => emit(AuthError(message)), (user) async {
           if (user != null) {
-            final result = await getUserDetails();
+            await getUserDetails();
           } else {
             // Emit unauthenticated state if no user
             emit(AuthUnauthenticated());

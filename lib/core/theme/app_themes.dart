@@ -26,8 +26,9 @@ class AppTheme {
     // ),
     radioTheme: RadioThemeData(
         fillColor: WidgetStateColor.resolveWith((states) => AppColors.primary)),
-    iconButtonTheme: IconButtonThemeData(
-        style: IconButton.styleFrom(
+    iconButtonTheme: const IconButtonThemeData(
+        style: ButtonStyle(
+      splashFactory: NoSplash.splashFactory,
       enableFeedback: false,
     )),
     elevatedButtonTheme: ElevatedButtonThemeData(
