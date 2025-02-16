@@ -26,9 +26,14 @@ class _HomeScreenState extends State<HomeScreen>
   late Animation<Color?> pawBackgroundColorAnimation;
   late Animation<Color?> pawIconColorAnimation;
 
+  late PageController pageController;
+
   @override
   void initState() {
     super.initState();
+
+    pageController = PageController(initialPage: currentIndex);
+
     navBarController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
@@ -62,10 +67,16 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   void dispose() {
     navBarController.dispose();
+    pageController.dispose();
     super.dispose();
   }
 
   setBottomBarIndex(index) {
+    setState(() {
+      currentIndex = index;
+    });
+    pageController.jumpToPage(index);
+
     if (index == 0 || index == 3 || index == 4) {
       if (pawBackgroundColorBegin != Colors.grey[600]) {
         pawBackgroundColorBegin = Colors.grey[600]!;
@@ -91,6 +102,7 @@ class _HomeScreenState extends State<HomeScreen>
     setState(() {
       currentIndex = index;
     });
+    pageController.jumpToPage(index);
   }
 
   // Method to get content based on the selected index
@@ -124,10 +136,18 @@ class _HomeScreenState extends State<HomeScreen>
           children: [
             // AnimatedSwitcher for smooth content change
             Positioned.fill(
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 300),
-                child: _getContentWidget(
-                    currentIndex), // Get content based on the current index
+              child: PageView(
+                controller: pageController,
+                onPageChanged: (index) {
+                  setBottomBarIndex(index);
+                },
+                children: [
+                  _getContentWidget(0),
+                  _getContentWidget(1),
+                  _getContentWidget(2),
+                  _getContentWidget(3),
+                  _getContentWidget(4),
+                ],
               ),
             ),
             Positioned(
@@ -177,9 +197,9 @@ class _HomeScreenState extends State<HomeScreen>
                                       : Colors.grey[600],
                                 ),
                                 onPressed: () {
-                                  if (navBarController.isCompleted) {
-                                    navBarController.reverse();
-                                  }
+                                  // if (navBarController.isCompleted) {
+                                  //   navBarController.reverse();
+                                  // }
                                   setBottomBarIndex(0);
                                 },
                                 splashColor: Colors.white,
@@ -245,9 +265,9 @@ class _HomeScreenState extends State<HomeScreen>
                                         color: Colors.transparent,
                                       ),
                                       onPressed: () {
-                                        if (navBarController.isCompleted) {
-                                          navBarController.reverse();
-                                        }
+                                        // if (navBarController.isCompleted) {
+                                        //   navBarController.reverse();
+                                        // }
                                         setBottomBarIndex(2);
                                       }),
                                   Text(
@@ -279,9 +299,9 @@ class _HomeScreenState extends State<HomeScreen>
                                     ),
                                   ),
                                   onPressed: () {
-                                    if (navBarController.isCompleted) {
-                                      navBarController.reverse();
-                                    }
+                                    // if (navBarController.isCompleted) {
+                                    //   navBarController.reverse();
+                                    // }
                                     setBottomBarIndex(3);
                                   }),
                               Text(
@@ -310,9 +330,9 @@ class _HomeScreenState extends State<HomeScreen>
                                         : Colors.grey[600],
                                   ),
                                   onPressed: () {
-                                    if (navBarController.isCompleted) {
-                                      navBarController.reverse();
-                                    }
+                                    // if (navBarController.isCompleted) {
+                                    //   navBarController.reverse();
+                                    // }
                                     setBottomBarIndex(4);
                                   }),
                               Text(
