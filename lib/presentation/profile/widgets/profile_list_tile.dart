@@ -4,11 +4,13 @@ class ProfileListTile extends StatelessWidget {
   final Widget leadingWidget;
   final String title;
   final String? subtitle;
+  final VoidCallback onTap;
   const ProfileListTile(
       {super.key,
       required this.leadingWidget,
       required this.title,
-      this.subtitle});
+      this.subtitle,
+      required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +20,10 @@ class ProfileListTile extends StatelessWidget {
       leading: leadingWidget,
       title: Text(
         title,
-        style: TextStyle(color: Colors.grey[800], fontSize: 18),
+        style: TextStyle(
+            color: Colors.grey[800],
+            fontSize: 18,
+            overflow: TextOverflow.ellipsis),
       ),
       subtitle: subtitle == null
           ? null
@@ -32,6 +37,7 @@ class ProfileListTile extends StatelessWidget {
         size: 18,
       ),
       contentPadding: EdgeInsets.zero,
+      onTap: onTap,
     );
   }
 }

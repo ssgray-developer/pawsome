@@ -14,7 +14,7 @@ import 'package:pawsome/presentation/auth/widgets/auth_form.dart';
 import '../../../core/theme/app_strings.dart';
 import '../../../core/theme/app_values.dart';
 import '../../../core/utils/validator.dart';
-import '../bloc/auth_cubit.dart';
+import '../../bloc/auth/auth_cubit.dart';
 
 class LoginScreen extends StatefulWidget {
   static const String id = '/login';

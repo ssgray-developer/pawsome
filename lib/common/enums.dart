@@ -12,3 +12,5 @@ enum Pet {
   rabbit,
   tortoise
 }
+
+enum PetGender { Male, Female }

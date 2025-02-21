@@ -7,8 +7,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:pawsome/core/theme/app_themes.dart';
-import 'package:pawsome/presentation/auth/bloc/auth_cubit.dart';
 import 'package:pawsome/presentation/auth/pages/login.dart';
+import 'package:pawsome/presentation/bloc/auth/auth_cubit.dart';
+import 'package:pawsome/presentation/bloc/image_picker/image_picker_cubit.dart';
 import 'package:pawsome/presentation/home/pages/home.dart';
 import 'package:upgrader/upgrader.dart';
 import '../core/theme/app_colors.dart';
@@ -71,6 +72,9 @@ class _MyAppState extends State<MyApp> {
       providers: [
         BlocProvider(
           create: (context) => sl<AuthCubit>()..listenToAuthChanges(),
+        ),
+        BlocProvider(
+          create: (context) => sl<ImagePickerCubit>(),
         ),
         // BlocProvider(
         //   create: (context) => sl<AppUpdateCubit>()..checkForUpdate(),

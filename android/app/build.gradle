@@ -24,7 +24,7 @@ android {
 
     defaultConfig {
         applicationId = "com.ssgray.pawsome"  // Unique Application ID for your app
-        minSdk = 23  // Minimum SDK version your app supports
+        minSdk = 33  // Minimum SDK version your app supports
         targetSdk = flutter.targetSdkVersion  // Target SDK version from Flutter config
         versionCode = flutter.versionCode  // App version code from Flutter
         versionName = flutter.versionName  // App version name from Flutter
@@ -61,6 +61,7 @@ flutter {
     source = "../.."  // Path to your Flutter source (default is one level up)
 }
 
-dependencies{
+dependencies {
     implementation 'com.facebook.android:facebook-android-sdk:latest.release'
+//    implementation "androidx.activity:activity:1.10.0"
 }

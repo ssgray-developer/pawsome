@@ -1,10 +1,7 @@
-import 'package:bloc/bloc.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:meta/meta.dart';
-import 'package:pawsome/domain/connectivity/repository/connectivity_repository.dart';
-import 'package:pawsome/domain/connectivity/usecase/check_connectivity.dart';
-
-import '../../service_locator.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/material.dart';
+import '../../../domain/connectivity/usecase/check_connectivity.dart';
+import '../../../service_locator.dart';
 
 part 'connectivity_state.dart';
 

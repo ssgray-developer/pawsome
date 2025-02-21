@@ -6,21 +6,21 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:pawsome/core/theme/app_colors.dart';
 
-Future<Uint8List?> pickImage({bool shouldCrop = false}) async {
-  // final ImagePicker picker = ImagePicker();
-  // final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-  //
-  // if (image != null) {
-  //   if (shouldCrop) {
-  //     final croppedImage = await cropImage(image.path);
-  //     // final bgRemoved = await ApiClient.removeBgApi(croppedImage!);
-  //     return croppedImage;
-  //   } else {
-  //     return await image.readAsBytes();
-  //   }
-  // }
-  // return null;
-}
+// Future<Uint8List?> pickImage({bool shouldCrop = false}) async {
+// final ImagePicker picker = ImagePicker();
+// final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+//
+// if (image != null) {
+//   if (shouldCrop) {
+//     final croppedImage = await cropImage(image.path);
+//     // final bgRemoved = await ApiClient.removeBgApi(croppedImage!);
+//     return croppedImage;
+//   } else {
+//     return await image.readAsBytes();
+//   }
+// }
+// return null;
+// }
 
 Future<Uint8List?> cropImage(String imageFilePath) async {
   // CroppedFile? croppedFile = await ImageCropper().cropImage(
@@ -43,7 +43,6 @@ Future<Uint8List?> cropImage(String imageFilePath) async {
   // }
   // return null;
 }
-
 
 // String checkTextType(String message) {
 //   try {

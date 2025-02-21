@@ -33,6 +33,10 @@
 		<string>LaunchScreen</string>
 		<key>NSLocationWhenInUseUsageDescription</key>
         <string>Allow access to location to view nearby pets.</string>
+        <key>NSPhotoLibraryUsageDescription</key>
+        <string>Allow access to your gallery to select pet images and profile picture.</string>
+        <key>NSCameraUsageDescription</key>
+        <string>Allow access to your camera to take pet images and profile picture.</string>
 		<key>UIMainStoryboardFile</key>
 		<string>Main</string>
 		<key>UISupportedInterfaceOrientations</key>

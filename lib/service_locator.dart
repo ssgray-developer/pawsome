@@ -3,7 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:pawsome/app/app_update_cubit.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:pawsome/data/app/source/app_local_data_source.dart';
 import 'package:pawsome/data/auth/source/auth_local_data_source.dart';
 import 'package:pawsome/data/auth/source/auth_remote_data_source.dart';
@@ -12,7 +13,9 @@ import 'package:pawsome/data/location/source/location_service.dart';
 import 'package:pawsome/data/pet/repository/pet_repository_impl.dart';
 import 'package:pawsome/data/pet/source/pet_service.dart';
 import 'package:pawsome/domain/app/repository/app.dart';
+import 'package:pawsome/domain/app/usecases/crop_image.dart';
 import 'package:pawsome/domain/app/usecases/remote_version_check.dart';
+import 'package:pawsome/domain/app/usecases/retrieve_lost_data.dart';
 import 'package:pawsome/domain/auth/usecases/get_auth_provider.dart';
 import 'package:pawsome/domain/auth/usecases/get_user_details.dart';
 import 'package:pawsome/domain/auth/usecases/listen_to_auth_changes.dart';
@@ -24,14 +27,17 @@ import 'package:pawsome/domain/pet/repository/pet.dart';
 import 'package:pawsome/domain/pet/usecases/listen_to_pet_adoption.dart';
 import 'package:pawsome/presentation/adoption/bloc/adoption_cubit.dart';
 import 'package:pawsome/presentation/adoption/bloc/pet_list_view_selection_cubit.dart';
-import 'package:pawsome/presentation/auth/bloc/auth_cubit.dart';
-import 'package:pawsome/presentation/bloc/connectivity_cubit.dart';
+import 'package:pawsome/presentation/bloc/app_update/app_update_cubit.dart';
+import 'package:pawsome/presentation/bloc/auth/auth_cubit.dart';
+import 'package:pawsome/presentation/bloc/connectivity/connectivity_cubit.dart';
+import 'package:pawsome/presentation/bloc/image_picker/image_picker_cubit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'data/app/repository/app_repository_impl.dart';
 import 'data/app/source/app_remote_data_source.dart';
 import 'data/auth/repository/auth_repository_impl.dart';
 import 'data/connectivity/repository/connectivity_repository_impl.dart';
 import 'domain/app/usecases/local_version_check.dart';
+import 'domain/app/usecases/pick_image.dart';
 import 'domain/auth/repository/auth.dart';
 import 'domain/auth/usecases/facebook_sign_in.dart';
 import 'domain/auth/usecases/facebook_sign_out.dart';
@@ -52,6 +58,8 @@ Future<void> initializeDependencies() async {
   sl.registerLazySingleton<SharedPreferencesAsync>(
       () => SharedPreferencesAsync());
   sl.registerLazySingleton<GoogleSignIn>(() => GoogleSignIn());
+  sl.registerLazySingleton<ImagePicker>(() => ImagePicker());
+  sl.registerLazySingleton<ImageCropper>(() => ImageCropper());
 
   // External
   sl.registerSingleton<AuthRemoteDataSource>(
@@ -59,7 +67,7 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<AuthLocalDataSource>(AuthLocalDataSourceImpl(sl()));
   sl.registerSingleton<PetService>(PetServiceImpl(sl()));
   sl.registerSingleton<LocationService>(LocationServiceImpl());
-  sl.registerSingleton<AppLocalDataSource>(AppLocalDataSourceImpl());
+  sl.registerSingleton<AppLocalDataSource>(AppLocalDataSourceImpl(sl(), sl()));
   sl.registerSingleton<AppRemoteDataSource>(AppRemoteDataSourceImpl(sl()));
 
   // Repository
@@ -76,6 +84,7 @@ Future<void> initializeDependencies() async {
   sl.registerFactory(() => PetListViewSelectionCubit());
   sl.registerFactory(() => AdoptionCubit(sl(), sl()));
   sl.registerFactory(() => AppUpdateCubit(sl(), sl()));
+  sl.registerFactory(() => ImagePickerCubit(sl(), sl()));
 
   // Usecases
   sl.registerLazySingleton<ListenToAuthChangesUseCase>(
@@ -107,4 +116,8 @@ Future<void> initializeDependencies() async {
       () => SendPasswordResetEmailUseCase(sl()));
   sl.registerLazySingleton<GetUserDetailsUseCase>(
       () => GetUserDetailsUseCase(sl()));
+  sl.registerLazySingleton<PickImageUseCase>(() => PickImageUseCase(sl()));
+  sl.registerLazySingleton<RetrieveLostDataUseCase>(
+      () => RetrieveLostDataUseCase(sl()));
+  sl.registerLazySingleton<CropImageUseCase>(() => CropImageUseCase(sl()));
 }
