@@ -16,7 +16,7 @@ class ImagePickerCubit extends Cubit<ImagePickerState> {
   Future<void> pickImage({required bool shouldCrop}) async {
     final pickedImage = await pickImageUseCase.call();
     pickedImage.fold(
-      (message) => emit(ImagePickerFailure(message)),
+      (message) => (),
       (image) async {
         if (shouldCrop) {
           final croppedImage = await cropImageUseCase.call(params: image.path);

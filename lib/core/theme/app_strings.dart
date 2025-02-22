@@ -469,6 +469,8 @@ class AppStrings {
   static const errorRegister = 'error_register';
   static const errorReport = 'error_report';
   static const selectPetImage = 'select_pet_image';
+  static const reasonForRehoming = 'reason_for_rehoming';
+  static const enterReason = 'enter_reason';
 
   //Reset password screen
   static const resetPasswordEmailSent = 'reset_email_password_sent';

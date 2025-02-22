@@ -414,10 +414,10 @@
   "female": "Female",
   "pet_name": "Pet Name",
   "enter_pet_name": "Enter pet name",
-  "pet_age": "Pet age (year)",
+  "pet_age": "Pet Age (Year)",
   "enter_pet_age": "Enter pet age",
-  "pet_class": "Pet class",
-  "pet_species": "Pet species",
+  "pet_class": "Pet Class",
+  "pet_species": "Pet Species",
   "unknown": "-Unknown-",
   "hybrid": "Hybrid",
   "price": "Price",
@@ -463,6 +463,8 @@
   "error_register": "Registration Error",
   "error_report": "Report Error",
   "select_pet_image": "Please select an image of your pet.",
+  "reason_for_rehoming": "Reason For Rehoming",
+  "enter_reason": "Enter reason",
 
 
   "reset_email_password_sent": "An email has been sent to reset your password.",

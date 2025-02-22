@@ -457,6 +457,8 @@
   "error_register": "无法注册",
   "error_report": "无法报告",
   "select_pet_image": "请选择您的宠物图像。",
+  "reason_for_rehoming": "宠物送养原因",
+  "enter_reason": "输入原因",
 
 
   "reset_email_password_sent": "已发送一封电子邮件以重置您的密码",

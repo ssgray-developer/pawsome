@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:currency_picker/currency_picker.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:pawsome/common/enums.dart';
 import 'package:pawsome/core/theme/app_colors.dart';
+import 'package:pawsome/core/theme/app_values.dart';
 import 'package:pawsome/presentation/bloc/image_picker/image_picker_cubit.dart';
 import '../../../core/theme/app_strings.dart';
 import '../widgets/adoption_form_field.dart';
@@ -24,35 +27,35 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
   bool isLoading = false;
   final List<bool> selectedGenderList = [true, false];
   PetGender selectedGender = PetGender.Male;
-  String _currency = '-';
-  Uint8List? _image;
+  String currencyCode = '-';
+  Uint8List? image;
   late Map<String, List<List<String>>> animalMap;
   List<String> selectedSpeciesList = [
-    AppStrings.unknown.tr(),
-    AppStrings.africanGrayParrot.tr(),
-    AppStrings.amazonParrot.tr(),
-    AppStrings.blueHeadedParrot.tr(),
-    AppStrings.bronzeWingedParrot.tr(),
-    AppStrings.budgerigarBudgieParakeet.tr(),
-    AppStrings.canary.tr(),
-    AppStrings.cockatiel.tr(),
-    AppStrings.cockatoo.tr(),
-    AppStrings.dovePigeon.tr(),
-    AppStrings.duskyPionus.tr(),
-    AppStrings.eclectusParrot.tr(),
-    AppStrings.finch.tr(),
-    AppStrings.greenCheekedParakeet.tr(),
-    AppStrings.hyacinthMacaw.tr(),
-    AppStrings.loveBird.tr(),
-    AppStrings.macaw.tr(),
-    AppStrings.monkParakeet.tr(),
-    AppStrings.redBilledPionus.tr(),
-    AppStrings.scalyHeadedPionus.tr(),
-    AppStrings.senegalParrot.tr(),
-    AppStrings.sunParakeet.tr(),
-    AppStrings.roseRingedParakeet.tr(),
-    AppStrings.whiteCrownedPionus.tr(),
-    AppStrings.zebraFinch.tr(),
+    AppStrings.unknown,
+    AppStrings.africanGrayParrot,
+    AppStrings.amazonParrot,
+    AppStrings.blueHeadedParrot,
+    AppStrings.bronzeWingedParrot,
+    AppStrings.budgerigarBudgieParakeet,
+    AppStrings.canary,
+    AppStrings.cockatiel,
+    AppStrings.cockatoo,
+    AppStrings.dovePigeon,
+    AppStrings.duskyPionus,
+    AppStrings.eclectusParrot,
+    AppStrings.finch,
+    AppStrings.greenCheekedParakeet,
+    AppStrings.hyacinthMacaw,
+    AppStrings.loveBird,
+    AppStrings.macaw,
+    AppStrings.monkParakeet,
+    AppStrings.redBilledPionus,
+    AppStrings.scalyHeadedPionus,
+    AppStrings.senegalParrot,
+    AppStrings.sunParakeet,
+    AppStrings.roseRingedParakeet,
+    AppStrings.whiteCrownedPionus,
+    AppStrings.zebraFinch,
   ];
 
   final animalClass = [
@@ -72,37 +75,43 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
 
   String selectedPetClass = AppStrings.bird;
 
-  // final _firstSpeciesKey = GlobalKey<DropdownSearchState<String>>();
-  // final _secondSpeciesKey = GlobalKey<DropdownSearchState<String>>();
+  late GlobalKey<DropdownSearchState<String>> firstSpeciesKey;
+  late GlobalKey<DropdownSearchState<String>> secondSpeciesKey;
 
-  final ScrollController scrollController = ScrollController();
+  late ScrollController scrollController;
 
-  Color nameColor = AppColors.primary;
-  Color ageColor = AppColors.primary;
-  Color priceColor = AppColors.primary;
-  Color descriptionColor = AppColors.primary;
+  late FocusNode petNameFocusNode;
+  late FocusNode petAgeFocusNode;
+  late FocusNode descriptionFocusNode;
+  late FocusNode priceFocusNode;
 
-  final petNameFocusNode = FocusNode();
-  final petAgeFocusNode = FocusNode();
-  final descriptionFocusNode = FocusNode();
-  final priceFocusNode = FocusNode();
-
-  final TextEditingController petNameTextEditingController =
-      TextEditingController();
-  final TextEditingController petAgeTextEditingController =
-      TextEditingController();
-  final TextEditingController descriptionTextEditingController =
-      TextEditingController();
-  final TextEditingController priceTextEditingController =
-      TextEditingController();
+  late TextEditingController petNameTextEditingController;
+  late TextEditingController petAgeTextEditingController;
+  late TextEditingController descriptionTextEditingController;
+  late TextEditingController priceTextEditingController;
 
   @override
   void initState() {
     super.initState();
-    petNameFocusNode.addListener(() => setState(() {}));
-    petAgeFocusNode.addListener(() => setState(() {}));
-    descriptionFocusNode.addListener(() => setState(() {}));
-    priceFocusNode.addListener(() => setState(() {}));
+    firstSpeciesKey = GlobalKey<DropdownSearchState<String>>();
+    secondSpeciesKey = GlobalKey<DropdownSearchState<String>>();
+
+    scrollController = ScrollController();
+
+    petNameTextEditingController = TextEditingController();
+    petAgeTextEditingController = TextEditingController();
+    descriptionTextEditingController = TextEditingController();
+    priceTextEditingController = TextEditingController();
+
+    petNameFocusNode = FocusNode();
+    petAgeFocusNode = FocusNode();
+    descriptionFocusNode = FocusNode();
+    priceFocusNode = FocusNode();
+
+    // petNameFocusNode.addListener(() => setState(() {}));
+    // petAgeFocusNode.addListener(() => setState(() {}));
+    // descriptionFocusNode.addListener(() => setState(() {}));
+    // priceFocusNode.addListener(() => setState(() {}));
   }
 
   @override
@@ -129,7 +138,7 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
   void registerPet(BuildContext context, String uid, String ownerName,
       String ownerUid, String ownerEmail, String ownerPhotoUrl) async {
     setState(() => isLoading = true);
-    if (_image == null) {
+    if (image == null) {
       showDialog(
           context: context,
           builder: (context) {
@@ -151,7 +160,7 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
       scrollToField(petNameFocusNode, 0);
     } else if (petAgeTextEditingController.text.trim().isEmpty) {
       scrollToField(petAgeFocusNode, 80);
-    } else if (_currency == '-') {
+    } else if (currencyCode == '-') {
       popCurrencyPicker();
     } else if (priceTextEditingController.text.trim().isEmpty) {
       scrollToField(priceFocusNode, null);
@@ -225,17 +234,33 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
   // }
 
   String getPetPrice() {
-    return '$_currency ${priceTextEditingController.text}';
+    return '$currencyCode ${priceTextEditingController.text}';
   }
 
   void popCurrencyPicker() {
-    // showCurrencyPicker(
-    //     context: context,
-    //     onSelect: (Currency currency) {
-    //       setState(() {
-    //         _currency = currency.code;
-    //       });
-    //     });
+    showCurrencyPicker(
+        context: context,
+        theme: CurrencyPickerThemeData(
+          inputDecoration: InputDecoration(
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.0),
+              borderSide: BorderSide(
+                color: AppColors.primary,
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.0),
+              borderSide: BorderSide(
+                color: AppColors.grey,
+              ),
+            ),
+          ),
+        ),
+        onSelect: (Currency currency) {
+          setState(() {
+            currencyCode = currency.code;
+          });
+        });
   }
 
   void scrollToField(FocusNode node, double? location) {
@@ -789,8 +814,9 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
                               borderRadius:
                                   const BorderRadius.all(Radius.circular(8)),
                               selectedBorderColor: AppColors.primary,
-                              selectedColor: Colors.white,
-                              fillColor: AppColors.primary,
+                              selectedColor: Colors.black,
+                              fillColor: Colors.transparent,
+                              borderWidth: 2,
                               // color: Colors.red[400],
                               constraints: const BoxConstraints(
                                   minHeight: 40.0, minWidth: 80.0),
@@ -810,7 +836,7 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
                       height: 15.0,
                     ),
                     AdoptionFormField(
-                        color: nameColor,
+                        color: AppColors.primary,
                         hintText: context.tr(AppStrings.enterPetName),
                         textInputType: TextInputType.name,
                         focusNode: petNameFocusNode,
@@ -827,7 +853,7 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
                       height: 15.0,
                     ),
                     AdoptionFormField(
-                      color: ageColor,
+                      color: AppColors.primary,
                       hintText: context.tr(AppStrings.enterPetAge),
                       textInputType: TextInputType.number,
                       focusNode: petAgeFocusNode,
@@ -847,32 +873,33 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
                     const SizedBox(
                       height: 15.0,
                     ),
+                    // TODO: Pending new package release
                     // AdaptiveDropdownSearch<T>(
                     //   popupProps: AdaptivePopupProps(
                     //       cupertinoProps: CupertinoPopupProps.bottomSheet(),
                     //       materialProps: PopupProps.dialog()),
                     // ),
-                    // DropdownSearch<String>(
-                    //   popupProps: PopupProps.modalBottomSheet(
-                    //     modalBottomSheetProps: ModalBottomSheetProps(
-                    //       backgroundColor:
-                    //           Theme.of(context).scaffoldBackgroundColor,
-                    //     ),
-                    //     showSelectedItems: true,
-                    //     // disabledItemFn: (String s) => s.startsWith('I'),
-                    //   ),
-                    //   items: (filter, infiniteScrollProps) => animalClass
-                    //       .map((animal) => context.tr(animal))
-                    //       .toList(),
-                    //   // dropdownSearchDecoration: InputDecoration(
-                    //   //   labelText: "Menu mode",
-                    //   //   hintText: "country in menu mode",
-                    //   // ),
-                    //   onChanged: petClassSelected,
-                    //   selectedItem: animalClass
-                    //       .map((animal) => context.tr(animal))
-                    //       .toList()[0],
-                    // ),
+                    DropdownSearch<String>(
+                      popupProps: PopupProps.modalBottomSheet(
+                        modalBottomSheetProps: ModalBottomSheetProps(
+                          backgroundColor:
+                              Theme.of(context).scaffoldBackgroundColor,
+                        ),
+                        showSelectedItems: true,
+                        // disabledItemFn: (String s) => s.startsWith('I'),
+                      ),
+                      items: (filter, infiniteScrollProps) => animalClass
+                          .map((animal) => context.tr(animal))
+                          .toList(),
+                      // dropdownSearchDecoration: InputDecoration(
+                      //   labelText: "Menu mode",
+                      //   hintText: "country in menu mode",
+                      // ),
+                      onChanged: petClassSelected,
+                      selectedItem: animalClass
+                          .map((animal) => context.tr(animal))
+                          .toList()[0],
+                    ),
                     const SizedBox(
                       height: 20.0,
                     ),
@@ -884,37 +911,43 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
                     const SizedBox(
                       height: 15.0,
                     ),
-                    // DropdownSearch<String>(
-                    //   key: _firstSpeciesKey,
-                    //   popupProps: PopupProps.modalBottomSheet(
-                    //     modalBottomSheetProps: ModalBottomSheetProps(
-                    //       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                    //     ),
-                    //     showSelectedItems: true,
-                    //     showSearchBox: true,
-                    //     // disabledItemFn: (String s) => s.startsWith('I'),
-                    //   ),
-                    //   items: (filter, infiniteScrollProps) => _selectedSpeciesList,
-                    //   // dropdownSearchDecoration: InputDecoration(
-                    //   //   labelText: "Menu mode",
-                    //   //   hintText: "country in menu mode",
-                    //   // ),
-                    //   onChanged: (value) {
-                    //     setState(() {
-                    //       if (_firstSpeciesKey.currentState!.getSelectedItem ==
-                    //           AppStrings.unknown.tr()) {
-                    //         isEnabled = false;
-                    //         isHybrid = false;
-                    //         _secondSpeciesKey.currentState!
-                    //             .changeSelectedItem(AppStrings.unknown.tr());
-                    //       } else {
-                    //         isEnabled = true;
-                    //         _secondSpeciesKey.currentState!.removeItem(value!);
-                    //       }
-                    //     });
-                    //   },
-                    //   selectedItem: _selectedSpeciesList[0],
-                    // ),
+                    // TODO: Pending new package release
+                    DropdownSearch<String>(
+                      key: firstSpeciesKey,
+                      popupProps: PopupProps.modalBottomSheet(
+                        modalBottomSheetProps: ModalBottomSheetProps(
+                          backgroundColor:
+                              Theme.of(context).scaffoldBackgroundColor,
+                        ),
+                        showSelectedItems: true,
+                        showSearchBox: true,
+                        // disabledItemFn: (String s) => s.startsWith('I'),
+                      ),
+                      items: (filter, infiniteScrollProps) =>
+                          selectedSpeciesList
+                              .map((species) => context.tr(species))
+                              .toList(),
+                      // dropdownSearchDecoration: InputDecoration(
+                      //   labelText: "Menu mode",
+                      //   hintText: "country in menu mode",
+                      // ),
+                      onChanged: (value) {
+                        setState(() {
+                          if (value == context.tr(AppStrings.unknown)) {
+                            isEnabled = false;
+                            isHybrid = false;
+                            secondSpeciesKey.currentState!.changeSelectedItem(
+                                context.tr(AppStrings.unknown));
+                          } else {
+                            isEnabled = true;
+                            secondSpeciesKey.currentState?.removeItem(value!);
+                          }
+                        });
+                      },
+                      selectedItem: selectedSpeciesList
+                          .map((animal) => context.tr(animal))
+                          .toList()[0],
+                    ),
                     const SizedBox(height: 10.0),
                     ListTile(
                       title: Text(
@@ -926,8 +959,9 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
                             ? (bool? value) {
                                 if (value != null) {
                                   if (value == false) {
-                                    // _secondSpeciesKey.currentState!
-                                    //     .changeSelectedItem(AppStrings.unknown.tr());
+                                    // secondSpeciesKey.currentState!
+                                    //     .changeSelectedItem(
+                                    //         context.tr(AppStrings.unknown));
                                   }
                                   setState(() {
                                     isHybrid = value;
@@ -941,33 +975,40 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
                     const SizedBox(
                       height: 10.0,
                     ),
-                    // DropdownSearch<String>(
-                    //   key: _secondSpeciesKey,
-                    //   enabled: isHybrid,
-                    //   popupProps: PopupProps.modalBottomSheet(
-                    //     modalBottomSheetProps: ModalBottomSheetProps(
-                    //       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                    //     ),
-                    //     showSelectedItems: true,
-                    //     showSearchBox: true,
-                    //     // disabledItemFn: (String s) => s.startsWith(_firstOption),
-                    //   ),
-                    //   items: (filter, infiniteScrollProps) => _selectedSpeciesList,
-                    //   // dropdownSearchDecoration: InputDecoration(
-                    //   //   labelText: "Menu mode",
-                    //   //   hintText: "country in menu mode",
-                    //   // ),
-                    //   onChanged: (value) {
-                    //     if (value != null) {
-                    //       if (value == AppStrings.unknown.tr()) {
-                    //         setState(() {
-                    //           isHybrid = false;
-                    //         });
-                    //       }
-                    //     }
-                    //   },
-                    //   selectedItem: _selectedSpeciesList[0],
-                    // ),
+                    // TODO: Pending new package release
+                    DropdownSearch<String>(
+                      key: secondSpeciesKey,
+                      enabled: isHybrid,
+                      popupProps: PopupProps.modalBottomSheet(
+                        modalBottomSheetProps: ModalBottomSheetProps(
+                          backgroundColor:
+                              Theme.of(context).scaffoldBackgroundColor,
+                        ),
+                        showSelectedItems: true,
+                        showSearchBox: true,
+                        // disabledItemFn: (String s) => s.startsWith(_firstOption),
+                      ),
+                      items: (filter, infiniteScrollProps) =>
+                          selectedSpeciesList
+                              .map((species) => context.tr(species))
+                              .toList(),
+                      // dropdownSearchDecoration: InputDecoration(
+                      //   labelText: "Menu mode",
+                      //   hintText: "country in menu mode",
+                      // ),
+                      onChanged: (value) {
+                        if (value != null) {
+                          if (value == context.tr(AppStrings.unknown)) {
+                            setState(() {
+                              isHybrid = false;
+                            });
+                          }
+                        }
+                      },
+                      selectedItem: selectedSpeciesList
+                          .map((species) => context.tr(species))
+                          .toList()[0],
+                    ),
                     const SizedBox(
                       height: 20.0,
                     ),
@@ -986,14 +1027,17 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
                           height: 50.0,
                           child: ElevatedButton(
                               onPressed: popCurrencyPicker,
-                              child: Text(_currency)),
+                              child: Text(
+                                currencyCode,
+                                style: const TextStyle(color: Colors.white),
+                              )),
                         ),
                         const SizedBox(
                           width: 25.0,
                         ),
                         Expanded(
                           child: AdoptionFormField(
-                            color: priceColor,
+                            color: AppColors.primary,
                             isTextCentered: true,
                             isSeparatorNeeded: true,
                             focusNode: priceFocusNode,
@@ -1010,7 +1054,7 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
                       height: 20.0,
                     ),
                     Text(
-                      context.tr(AppStrings.description),
+                      context.tr(AppStrings.reasonForRehoming),
                       style: const TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 18.0),
                     ),
@@ -1018,12 +1062,12 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
                       height: 15.0,
                     ),
                     AdoptionFormField(
-                      color: descriptionColor,
+                      color: AppColors.primary,
                       maxLines: 5,
                       focusNode: descriptionFocusNode,
                       controller: descriptionTextEditingController,
                       textInputType: TextInputType.multiline,
-                      hintText: context.tr(AppStrings.enterDescription),
+                      hintText: context.tr(AppStrings.enterReason),
                     ),
                     const SizedBox(
                       height: 20.0,
@@ -1045,10 +1089,16 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
                                       color: Colors.white,
                                       size: 24.0,
                                     )
-                                  : const Icon(
-                                      Icons.arrow_right_alt_sharp,
+                                  : Icon(
+                                      Platform.isIOS
+                                          ? Icons.arrow_forward_ios
+                                          : Icons.arrow_back,
+                                      color: Colors.white,
                                     ),
-                              label: Text(context.tr(AppStrings.registerPet)),
+                              label: Text(
+                                context.tr(AppStrings.registerPet),
+                                style: const TextStyle(color: Colors.white),
+                              ),
                             ),
                           ),
                         ),
