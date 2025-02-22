@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class RegisteredPetModel {
+class PetRegistrationModel {
   final String postId;
   final String uid;
   final String photoUrl;
@@ -19,7 +19,7 @@ class RegisteredPetModel {
   final String ownerPhotoUrl;
   final List likes;
 
-  RegisteredPetModel({
+  PetRegistrationModel({
     required this.postId,
     required this.uid,
     required this.photoUrl,
@@ -39,8 +39,8 @@ class RegisteredPetModel {
     required this.likes,
   });
 
-  factory RegisteredPetModel.fromJson(Map<String, dynamic> json) {
-    return RegisteredPetModel(
+  factory PetRegistrationModel.fromJson(Map<String, dynamic> json) {
+    return PetRegistrationModel(
       postId: json["postId"],
       uid: json["uid"],
       photoUrl: json["photoUrl"],
@@ -60,26 +60,26 @@ class RegisteredPetModel {
       likes: json["likes"],
     );
   }
-//
 
-  // factory RegisteredPetViewModel.fromEntity(RegisteredPet entity) {
-  //   return RegisteredPetViewModel(
-  //       postId: entity.postId,
-  //       uid: entity.uid,
-  //       photoUrl: entity.photoUrl,
-  //       gender: entity.gender,
-  //       name: entity.name,
-  //       age: entity.age,
-  //       petClass: entity.petClass,
-  //       petSpecies: entity.petSpecies,
-  //       petPrice: entity.petPrice,
-  //       description: entity.description,
-  //       location: entity.location,
-  //       date: entity.date,
-  //       owner: entity.owner,
-  //       ownerUid: entity.ownerUid,
-  //       ownerEmail: entity.ownerEmail,
-  //       ownerPhotoUrl: entity.ownerPhotoUrl,
-  //       likes: entity.likes);
-  // }
+  Map<String, dynamic> toJson() {
+    return {
+      "postId": postId,
+      "uid": uid,
+      "photoUrl": photoUrl,
+      "gender": gender,
+      "name": name,
+      "age": age,
+      "petClass": petClass,
+      "petSpecies": petSpecies,
+      "petPrice": petPrice,
+      "description": description,
+      "location": location,
+      "date": date,
+      "owner": owner,
+      "ownerUid": ownerUid,
+      "ownerEmail": ownerEmail,
+      "ownerPhotoUrl": ownerPhotoUrl,
+      "likes": likes,
+    };
+  }
 }

@@ -5,6 +5,7 @@ class AdoptionFormField extends StatefulWidget {
   final FocusNode focusNode;
   final TextEditingController controller;
   final TextInputType textInputType;
+  final TextInputAction textInputAction;
   final String hintText;
   final Color color;
   final int maxLines;
@@ -12,18 +13,21 @@ class AdoptionFormField extends StatefulWidget {
   final bool isTextCentered;
   final bool interactionEnabled;
   final int? maxCharacters;
+  final VoidCallback? onEditingComplete;
   const AdoptionFormField(
       {super.key,
       required this.focusNode,
       required this.controller,
       required this.textInputType,
+      required this.textInputAction,
       required this.hintText,
       required this.color,
       this.maxLines = 1,
       this.isSeparatorNeeded = false,
       this.isTextCentered = false,
       this.interactionEnabled = true,
-      this.maxCharacters});
+      this.maxCharacters,
+      this.onEditingComplete});
 
   @override
   State<AdoptionFormField> createState() => _AdoptionFormFieldState();
@@ -64,6 +68,7 @@ class _AdoptionFormFieldState extends State<AdoptionFormField> {
               ]
             : null,
         keyboardType: widget.textInputType,
+        textInputAction: widget.textInputAction,
         focusNode: widget.focusNode,
         controller: widget.controller,
         // style: const TextStyle(letterSpacing: AppSize.s5),
@@ -85,6 +90,7 @@ class _AdoptionFormFieldState extends State<AdoptionFormField> {
             ),
           ),
         ),
+        onEditingComplete: widget.onEditingComplete,
       ),
     );
   }

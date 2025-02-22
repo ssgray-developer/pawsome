@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 class ProfileListTile extends StatelessWidget {
@@ -18,6 +20,8 @@ class ProfileListTile extends StatelessWidget {
       visualDensity: VisualDensity.compact,
       dense: false,
       leading: leadingWidget,
+      enableFeedback: false,
+      splashColor: Colors.transparent,
       title: Text(
         title,
         style: TextStyle(
@@ -32,7 +36,7 @@ class ProfileListTile extends StatelessWidget {
               style: TextStyle(color: Colors.grey[600]),
             ),
       trailing: Icon(
-        Icons.arrow_forward_ios_rounded,
+        Platform.isIOS ? Icons.arrow_forward_ios_rounded : Icons.arrow_forward,
         color: Colors.grey[800],
         size: 18,
       ),

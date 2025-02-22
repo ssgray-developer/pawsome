@@ -8,7 +8,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:pawsome/core/theme/app_colors.dart';
 import 'package:pawsome/presentation/adoption/bloc/adoption_cubit.dart';
 import 'package:pawsome/presentation/adoption/bloc/pet_list_view_selection_cubit.dart';
-import 'package:pawsome/data/pet/models/registered_pet_model.dart';
+import 'package:pawsome/data/pet/models/pet_registration_model.dart';
 import 'package:pawsome/presentation/adoption/widgets/pet_list_view.dart';
 import 'package:pawsome/presentation/adoption/widgets/search_textfield.dart';
 
@@ -332,7 +332,7 @@ class _AdoptionScreenState extends State<AdoptionScreen>
 
                       if (state is AdoptionFailure) {}
 
-                      return StreamBuilder<List<RegisteredPetModel>>(
+                      return StreamBuilder<List<PetRegistrationModel>>(
                         stream: context.read<AdoptionCubit>().petStream,
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==

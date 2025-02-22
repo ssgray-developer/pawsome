@@ -9,8 +9,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:pawsome/common/enums.dart';
 import 'package:pawsome/core/theme/app_colors.dart';
-import 'package:pawsome/core/theme/app_values.dart';
 import 'package:pawsome/presentation/bloc/image_picker/image_picker_cubit.dart';
+import '../../../common/animal_list.dart';
 import '../../../core/theme/app_strings.dart';
 import '../widgets/adoption_form_field.dart';
 
@@ -25,56 +25,18 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
   bool isHybrid = false;
   bool isEnabled = false;
   bool isLoading = false;
-  final List<bool> selectedGenderList = [true, false];
+
   PetGender selectedGender = PetGender.Male;
   String currencyCode = '-';
   Uint8List? image;
-  late Map<String, List<List<String>>> animalMap;
-  List<String> selectedSpeciesList = [
-    AppStrings.unknown,
-    AppStrings.africanGrayParrot,
-    AppStrings.amazonParrot,
-    AppStrings.blueHeadedParrot,
-    AppStrings.bronzeWingedParrot,
-    AppStrings.budgerigarBudgieParakeet,
-    AppStrings.canary,
-    AppStrings.cockatiel,
-    AppStrings.cockatoo,
-    AppStrings.dovePigeon,
-    AppStrings.duskyPionus,
-    AppStrings.eclectusParrot,
-    AppStrings.finch,
-    AppStrings.greenCheekedParakeet,
-    AppStrings.hyacinthMacaw,
-    AppStrings.loveBird,
-    AppStrings.macaw,
-    AppStrings.monkParakeet,
-    AppStrings.redBilledPionus,
-    AppStrings.scalyHeadedPionus,
-    AppStrings.senegalParrot,
-    AppStrings.sunParakeet,
-    AppStrings.roseRingedParakeet,
-    AppStrings.whiteCrownedPionus,
-    AppStrings.zebraFinch,
-  ];
-
-  final animalClass = [
-    AppStrings.bird,
-    AppStrings.cat,
-    AppStrings.dog,
-    AppStrings.ferret,
-    AppStrings.fish,
-    AppStrings.guineaPig,
-    AppStrings.horse,
-    AppStrings.iguana,
-    AppStrings.mouseRat,
-    AppStrings.otter,
-    AppStrings.rabbit,
-    AppStrings.tortoise,
-  ];
-
+  String? selectedSpeciesInFirstDropdown;
+  List<String> selectedSpeciesList = birdSpecies;
   String selectedPetClass = AppStrings.bird;
 
+  final List<bool> selectedGenderList = [true, false];
+  late Map<String, List<List<String>>> animalMap;
+
+  late GlobalKey<DropdownSearchState<String>> petClassKey;
   late GlobalKey<DropdownSearchState<String>> firstSpeciesKey;
   late GlobalKey<DropdownSearchState<String>> secondSpeciesKey;
 
@@ -82,7 +44,7 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
 
   late FocusNode petNameFocusNode;
   late FocusNode petAgeFocusNode;
-  late FocusNode descriptionFocusNode;
+  late FocusNode reasonFocusNode;
   late FocusNode priceFocusNode;
 
   late TextEditingController petNameTextEditingController;
@@ -93,6 +55,7 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
   @override
   void initState() {
     super.initState();
+    petClassKey = GlobalKey<DropdownSearchState<String>>();
     firstSpeciesKey = GlobalKey<DropdownSearchState<String>>();
     secondSpeciesKey = GlobalKey<DropdownSearchState<String>>();
 
@@ -105,13 +68,8 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
 
     petNameFocusNode = FocusNode();
     petAgeFocusNode = FocusNode();
-    descriptionFocusNode = FocusNode();
+    reasonFocusNode = FocusNode();
     priceFocusNode = FocusNode();
-
-    // petNameFocusNode.addListener(() => setState(() {}));
-    // petAgeFocusNode.addListener(() => setState(() {}));
-    // descriptionFocusNode.addListener(() => setState(() {}));
-    // priceFocusNode.addListener(() => setState(() {}));
   }
 
   @override
@@ -121,18 +79,18 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
   }
 
   void petClassSelected(String? value) {
-    // _firstSpeciesKey.currentState!.changeSelectedItem(AppStrings.unknown.tr());
-    // _secondSpeciesKey.currentState!.changeSelectedItem(AppStrings.unknown.tr());
-    // if (value != null) {
-    //   final int index = animalClass.indexWhere((element) => element == value);
-    //   selectedPetClass = animalValueClass[index];
-    //   _selectedSpeciesList = animalMap[value]![0];
-    //   // setState(() {
-    //   // _selectedPetClass = value;
-    //   // _selectedPetClass = animalValueClass[index];
-    //   // _selectedSpeciesList = animalMap[value]![0];
-    //   // });
-    // }
+    firstSpeciesKey.currentState
+        ?.changeSelectedItem(context.tr(AppStrings.unknown));
+    secondSpeciesKey.currentState
+        ?.changeSelectedItem(context.tr(AppStrings.unknown));
+    if (value != null) {
+      final int index =
+          animalClass.indexWhere((element) => context.tr(element) == value);
+      final newSpeciesList =
+          speciesList[index].map((species) => species).toList();
+      selectedSpeciesList = newSpeciesList;
+    }
+    firstSpeciesKey.currentState?.openDropDownSearch();
   }
 
   void registerPet(BuildContext context, String uid, String ownerName,
@@ -165,7 +123,7 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
     } else if (priceTextEditingController.text.trim().isEmpty) {
       scrollToField(priceFocusNode, null);
     } else if (descriptionTextEditingController.text.trim().isEmpty) {
-      scrollToField(descriptionFocusNode, null);
+      scrollToField(reasonFocusNode, null);
     } else {
       //   try {
       //     if (await checkConnectivity()) {
@@ -260,6 +218,7 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
           setState(() {
             currencyCode = currency.code;
           });
+          FocusScope.of(context).requestFocus(priceFocusNode);
         });
   }
 
@@ -278,414 +237,6 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
   @override
   Widget build(BuildContext context) {
     // User user = Provider.of<UserViewModel>(context).getUser;
-
-    List<String> birdSpecies = [
-      AppStrings.unknown.tr(),
-      AppStrings.africanGrayParrot.tr(),
-      AppStrings.amazonParrot.tr(),
-      AppStrings.blueHeadedParrot.tr(),
-      AppStrings.bronzeWingedParrot.tr(),
-      AppStrings.budgerigarBudgieParakeet.tr(),
-      AppStrings.canary.tr(),
-      AppStrings.cockatiel.tr(),
-      AppStrings.cockatoo.tr(),
-      AppStrings.dovePigeon.tr(),
-      AppStrings.duskyPionus.tr(),
-      AppStrings.eclectusParrot.tr(),
-      AppStrings.finch.tr(),
-      AppStrings.greenCheekedParakeet.tr(),
-      AppStrings.hyacinthMacaw.tr(),
-      AppStrings.loveBird.tr(),
-      AppStrings.macaw.tr(),
-      AppStrings.monkParakeet.tr(),
-      AppStrings.redBilledPionus.tr(),
-      AppStrings.scalyHeadedPionus.tr(),
-      AppStrings.senegalParrot.tr(),
-      AppStrings.sunParakeet.tr(),
-      AppStrings.roseRingedParakeet.tr(),
-      AppStrings.whiteCrownedPionus.tr(),
-      AppStrings.zebraFinch.tr(),
-    ];
-
-    List<String> catSpecies = [
-      AppStrings.unknown.tr(),
-      AppStrings.abyssinian.tr(),
-      AppStrings.americanBobtail.tr(),
-      AppStrings.americanCurl.tr(),
-      AppStrings.americanShorthair.tr(),
-      AppStrings.americanWirehair.tr(),
-      AppStrings.bengalCat.tr(),
-      AppStrings.birman.tr(),
-      AppStrings.balineseCat.tr(),
-      AppStrings.bombayCat.tr(),
-      AppStrings.britishLonghair.tr(),
-      AppStrings.britishShorthair.tr(),
-      AppStrings.burmeseCat.tr(),
-      AppStrings.burmilla.tr(),
-      AppStrings.caracal.tr(),
-      AppStrings.chartreux.tr(),
-      AppStrings.cornishRex.tr(),
-      AppStrings.cymric.tr(),
-      AppStrings.donskoy.tr(),
-      AppStrings.europeanShorthair.tr(),
-      AppStrings.exoticShorthair.tr(),
-      AppStrings.havanaBrown.tr(),
-      AppStrings.himalayanCat.tr(),
-      AppStrings.korat.tr(),
-      AppStrings.laperm.tr(),
-      AppStrings.lykoi.tr(),
-      AppStrings.maineCoon.tr(),
-      AppStrings.manxCat.tr(),
-      AppStrings.munchkinCat.tr(),
-      AppStrings.nebelung.tr(),
-      AppStrings.norwegianForestCat.tr(),
-      AppStrings.ocicat.tr(),
-      AppStrings.orientalLonghair.tr(),
-      AppStrings.orientalShorthair.tr(),
-      AppStrings.persianCat.tr(),
-      AppStrings.peterbald.tr(),
-      AppStrings.ragamuffin.tr(),
-      AppStrings.ragdoll.tr(),
-      AppStrings.russianBlue.tr(),
-      AppStrings.savannahCat.tr(),
-      AppStrings.scottishFold.tr(),
-      AppStrings.selkirkRex.tr(),
-      AppStrings.siameseCat.tr(),
-      AppStrings.siberianCat.tr(),
-      AppStrings.singapuraCat.tr(),
-      AppStrings.somaliCat.tr(),
-      AppStrings.sphynxCat.tr(),
-      AppStrings.thaiCat.tr(),
-      AppStrings.tonkineseCat.tr(),
-      AppStrings.toyger.tr(),
-      AppStrings.turkishAngora.tr(),
-      AppStrings.vanCat.tr(),
-    ];
-
-    List<String> dogSpecies = [
-      AppStrings.unknown.tr(),
-      AppStrings.affenpinscher.tr(),
-      AppStrings.afghanHound.tr(),
-      AppStrings.airedaleTerrier.tr(),
-      AppStrings.alaskanMalamute.tr(),
-      AppStrings.americanBulldog.tr(),
-      AppStrings.americanEskimoDog.tr(),
-      AppStrings.americanStaffordshireTerrier.tr(),
-      AppStrings.australianCattleDog.tr(),
-      AppStrings.australianShepherd.tr(),
-      AppStrings.basenji.tr(),
-      AppStrings.bassetHound.tr(),
-      AppStrings.beagle.tr(),
-      AppStrings.beardedCollie.tr(),
-      AppStrings.belgianShepherd.tr(),
-      AppStrings.berneseMountainDog.tr(),
-      AppStrings.bichonFrise.tr(),
-      AppStrings.borderCollie.tr(),
-      AppStrings.borderTerrier.tr(),
-      AppStrings.bostonTerrier.tr(),
-      AppStrings.boxer.tr(),
-      AppStrings.brittany.tr(),
-      AppStrings.brusselsGriffon.tr(),
-      AppStrings.bulldog.tr(),
-      AppStrings.bullTerrier.tr(),
-      AppStrings.cairnTerrier.tr(),
-      AppStrings.cavalierKingCharlesSpaniel.tr(),
-      AppStrings.chihuahua.tr(),
-      AppStrings.chowChow.tr(),
-      AppStrings.dachshund.tr(),
-      AppStrings.dalmation.tr(),
-      AppStrings.dobermann.tr(),
-      AppStrings.englishCockerSpaniel.tr(),
-      AppStrings.frenchBulldog.tr(),
-      AppStrings.germanShepherd.tr(),
-      AppStrings.greatDane.tr(),
-      AppStrings.goldenRetriever.tr(),
-      AppStrings.irishSetter.tr(),
-      AppStrings.labradorRetriever.tr(),
-      AppStrings.malteseDog.tr(),
-      AppStrings.newfoundlandDog.tr(),
-      AppStrings.papillon.tr(),
-      AppStrings.pembrokeWelshCorgi.tr(),
-      AppStrings.pomeranian.tr(),
-      AppStrings.poodle.tr(),
-      AppStrings.pug.tr(),
-      AppStrings.rottweiler.tr(),
-      AppStrings.shetlandSheepdog.tr(),
-      AppStrings.shihTzu.tr(),
-      AppStrings.siberianHusky.tr(),
-      AppStrings.softcoatedWheatenTerrier.tr(),
-      AppStrings.yorkshireTerrier.tr(),
-    ];
-
-    List<String> ferretSpecies = [
-      AppStrings.unknown.tr(),
-      AppStrings.albinoFerret.tr(),
-      AppStrings.blazeFerret.tr(),
-      AppStrings.champagneFerret.tr(),
-      AppStrings.chocolateFerret.tr(),
-      AppStrings.cinnamonFerret.tr(),
-      AppStrings.dalmatianFerret.tr(),
-      AppStrings.pandaFerret.tr(),
-      AppStrings.siameseFerret.tr(),
-      AppStrings.silverFerret.tr(),
-    ];
-
-    List<String> fishSpecies = [
-      AppStrings.unknown.tr(),
-      AppStrings.africanCichlid.tr(),
-      AppStrings.angelfish.tr(),
-      AppStrings.asianStoneCatfish.tr(),
-      AppStrings.bichir.tr(),
-      AppStrings.bloodfinTetra.tr(),
-      AppStrings.bloodParrotCichlid.tr(),
-      AppStrings.cardinalTetra.tr(),
-      AppStrings.cherryBarb.tr(),
-      AppStrings.cherryShrimp.tr(),
-      AppStrings.clownLoach.tr(),
-      AppStrings.convictCichlid.tr(),
-      AppStrings.danioMargaritatus.tr(),
-      AppStrings.diamondTetra.tr(),
-      AppStrings.dwarfGourami.tr(),
-      AppStrings.firemouthCichlid.tr(),
-      AppStrings.glassCatfish.tr(),
-      AppStrings.goldBarb.tr(),
-      AppStrings.goldfish.tr(),
-      AppStrings.greenTexasCichlid.tr(),
-      AppStrings.guppy.tr(),
-      AppStrings.harlequinRasboras.tr(),
-      AppStrings.jackDempsey.tr(),
-      AppStrings.killifish.tr(),
-      AppStrings.kuhliLoach.tr(),
-      AppStrings.marbledHatchetfish.tr(),
-      AppStrings.mollies.tr(),
-      AppStrings.neonTetra.tr(),
-      AppStrings.odessaBarb.tr(),
-      AppStrings.oscarCichlid.tr(),
-      AppStrings.otocinclus.tr(),
-      AppStrings.pearlGourami.tr(),
-      AppStrings.pictusCatfish.tr(),
-      AppStrings.platy.tr(),
-      AppStrings.rainbowfish.tr(),
-      AppStrings.rainbowShark.tr(),
-      AppStrings.ramCichlid.tr(),
-      AppStrings.raphaelCatfish.tr(),
-      AppStrings.redeyeTetra.tr(),
-      AppStrings.rosyBarb.tr(),
-      AppStrings.siameseFightingFish.tr(),
-      AppStrings.swordTail.tr(),
-      AppStrings.tigerBarb.tr(),
-      AppStrings.upsideDownCatfish.tr(),
-      AppStrings.whiteCloudMountainMinnow.tr(),
-      AppStrings.zebrafish.tr(),
-    ];
-
-    List<String> horseSpecies = [
-      AppStrings.unknown.tr(),
-      AppStrings.akhalTeke.tr(),
-      AppStrings.americanPaintHorse.tr(),
-      AppStrings.americanQuarterHorse.tr(),
-      AppStrings.americanSaddlebred.tr(),
-      AppStrings.andalusianHorse.tr(),
-      AppStrings.appaloosa.tr(),
-      AppStrings.arabianHorse.tr(),
-      AppStrings.ardennais.tr(),
-      AppStrings.belgianHorse.tr(),
-      AppStrings.belgianWarmblood.tr(),
-      AppStrings.blackForestHorse.tr(),
-      AppStrings.bretonHorse.tr(),
-      AppStrings.clydesdaleHorse.tr(),
-      AppStrings.criolloHorse.tr(),
-      AppStrings.curlyHorse.tr(),
-      AppStrings.dutchWarmblood.tr(),
-      AppStrings.falabella.tr(),
-      AppStrings.fellPony.tr(),
-      AppStrings.fjordHorse.tr(),
-      AppStrings.friesianHorse.tr(),
-      AppStrings.gypsyHorse.tr(),
-      AppStrings.haflinger.tr(),
-      AppStrings.hanoverianHorse.tr(),
-      AppStrings.holsteiner.tr(),
-      AppStrings.huculPony.tr(),
-      AppStrings.icelandicHorse.tr(),
-      AppStrings.irishSportHorse.tr(),
-      AppStrings.knabstrupper.tr(),
-      AppStrings.konik.tr(),
-      AppStrings.lipizzan.tr(),
-      AppStrings.lusitano.tr(),
-      AppStrings.mangalargaMarchador.tr(),
-      AppStrings.marwariHorse.tr(),
-      AppStrings.missouriFoxTrotter.tr(),
-      AppStrings.mongolianHorse.tr(),
-      AppStrings.morganHorse.tr(),
-      AppStrings.mustang.tr(),
-      AppStrings.noriker.tr(),
-      AppStrings.pasoFino.tr(),
-      AppStrings.percheron.tr(),
-      AppStrings.peruvianPaso.tr(),
-      AppStrings.shetlandPony.tr(),
-      AppStrings.shireHorse.tr(),
-      AppStrings.silesianHorse.tr(),
-      AppStrings.standardbred.tr(),
-      AppStrings.tennesseeWalkingHorse.tr(),
-      AppStrings.trakehner.tr(),
-    ];
-
-    List<String> guineaPigSpecies = [
-      AppStrings.unknown.tr(),
-      AppStrings.abyssinianGuineaPig.tr(),
-      AppStrings.americanGuineaPig.tr(),
-      AppStrings.peruvianGuineaPig.tr(),
-      AppStrings.rexGuineaPig.tr(),
-      AppStrings.sheltieSilkieGuineaPig.tr(),
-      AppStrings.skinnyGuineaPig.tr(),
-      AppStrings.teddyGuineaPig.tr(),
-      AppStrings.texelGuineaPig.tr(),
-      AppStrings.whiteCrestedGuineaPig.tr(),
-    ];
-
-    List<String> iguanaSpecies = [
-      AppStrings.unknown.tr(),
-      AppStrings.angelIslandChuckwalla.tr(),
-      AppStrings.blueIguana.tr(),
-      AppStrings.brachylophusBulabula.tr(),
-      AppStrings.brachylophusFasciatus.tr(),
-      AppStrings.commonChuckwalla.tr(),
-      AppStrings.ctenosauraBakeri.tr(),
-      AppStrings.ctenosauraFlavidorsalis.tr(),
-      AppStrings.ctenosauraPalearis.tr(),
-      AppStrings.ctenosauraPectinata.tr(),
-      AppStrings.ctenosauraQuinquecarinata.tr(),
-      AppStrings.cycluraNubila.tr(),
-      AppStrings.desertIguana.tr(),
-      AppStrings.fijiCrestedIguana.tr(),
-      AppStrings.greenIguana.tr(),
-      AppStrings.lesserAntilleanIguana.tr(),
-      AppStrings.northernBahamianRockIguana.tr(),
-      AppStrings.rhinocerosIguana.tr(),
-      AppStrings.yucatanSpinyTailedIguana.tr(),
-    ];
-
-    List<String> mouseRatSpecies = [
-      AppStrings.unknown.tr(),
-      AppStrings.africanPygmyMouse.tr(),
-      AppStrings.blackRat.tr(),
-      AppStrings.brownRat.tr(),
-      AppStrings.cairoSpinyMouse.tr(),
-      AppStrings.ceylonSpinyMouse.tr(),
-      AppStrings.creteSpinyMouse.tr(),
-      AppStrings.gairdnersShrewmouse.tr(),
-      AppStrings.gambianPouchedRat.tr(),
-      AppStrings.houseMouse.tr(),
-      AppStrings.macedonianMouse.tr(),
-      AppStrings.mattheysMouse.tr(),
-      AppStrings.mongolianGerbil.tr(),
-      AppStrings.natalMultimammateMouse.tr(),
-      AppStrings.summitRat.tr(),
-      AppStrings.temmincksMouse.tr(),
-      AppStrings.turkestanRat.tr(),
-    ];
-
-    List<String> otterSpecies = [
-      AppStrings.unknown.tr(),
-      AppStrings.africanClawlessOtter.tr(),
-      AppStrings.americanMink.tr(),
-      AppStrings.asianSmallClawedOtter.tr(),
-      AppStrings.eurasianOtter.tr(),
-      AppStrings.giantOtter.tr(),
-      AppStrings.hairyNosedOtter.tr(),
-      AppStrings.marineOtter.tr(),
-      AppStrings.neotropicalOtter.tr(),
-      AppStrings.northAmericanRiverOtter.tr(),
-      AppStrings.seaOtter.tr(),
-      AppStrings.smoothCoatedOtter.tr(),
-      AppStrings.southernRiverOtter.tr(),
-      AppStrings.spottedNeckedOtter.tr(),
-    ];
-
-    List<String> rabbitSpecies = [
-      AppStrings.unknown.tr(),
-      AppStrings.alaskaRabbit.tr(),
-      AppStrings.americanFuzzyLop.tr(),
-      AppStrings.americanRabbit.tr(),
-      AppStrings.annamiteStripedRabbit.tr(),
-      AppStrings.appalachianCottontail.tr(),
-      AppStrings.brushRabbit.tr(),
-      AppStrings.bunyoroRabbit.tr(),
-      AppStrings.cashmereLop.tr(),
-      AppStrings.checkeredGiantRabbit.tr(),
-      AppStrings.commonTapeti.tr(),
-      AppStrings.deilenaar.tr(),
-      AppStrings.desertCottontail.tr(),
-      AppStrings.dicesCottontail.tr(),
-      AppStrings.easternCottontail.tr(),
-      AppStrings.europeanRabbit.tr(),
-      AppStrings.flemishGiantRabbit.tr(),
-      AppStrings.floridaWhiteRabbit.tr(),
-      AppStrings.hollandLop.tr(),
-      AppStrings.jerseyWooly.tr(),
-      AppStrings.marshRabbit.tr(),
-      AppStrings.mexicanCottontail.tr(),
-      AppStrings.miniLop.tr(),
-      AppStrings.mountainCottontail.tr(),
-      AppStrings.netherlandDwarfRabbit.tr(),
-      AppStrings.newEnglandCottontail.tr(),
-      AppStrings.omiltemeCottontail.tr(),
-      AppStrings.polishRabbit.tr(),
-      AppStrings.pygmyRabbit.tr(),
-      AppStrings.riverineRabbit.tr(),
-      AppStrings.sumatranStripedRabbit.tr(),
-      AppStrings.swampRabbit.tr(),
-      AppStrings.tresMariasCottontail.tr(),
-      AppStrings.volcanoRabbit.tr(),
-    ];
-
-    List<String> tortoiseSpecies = [
-      AppStrings.unknown.tr(),
-      AppStrings.africanSpurredTortoise.tr(),
-      AppStrings.aldabraGiantTortoise.tr(),
-      AppStrings.asianForestTortoise.tr(),
-      AppStrings.bellsHingeBackTortoise.tr(),
-      AppStrings.bolsonTortoise.tr(),
-      AppStrings.burmeseStarTortoise.tr(),
-      AppStrings.chacoTortoise.tr(),
-      AppStrings.egyptianTortoise.tr(),
-      AppStrings.greekTortoise.tr(),
-      AppStrings.hermannsTortoise.tr(),
-      AppStrings.homesHingeBackTortoise.tr(),
-      AppStrings.homopusAreolatus.tr(),
-      AppStrings.homopusFemoralis.tr(),
-      AppStrings.impressedTortoise.tr(),
-      AppStrings.indianStarTortoise.tr(),
-      AppStrings.leopardTortoise.tr(),
-      AppStrings.marginatedTortoise.tr(),
-      AppStrings.pancakeTortoise.tr(),
-      AppStrings.ploughshareTortoise.tr(),
-      AppStrings.radiatedTortoise.tr(),
-      AppStrings.redFootedTortoise.tr(),
-      AppStrings.russianTortoise.tr(),
-      AppStrings.speckledCapeTortoise.tr(),
-      AppStrings.spiderTortoise.tr(),
-      AppStrings.texasTortoise.tr(),
-      AppStrings.yellowFootedTortoise.tr(),
-    ];
-
-    // animalMap = {
-    //   AppStrings.bird.tr(): [birdSpecies, birdValueSpecies],
-    //   AppStrings.cat.tr(): [catSpecies, catValueSpecies],
-    //   AppStrings.dog.tr(): [dogSpecies, dogValueSpecies],
-    //   AppStrings.ferret.tr(): [ferretSpecies, ferretValueSpecies],
-    //   AppStrings.fish.tr(): [fishSpecies, fishValueSpecies],
-    //   AppStrings.guineaPig.tr(): [guineaPigSpecies, guineaPigValueSpecies],
-    //   AppStrings.horse.tr(): [horseSpecies, horseValueSpecies],
-    //   AppStrings.iguana.tr(): [iguanaSpecies, iguanaValueSpecies],
-    //   AppStrings.mouseRat.tr(): [mouseRatSpecies, mouseRatValueSpecies],
-    //   AppStrings.otter.tr(): [otterSpecies, otterValueSpecies],
-    //   AppStrings.rabbit.tr(): [rabbitSpecies, rabbitValueSpecies],
-    //   AppStrings.tortoise.tr(): [tortoiseSpecies, tortoiseValueSpecies],
-    // };
-
-    // _selectedSpeciesList = birdSpecies;
-    // print('changed');
 
     final genderToggleChildren = [
       Row(
@@ -836,11 +387,16 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
                       height: 15.0,
                     ),
                     AdoptionFormField(
-                        color: AppColors.primary,
-                        hintText: context.tr(AppStrings.enterPetName),
-                        textInputType: TextInputType.name,
-                        focusNode: petNameFocusNode,
-                        controller: petNameTextEditingController),
+                      color: AppColors.primary,
+                      hintText: context.tr(AppStrings.enterPetName),
+                      textInputType: TextInputType.name,
+                      textInputAction: TextInputAction.next,
+                      focusNode: petNameFocusNode,
+                      controller: petNameTextEditingController,
+                      onEditingComplete: () {
+                        FocusScope.of(context).requestFocus(petAgeFocusNode);
+                      },
+                    ),
                     const SizedBox(
                       height: 20.0,
                     ),
@@ -856,11 +412,15 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
                       color: AppColors.primary,
                       hintText: context.tr(AppStrings.enterPetAge),
                       textInputType: TextInputType.number,
+                      textInputAction: TextInputAction.next,
                       focusNode: petAgeFocusNode,
                       controller: petAgeTextEditingController,
                       interactionEnabled: false,
                       isSeparatorNeeded: true,
                       maxCharacters: 2,
+                      onEditingComplete: () {
+                        petClassKey.currentState?.openDropDownSearch();
+                      },
                     ),
                     const SizedBox(
                       height: 20.0,
@@ -880,6 +440,7 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
                     //       materialProps: PopupProps.dialog()),
                     // ),
                     DropdownSearch<String>(
+                      key: petClassKey,
                       popupProps: PopupProps.modalBottomSheet(
                         modalBottomSheetProps: ModalBottomSheetProps(
                           backgroundColor:
@@ -895,7 +456,9 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
                       //   labelText: "Menu mode",
                       //   hintText: "country in menu mode",
                       // ),
-                      onChanged: petClassSelected,
+                      onChanged: (value) {
+                        petClassSelected(value);
+                      },
                       selectedItem: animalClass
                           .map((animal) => context.tr(animal))
                           .toList()[0],
@@ -932,17 +495,20 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
                       //   hintText: "country in menu mode",
                       // ),
                       onChanged: (value) {
-                        setState(() {
-                          if (value == context.tr(AppStrings.unknown)) {
-                            isEnabled = false;
-                            isHybrid = false;
-                            secondSpeciesKey.currentState!.changeSelectedItem(
-                                context.tr(AppStrings.unknown));
-                          } else {
+                        if (value == context.tr(AppStrings.unknown)) {
+                          isEnabled = false;
+                          isHybrid = false;
+                          secondSpeciesKey.currentState?.changeSelectedItem(
+                              context.tr(AppStrings.unknown));
+                        } else {
+                          setState(() {
                             isEnabled = true;
-                            secondSpeciesKey.currentState?.removeItem(value!);
-                          }
-                        });
+                            selectedSpeciesInFirstDropdown = value;
+                          });
+                        }
+                        if (value != context.tr(AppStrings.unknown)) {
+                          popCurrencyPicker();
+                        }
                       },
                       selectedItem: selectedSpeciesList
                           .map((animal) => context.tr(animal))
@@ -990,6 +556,10 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
                       ),
                       items: (filter, infiniteScrollProps) =>
                           selectedSpeciesList
+                              .where((species) =>
+                                  context.tr(species) !=
+                                  context
+                                      .tr(selectedSpeciesInFirstDropdown ?? ''))
                               .map((species) => context.tr(species))
                               .toList(),
                       // dropdownSearchDecoration: InputDecoration(
@@ -1026,7 +596,9 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
                           width: 100.0,
                           height: 50.0,
                           child: ElevatedButton(
-                              onPressed: popCurrencyPicker,
+                              onPressed: () {
+                                popCurrencyPicker();
+                              },
                               child: Text(
                                 currencyCode,
                                 style: const TextStyle(color: Colors.white),
@@ -1043,9 +615,14 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
                             focusNode: priceFocusNode,
                             controller: priceTextEditingController,
                             textInputType: TextInputType.number,
+                            textInputAction: TextInputAction.next,
                             hintText: context.tr(AppStrings.enterPrice),
                             interactionEnabled: false,
                             maxCharacters: 9,
+                            onEditingComplete: () {
+                              FocusScope.of(context)
+                                  .requestFocus(reasonFocusNode);
+                            },
                           ),
                         )
                       ],
@@ -1064,9 +641,10 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
                     AdoptionFormField(
                       color: AppColors.primary,
                       maxLines: 5,
-                      focusNode: descriptionFocusNode,
+                      focusNode: reasonFocusNode,
                       controller: descriptionTextEditingController,
                       textInputType: TextInputType.multiline,
+                      textInputAction: TextInputAction.done,
                       hintText: context.tr(AppStrings.enterReason),
                     ),
                     const SizedBox(

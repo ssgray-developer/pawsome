@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pawsome/core/utils/generate_primary_swatch.dart';
 import 'app_colors.dart';
 import 'app_fonts.dart';
 import 'app_styles.dart';
@@ -12,15 +13,24 @@ class AppTheme {
     colorScheme: ColorScheme.light(
       secondaryContainer: Colors.grey[900],
     ),
-    // appBarTheme: AppBarTheme(
-    //   shape: const RoundedRectangleBorder(
-    //       borderRadius: BorderRadius.vertical(bottom: Radius.circular(30))),
-    //   iconTheme: const IconThemeData(color: Colors.white),
-    //   titleTextStyle: const TextStyle(
-    //     fontWeight: FontWeight.bold,
-    //     color: Colors.white,
-    //     fontSize: FontSize.s18,
-    //   ),
+    // useMaterial3: false,
+    // primarySwatch: generatePrimarySwatch(AppColors.primary),
+    // colorSchemeSeed: AppColors.primary,
+    // inputDecorationTheme:
+    //     InputDecorationTheme(filled: false, fillColor: Colors.transparent),
+    // colorScheme: ColorScheme.light(
+    //   secondaryContainer: Colors.grey[900],
+    // ),
+    appBarTheme: AppBarTheme(
+      surfaceTintColor: AppColors.primary,
+      //   shape: const RoundedRectangleBorder(
+      //       borderRadius: BorderRadius.vertical(bottom: Radius.circular(30))),
+      //   iconTheme: const IconThemeData(color: Colors.white),
+      //   titleTextStyle: const TextStyle(
+      //     fontWeight: FontWeight.bold,
+      //     color: Colors.white,
+      //     fontSize: FontSize.s18,
+    ),
     //   backgroundColor: AppColors.primary,
     //   elevation: 0,
     // ),
