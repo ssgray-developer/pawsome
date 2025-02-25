@@ -1,8 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:pawsome/data/pet/models/pet_model.dart';
 
-class RegisteredPet {
-  final String postId;
-  final String uid;
+class PetEntity {
   final String photoUrl;
   final String gender;
   final String name;
@@ -10,7 +9,7 @@ class RegisteredPet {
   final String petClass;
   final String petSpecies;
   final String petPrice;
-  final String description;
+  final String reason;
   final Map<String, dynamic> location;
   final FieldValue date;
   final String owner;
@@ -19,9 +18,7 @@ class RegisteredPet {
   final String ownerPhotoUrl;
   final List likes;
 
-  RegisteredPet({
-    required this.postId,
-    required this.uid,
+  PetEntity({
     required this.photoUrl,
     required this.gender,
     required this.name,
@@ -29,7 +26,7 @@ class RegisteredPet {
     required this.petClass,
     required this.petSpecies,
     required this.petPrice,
-    required this.description,
+    required this.reason,
     required this.location,
     required this.date,
     required this.owner,
@@ -38,4 +35,26 @@ class RegisteredPet {
     required this.ownerPhotoUrl,
     required this.likes,
   });
+}
+
+extension PetEntityToModel on PetEntity {
+  PetModel toModel() {
+    return PetModel(
+      photoUrl: photoUrl,
+      gender: gender,
+      name: name,
+      age: age,
+      petClass: petClass,
+      petSpecies: petSpecies,
+      petPrice: petPrice,
+      reason: reason,
+      location: location,
+      date: date,
+      owner: owner,
+      ownerUid: ownerUid,
+      ownerEmail: ownerEmail,
+      ownerPhotoUrl: ownerPhotoUrl,
+      likes: likes,
+    );
+  }
 }

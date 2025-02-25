@@ -2,10 +2,11 @@ import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../../data/auth/models/user_sign_in_req.dart';
+import '../entity/user.dart';
 
 abstract class AuthRepository {
   Stream<User?> listenToAuthChanges();
-  Future<Either> getUserDetails();
+  Future<Either<String, UserEntity>> getUserDetails();
   Future<Either> signOut();
   Future<Either> signIn(UserSignInReq user);
   Future<Either> signInWithGoogle();

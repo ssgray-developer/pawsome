@@ -9,7 +9,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:pawsome/common/enums.dart';
 import 'package:pawsome/core/theme/app_colors.dart';
+import 'package:pawsome/data/pet/models/pet_registration_req.dart';
 import 'package:pawsome/presentation/bloc/image_picker/image_picker_cubit.dart';
+import 'package:pawsome/presentation/profile/bloc/register_pet_cubit.dart';
 import '../../../common/animal_list.dart';
 import '../../../core/theme/app_strings.dart';
 import '../widgets/adoption_form_field.dart';
@@ -36,6 +38,11 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
   final List<bool> selectedGenderList = [true, false];
   late Map<String, List<List<String>>> animalMap;
 
+  late GlobalKey<FormState> nameFormKey;
+  late GlobalKey<FormState> ageFormKey;
+  late GlobalKey<FormState> priceFormKey;
+  late GlobalKey<FormState> reasonFormKey;
+
   late GlobalKey<DropdownSearchState<String>> petClassKey;
   late GlobalKey<DropdownSearchState<String>> firstSpeciesKey;
   late GlobalKey<DropdownSearchState<String>> secondSpeciesKey;
@@ -49,12 +56,17 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
 
   late TextEditingController petNameTextEditingController;
   late TextEditingController petAgeTextEditingController;
-  late TextEditingController descriptionTextEditingController;
+  late TextEditingController reasonTextEditingController;
   late TextEditingController priceTextEditingController;
 
   @override
   void initState() {
     super.initState();
+    nameFormKey = GlobalKey<FormState>();
+    ageFormKey = GlobalKey<FormState>();
+    priceFormKey = GlobalKey<FormState>();
+    reasonFormKey = GlobalKey<FormState>();
+
     petClassKey = GlobalKey<DropdownSearchState<String>>();
     firstSpeciesKey = GlobalKey<DropdownSearchState<String>>();
     secondSpeciesKey = GlobalKey<DropdownSearchState<String>>();
@@ -63,7 +75,7 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
 
     petNameTextEditingController = TextEditingController();
     petAgeTextEditingController = TextEditingController();
-    descriptionTextEditingController = TextEditingController();
+    reasonTextEditingController = TextEditingController();
     priceTextEditingController = TextEditingController();
 
     petNameFocusNode = FocusNode();
@@ -93,73 +105,100 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
     firstSpeciesKey.currentState?.openDropDownSearch();
   }
 
-  void registerPet(BuildContext context, String uid, String ownerName,
-      String ownerUid, String ownerEmail, String ownerPhotoUrl) async {
-    setState(() => isLoading = true);
-    if (image == null) {
-      showDialog(
-          context: context,
-          builder: (context) {
-            isLoading = false;
-            if (!Platform.isIOS) {
-              return AlertDialog(
-                title: Text(context.tr(AppStrings.errorRegister)),
-                content: Text(context.tr(AppStrings.selectPetImage)),
-              );
-            } else {
-              return CupertinoAlertDialog(
-                title: Text(context.tr(AppStrings.errorRegister)),
-                content: Text(context.tr(AppStrings.selectPetImage)),
-              );
-            }
-          });
-      return;
-    } else if (petNameTextEditingController.text.trim().isEmpty) {
-      scrollToField(petNameFocusNode, 0);
-    } else if (petAgeTextEditingController.text.trim().isEmpty) {
-      scrollToField(petAgeFocusNode, 80);
-    } else if (currencyCode == '-') {
-      popCurrencyPicker();
-    } else if (priceTextEditingController.text.trim().isEmpty) {
-      scrollToField(priceFocusNode, null);
-    } else if (descriptionTextEditingController.text.trim().isEmpty) {
-      scrollToField(reasonFocusNode, null);
-    } else {
-      //   try {
-      //     if (await checkConnectivity()) {
-      //       Position currentLocation = await LocationModel.determinePosition();
-      //       await FirestoreMethods.uploadRegisteredPet(
-      //               _image!,
-      //               uid,
-      //               selectedGender.name,
-      //               petNameTextEditingController.text.trim(),
-      //               petAgeTextEditingController.text,
-      //               selectedPetClass,
-      //               getPetSpecies(),
-      //               getPetPrice(),
-      //               descriptionTextEditingController.text.trim(),
-      //               ownerName,
-      //               ownerUid,
-      //               ownerEmail,
-      //               currentLocation,
-      //               ownerPhotoUrl)
-      //           .then((value) {
-      //         if (value == 'success') {
-      //           Navigator.pop(context, AppStrings.petRegisteredSuccessfully.tr());
-      //         } else {
-      //           // showSnackBar(context, value, defaultColor: false);
-      //         }
-      //       });
-      //     } else {
-      //       // showSnackBar(context, AppStrings.noConnection.tr(),
-      //       //     defaultColor: false);
-      //     }
-      //   } catch (e) {
-      //     // showSnackBar(context, e.toString(), defaultColor: false);
-      //   }
+  void registerPet() {
+    if ((context.read<ImagePickerCubit>().state is ImagePickerSuccess) &&
+        nameFormKey.currentState!.validate() &&
+        ageFormKey.currentState!.validate() &&
+        currencyCode != '-' &&
+        priceFormKey.currentState!.validate() &&
+        reasonFormKey.currentState!.validate()) {
+      final petRegistrationReq = PetRegistrationReq(
+          file: (context.read<ImagePickerCubit>().state as ImagePickerSuccess)
+              .image,
+          gender: selectedGender.name,
+          name: petNameTextEditingController.text.trim(),
+          age: petAgeTextEditingController.text.trim(),
+          petClass: petClassKey.currentState!.getSelectedItem!,
+          species: firstSpeciesKey.currentState!.getSelectedItem! +
+                      secondSpeciesKey.currentState!.getSelectedItem! ==
+                  context.tr(AppStrings.unknown)
+              ? ''
+              : ' & ${secondSpeciesKey.currentState!.getSelectedItem!}',
+          currency: currencyCode,
+          price: priceTextEditingController.text.trim(),
+          reason: reasonTextEditingController.text.trim());
+
+      context.read<RegisterPetCubit>().registerPet(petRegistrationReq);
     }
-    setState(() => isLoading = false);
   }
+
+  // void registerPet(BuildContext context, String uid, String ownerName,
+  //     String ownerUid, String ownerEmail, String ownerPhotoUrl) async {
+  //   setState(() => isLoading = true);
+  //   if (image == null) {
+  //     showDialog(
+  //         context: context,
+  //         builder: (context) {
+  //           isLoading = false;
+  //           if (!Platform.isIOS) {
+  //             return AlertDialog(
+  //               title: Text(context.tr(AppStrings.errorRegister)),
+  //               content: Text(context.tr(AppStrings.selectPetImage)),
+  //             );
+  //           } else {
+  //             return CupertinoAlertDialog(
+  //               title: Text(context.tr(AppStrings.errorRegister)),
+  //               content: Text(context.tr(AppStrings.selectPetImage)),
+  //             );
+  //           }
+  //         });
+  //     return;
+  //   } else if (petNameTextEditingController.text.trim().isEmpty) {
+  //     scrollToField(petNameFocusNode, 0);
+  //   } else if (petAgeTextEditingController.text.trim().isEmpty) {
+  //     scrollToField(petAgeFocusNode, 80);
+  //   } else if (currencyCode == '-') {
+  //     popCurrencyPicker();
+  //   } else if (priceTextEditingController.text.trim().isEmpty) {
+  //     scrollToField(priceFocusNode, null);
+  //   } else if (descriptionTextEditingController.text.trim().isEmpty) {
+  //     scrollToField(reasonFocusNode, null);
+  //   } else {
+  //   try {
+  //     if (await checkConnectivity()) {
+  //       Position currentLocation = await LocationModel.determinePosition();
+  //       await FirestoreMethods.uploadRegisteredPet(
+  //               _image!,
+  //               uid,
+  //               selectedGender.name,
+  //               petNameTextEditingController.text.trim(),
+  //               petAgeTextEditingController.text,
+  //               selectedPetClass,
+  //               getPetSpecies(),
+  //               getPetPrice(),
+  //               descriptionTextEditingController.text.trim(),
+  //               ownerName,
+  //               ownerUid,
+  //               ownerEmail,
+  //               currentLocation,
+  //               ownerPhotoUrl)
+  //           .then((value) {
+  //         if (value == 'success') {
+  //           Navigator.pop(context, AppStrings.petRegisteredSuccessfully.tr());
+  //         } else {
+  //           // showSnackBar(context, value, defaultColor: false);
+  //         }
+  //       });
+  //     } else {
+  //       // showSnackBar(context, AppStrings.noConnection.tr(),
+  //       //     defaultColor: false);
+  //     }
+  //   } catch (e) {
+  //     // showSnackBar(context, e.toString(), defaultColor: false);
+  //   }
+  //   }
+  //   setState(() => isLoading = false);
+  // }
 
   // String getPetSpecies() {
   // if (isHybrid == false ||
@@ -191,10 +230,6 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
   // }
   // }
 
-  String getPetPrice() {
-    return '$currencyCode ${priceTextEditingController.text}';
-  }
-
   void popCurrencyPicker() {
     showCurrencyPicker(
         context: context,
@@ -222,22 +257,20 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
         });
   }
 
-  void scrollToField(FocusNode node, double? location) {
-    setState(() {
-      scrollController
-          .animateTo(location ?? scrollController.position.maxScrollExtent,
-              duration: const Duration(milliseconds: 500),
-              curve: Curves.fastOutSlowIn)
-          .then((_) {
-        node.requestFocus();
-      });
-    });
-  }
+  // void scrollToField(FocusNode node, double? location) {
+  //   setState(() {
+  //     scrollController
+  //         .animateTo(location ?? scrollController.position.maxScrollExtent,
+  //             duration: const Duration(milliseconds: 500),
+  //             curve: Curves.fastOutSlowIn)
+  //         .then((_) {
+  //       node.requestFocus();
+  //     });
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
-    // User user = Provider.of<UserViewModel>(context).getUser;
-
     final genderToggleChildren = [
       Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -387,12 +420,19 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
                       height: 15.0,
                     ),
                     AdoptionFormField(
+                      globalKey: nameFormKey,
                       color: AppColors.primary,
                       hintText: context.tr(AppStrings.enterPetName),
                       textInputType: TextInputType.name,
                       textInputAction: TextInputAction.next,
                       focusNode: petNameFocusNode,
                       controller: petNameTextEditingController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return context.tr(AppStrings.enterPetName);
+                        }
+                        return null;
+                      },
                       onEditingComplete: () {
                         FocusScope.of(context).requestFocus(petAgeFocusNode);
                       },
@@ -409,6 +449,7 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
                       height: 15.0,
                     ),
                     AdoptionFormField(
+                      globalKey: ageFormKey,
                       color: AppColors.primary,
                       hintText: context.tr(AppStrings.enterPetAge),
                       textInputType: TextInputType.number,
@@ -418,6 +459,12 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
                       interactionEnabled: false,
                       isSeparatorNeeded: true,
                       maxCharacters: 2,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return context.tr(AppStrings.enterPetAge);
+                        }
+                        return null;
+                      },
                       onEditingComplete: () {
                         petClassKey.currentState?.openDropDownSearch();
                       },
@@ -525,9 +572,9 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
                             ? (bool? value) {
                                 if (value != null) {
                                   if (value == false) {
-                                    // secondSpeciesKey.currentState!
-                                    //     .changeSelectedItem(
-                                    //         context.tr(AppStrings.unknown));
+                                    secondSpeciesKey.currentState!
+                                        .changeSelectedItem(
+                                            context.tr(AppStrings.unknown));
                                   }
                                   setState(() {
                                     isHybrid = value;
@@ -554,6 +601,7 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
                         showSearchBox: true,
                         // disabledItemFn: (String s) => s.startsWith(_firstOption),
                       ),
+                      // TODO: Filter unknown item and change logic in register pet function
                       items: (filter, infiniteScrollProps) =>
                           selectedSpeciesList
                               .where((species) =>
@@ -609,6 +657,7 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
                         ),
                         Expanded(
                           child: AdoptionFormField(
+                            globalKey: priceFormKey,
                             color: AppColors.primary,
                             isTextCentered: true,
                             isSeparatorNeeded: true,
@@ -619,6 +668,12 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
                             hintText: context.tr(AppStrings.enterPrice),
                             interactionEnabled: false,
                             maxCharacters: 9,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return context.tr(AppStrings.enterPrice);
+                              }
+                              return null;
+                            },
                             onEditingComplete: () {
                               FocusScope.of(context)
                                   .requestFocus(reasonFocusNode);
@@ -639,13 +694,20 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
                       height: 15.0,
                     ),
                     AdoptionFormField(
+                      globalKey: reasonFormKey,
                       color: AppColors.primary,
                       maxLines: 5,
                       focusNode: reasonFocusNode,
-                      controller: descriptionTextEditingController,
+                      controller: reasonTextEditingController,
                       textInputType: TextInputType.multiline,
                       textInputAction: TextInputAction.done,
                       hintText: context.tr(AppStrings.enterReason),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return context.tr(AppStrings.enterReason);
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(
                       height: 20.0,

@@ -26,9 +26,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final emailFormKey = GlobalKey<FormState>();
-  final passwordFormKey = GlobalKey<FormState>();
-  final forgotPasswordFormKey = GlobalKey<FormState>();
+  late GlobalKey<FormState> emailFormKey;
+  late GlobalKey<FormState> passwordFormKey;
+  late GlobalKey<FormState> forgotPasswordFormKey;
 
   late FocusNode emailNode;
   late FocusNode passwordNode;
@@ -45,6 +45,10 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
+    emailFormKey = GlobalKey<FormState>();
+    passwordFormKey = GlobalKey<FormState>();
+    forgotPasswordFormKey = GlobalKey<FormState>();
+
     emailNode = FocusNode();
     passwordNode = FocusNode();
     forgotPasswordNode = FocusNode();

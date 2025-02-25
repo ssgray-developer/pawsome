@@ -16,10 +16,10 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final nameFormKey = GlobalKey<FormState>();
-  final emailFormKey = GlobalKey<FormState>();
-  final passwordFormKey = GlobalKey<FormState>();
-  final confirmPasswordFormKey = GlobalKey<FormState>();
+  late GlobalKey<FormState> nameFormKey;
+  late GlobalKey<FormState> emailFormKey;
+  late GlobalKey<FormState> passwordFormKey;
+  late GlobalKey<FormState> confirmPasswordFormKey;
 
   late FocusNode usernameNode;
   late FocusNode emailNode;
@@ -34,6 +34,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   void initState() {
     super.initState();
+    nameFormKey = GlobalKey<FormState>();
+    emailFormKey = GlobalKey<FormState>();
+    passwordFormKey = GlobalKey<FormState>();
+    confirmPasswordFormKey = GlobalKey<FormState>();
 
     usernameNode = FocusNode();
     emailNode = FocusNode();

@@ -1,8 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:pawsome/domain/pet/entity/pet.dart';
 
-class PetRegistrationModel {
-  final String postId;
-  final String uid;
+class PetModel {
   final String photoUrl;
   final String gender;
   final String name;
@@ -10,7 +9,7 @@ class PetRegistrationModel {
   final String petClass;
   final String petSpecies;
   final String petPrice;
-  final String description;
+  final String reason;
   final Map<String, dynamic> location;
   final FieldValue date;
   final String owner;
@@ -19,9 +18,7 @@ class PetRegistrationModel {
   final String ownerPhotoUrl;
   final List likes;
 
-  PetRegistrationModel({
-    required this.postId,
-    required this.uid,
+  PetModel({
     required this.photoUrl,
     required this.gender,
     required this.name,
@@ -29,7 +26,7 @@ class PetRegistrationModel {
     required this.petClass,
     required this.petSpecies,
     required this.petPrice,
-    required this.description,
+    required this.reason,
     required this.location,
     required this.date,
     required this.owner,
@@ -39,10 +36,8 @@ class PetRegistrationModel {
     required this.likes,
   });
 
-  factory PetRegistrationModel.fromJson(Map<String, dynamic> json) {
-    return PetRegistrationModel(
-      postId: json["postId"],
-      uid: json["uid"],
+  factory PetModel.fromJson(Map<String, dynamic> json) {
+    return PetModel(
       photoUrl: json["photoUrl"],
       gender: json["gender"],
       name: json["name"],
@@ -50,7 +45,7 @@ class PetRegistrationModel {
       petClass: json["petClass"],
       petSpecies: json["petSpecies"],
       petPrice: json["petPrice"],
-      description: json["description"],
+      reason: json["reason"],
       location: json["location"],
       date: json["date"],
       owner: json["owner"],
@@ -63,8 +58,6 @@ class PetRegistrationModel {
 
   Map<String, dynamic> toJson() {
     return {
-      "postId": postId,
-      "uid": uid,
       "photoUrl": photoUrl,
       "gender": gender,
       "name": name,
@@ -72,7 +65,7 @@ class PetRegistrationModel {
       "petClass": petClass,
       "petSpecies": petSpecies,
       "petPrice": petPrice,
-      "description": description,
+      "description": reason,
       "location": location,
       "date": date,
       "owner": owner,
@@ -81,5 +74,27 @@ class PetRegistrationModel {
       "ownerPhotoUrl": ownerPhotoUrl,
       "likes": likes,
     };
+  }
+}
+
+extension PetModelToEntity on PetModel {
+  PetEntity toEntity() {
+    return PetEntity(
+      photoUrl: photoUrl,
+      gender: gender,
+      name: name,
+      age: age,
+      petClass: petClass,
+      petSpecies: petSpecies,
+      petPrice: petPrice,
+      reason: reason,
+      location: location,
+      date: date,
+      owner: owner,
+      ownerUid: ownerUid,
+      ownerEmail: ownerEmail,
+      ownerPhotoUrl: ownerPhotoUrl,
+      likes: likes,
+    );
   }
 }

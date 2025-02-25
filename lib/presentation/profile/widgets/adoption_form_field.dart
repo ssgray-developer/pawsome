@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class AdoptionFormField extends StatefulWidget {
+  final GlobalKey globalKey;
   final FocusNode focusNode;
   final TextEditingController controller;
   final TextInputType textInputType;
@@ -13,14 +14,17 @@ class AdoptionFormField extends StatefulWidget {
   final bool isTextCentered;
   final bool interactionEnabled;
   final int? maxCharacters;
+  final FormFieldValidator validator;
   final VoidCallback? onEditingComplete;
   const AdoptionFormField(
       {super.key,
+      required this.globalKey,
       required this.focusNode,
       required this.controller,
       required this.textInputType,
       required this.textInputAction,
       required this.hintText,
+      required this.validator,
       required this.color,
       this.maxLines = 1,
       this.isSeparatorNeeded = false,
@@ -57,6 +61,7 @@ class _AdoptionFormFieldState extends State<AdoptionFormField> {
                 ]
               : null),
       child: TextFormField(
+        key: widget.globalKey,
         textAlign: widget.isTextCentered ? TextAlign.center : TextAlign.start,
         enableInteractiveSelection: widget.interactionEnabled,
         inputFormatters: widget.isSeparatorNeeded
@@ -71,6 +76,7 @@ class _AdoptionFormFieldState extends State<AdoptionFormField> {
         textInputAction: widget.textInputAction,
         focusNode: widget.focusNode,
         controller: widget.controller,
+        validator: widget.validator,
         // style: const TextStyle(letterSpacing: AppSize.s5),
         maxLines: widget.maxLines,
         decoration: InputDecoration(

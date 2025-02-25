@@ -4,7 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:full_screen_image/full_screen_image.dart';
-import 'package:pawsome/data/pet/models/pet_registration_model.dart';
+import 'package:pawsome/data/pet/models/pet_model.dart';
 
 import '../../../core/theme/app_fonts.dart';
 import '../../../core/theme/app_strings.dart';
@@ -12,7 +12,7 @@ import '../../../core/utils/functions.dart';
 
 // ignore: must_be_immutable
 class PetDetails extends StatefulWidget {
-  final PetRegistrationModel registeredPetViewModel;
+  final PetModel registeredPetViewModel;
   final int index;
 
   const PetDetails(
@@ -310,7 +310,7 @@ class PetDetailsState extends State<PetDetails> {
                         height: 5,
                       ),
                       Text(
-                        widget.registeredPetViewModel.description,
+                        widget.registeredPetViewModel.reason,
                         style:
                             const TextStyle(fontSize: 16, color: Colors.grey),
                       ),

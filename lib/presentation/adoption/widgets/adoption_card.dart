@@ -3,7 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:pawsome/data/pet/models/pet_registration_model.dart';
+import 'package:pawsome/data/pet/models/pet_model.dart';
 
 import '../../../core/theme/app_strings.dart';
 import '../../../core/utils/functions.dart';
@@ -11,7 +11,7 @@ import '../pages/pet_details.dart';
 import 'like_animation.dart';
 
 class AdoptionCard extends StatefulWidget {
-  final PetRegistrationModel registeredPetModel;
+  final PetModel registeredPetModel;
   final int index;
   const AdoptionCard(
       {super.key, required this.registeredPetModel, required this.index});
