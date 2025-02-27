@@ -13,6 +13,7 @@ abstract class PetRemoteDataSource {
   Stream<Either> listenToPetAdoption(NearbyPetReq nearbyPet);
   Future<Either> registerPet(PetModel pet);
   Future<Either> registerPetImage(RegisterPetImageReq pet);
+  Future<Either> retrieveSinglePet(String docId);
 }
 
 class PetRemoteDataSourceImpl extends PetRemoteDataSource {
@@ -63,7 +64,7 @@ class PetRemoteDataSourceImpl extends PetRemoteDataSource {
           .collection('registeredPets')
           .doc(postId)
           .set(pet.toJson());
-      return const Right('Pet registered successfully.');
+      return Right(postId);
     } catch (e) {
       return const Left('Google sign out failure');
     }
@@ -87,6 +88,17 @@ class PetRemoteDataSourceImpl extends PetRemoteDataSource {
       return Right(downloadUrl);
     } catch (e) {
       return const Left('Failed to upload pet image.');
+    }
+  }
+
+  @override
+  Future<Either> retrieveSinglePet(String docId) async {
+    try {
+      DocumentSnapshot snapshot =
+          await firebaseFirestore.collection('registeredPets').doc(docId).get();
+      return Right(snapshot.data());
+    } catch (e) {
+      return const Left('Failed to retrieve pet details.');
     }
   }
 }

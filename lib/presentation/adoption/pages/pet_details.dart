@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:full_screen_image/full_screen_image.dart';
 import 'package:pawsome/data/pet/models/pet_model.dart';
+import 'package:pawsome/domain/pet/entity/pet.dart';
 
 import '../../../core/theme/app_fonts.dart';
 import '../../../core/theme/app_strings.dart';
@@ -12,11 +13,10 @@ import '../../../core/utils/functions.dart';
 
 // ignore: must_be_immutable
 class PetDetails extends StatefulWidget {
-  final PetModel registeredPetViewModel;
-  final int index;
+  final PetEntity pet;
+  final int? index;
 
-  const PetDetails(
-      {super.key, required this.registeredPetViewModel, required this.index});
+  const PetDetails({super.key, required this.pet, this.index});
 
   @override
   PetDetailsState createState() => PetDetailsState();
@@ -36,7 +36,7 @@ class PetDetailsState extends State<PetDetails> {
   Future<void> contactMePressed(String currentUserUid) async {
     DocumentSnapshot snapshot = await FirebaseFirestore.instance
         .collection('users')
-        .doc(widget.registeredPetViewModel.ownerUid)
+        .doc(widget.pet.ownerUid)
         .get();
 
     // final recipientUser = User.fromSnapshot(snapshot);
@@ -60,7 +60,7 @@ class PetDetailsState extends State<PetDetails> {
             AppStrings.ownerPet,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-          ).tr(args: ['${widget.registeredPetViewModel.owner}'])),
+          ).tr(args: ['${widget.pet.owner}'])),
       body: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20.0),
@@ -90,7 +90,7 @@ class PetDetailsState extends State<PetDetails> {
                             ),
                             child: CachedNetworkImage(
                               // key: UniqueKey(),
-                              imageUrl: widget.registeredPetViewModel.photoUrl,
+                              imageUrl: widget.pet.photoUrl,
                               // maxHeightDiskCache: 50,
                               // height: 100,
                               // width: 100,
@@ -116,7 +116,7 @@ class PetDetailsState extends State<PetDetails> {
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
                               Text(
-                                widget.registeredPetViewModel.name,
+                                widget.pet.name,
                                 style: const TextStyle(
                                     fontSize: 22, fontWeight: FontWeight.w600),
                                 maxLines: 1,
@@ -126,8 +126,7 @@ class PetDetailsState extends State<PetDetails> {
                                 height: 5,
                               ),
                               Text(
-                                getName(context,
-                                    widget.registeredPetViewModel.petSpecies),
+                                getName(context, widget.pet.petSpecies),
                                 style: TextStyle(color: Colors.grey.shade500),
                                 maxLines: 4,
                                 overflow: TextOverflow.ellipsis,
@@ -149,7 +148,7 @@ class PetDetailsState extends State<PetDetails> {
                                     ),
                                     child: Center(
                                       child: Text(
-                                        widget.registeredPetViewModel.gender,
+                                        widget.pet.gender,
                                         style: const TextStyle(
                                             fontWeight: FontWeight.w600,
                                             fontSize: FontSize.s12,
@@ -172,7 +171,7 @@ class PetDetailsState extends State<PetDetails> {
                                     ),
                                     child: Center(
                                       child: Text(
-                                        '${widget.registeredPetViewModel.age} ${AppStrings.yrs.tr()}',
+                                        '${widget.pet.age} ${AppStrings.yrs.tr()}',
                                         style: const TextStyle(
                                             fontWeight: FontWeight.w600,
                                             fontSize: FontSize.s12,
@@ -191,8 +190,7 @@ class PetDetailsState extends State<PetDetails> {
                                           MaterialTapTargetSize.shrinkWrap,
                                     ),
                                     label: Text(
-                                      k_m_b_generator(widget
-                                          .registeredPetViewModel.likes.length),
+                                      k_m_b_generator(widget.pet.likes.length),
                                       style: const TextStyle(color: Colors.red),
                                     ),
                                     icon: const Icon(
@@ -231,8 +229,7 @@ class PetDetailsState extends State<PetDetails> {
                                 // key: UniqueKey(),
                                 fit: BoxFit.cover,
                                 cacheManager: customCacheManager,
-                                imageUrl:
-                                    widget.registeredPetViewModel.ownerPhotoUrl,
+                                imageUrl: widget.pet.ownerPhotoUrl,
                                 // maxHeightDiskCache: 50,
                                 // height: 100,
                                 // width: 100,
@@ -260,7 +257,7 @@ class PetDetailsState extends State<PetDetails> {
                                 crossAxisAlignment: CrossAxisAlignment.baseline,
                                 children: [
                                   Text(
-                                    widget.registeredPetViewModel.owner,
+                                    widget.pet.owner,
                                     style: TextStyle(
                                         fontSize: 22,
                                         fontWeight: FontWeight.w600,
@@ -285,7 +282,7 @@ class PetDetailsState extends State<PetDetails> {
                                   color: const Color(0xffffe4c4),
                                 ),
                                 child: Text(
-                                  widget.registeredPetViewModel.petPrice,
+                                  widget.pet.petPrice,
                                   style: const TextStyle(
                                       fontWeight: FontWeight.w600,
                                       fontSize: FontSize.s12,
@@ -310,7 +307,7 @@ class PetDetailsState extends State<PetDetails> {
                         height: 5,
                       ),
                       Text(
-                        widget.registeredPetViewModel.reason,
+                        widget.pet.reason,
                         style:
                             const TextStyle(fontSize: 16, color: Colors.grey),
                       ),

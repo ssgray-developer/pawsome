@@ -11,7 +11,7 @@ class PetModel {
   final String petPrice;
   final String reason;
   final Map<String, dynamic> location;
-  final FieldValue date;
+  final Timestamp? date;
   final String owner;
   final String ownerUid;
   final String ownerEmail;
@@ -65,9 +65,9 @@ class PetModel {
       "petClass": petClass,
       "petSpecies": petSpecies,
       "petPrice": petPrice,
-      "description": reason,
+      "reason": reason,
       "location": location,
-      "date": date,
+      "date": date ?? FieldValue.serverTimestamp(),
       "owner": owner,
       "ownerUid": ownerUid,
       "ownerEmail": ownerEmail,
@@ -89,7 +89,7 @@ extension PetModelToEntity on PetModel {
       petPrice: petPrice,
       reason: reason,
       location: location,
-      date: date,
+      date: date?.toDate(),
       owner: owner,
       ownerUid: ownerUid,
       ownerEmail: ownerEmail,

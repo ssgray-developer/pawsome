@@ -8,7 +8,9 @@ import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:pawsome/core/theme/app_strings.dart';
 import 'package:pawsome/core/theme/app_values.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:pawsome/presentation/profile/bloc/register_pet_cubit.dart';
 import 'package:pawsome/presentation/profile/pages/pet_adoption_listing.dart';
+import '../../../service_locator.dart';
 import '../../bloc/auth/auth_cubit.dart';
 import '../widgets/profile_list_tile.dart';
 
@@ -150,7 +152,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       title: context.tr(AppStrings.listYourPet),
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => const PetAdoptionListing()));
+                            builder: (context) => BlocProvider(
+                                  create: (context) => sl<RegisterPetCubit>(),
+                                  child: PetAdoptionListing(),
+                                )));
                       },
                     ),
                     Divider(

@@ -119,7 +119,7 @@ class _LoginScreenState extends State<LoginScreen> {
               BlocListener<AuthCubit, AuthState>(
                 listener: (context, state) {
                   if (state is AuthError) {
-                    var snackBar = SnackBar(
+                    final snackBar = SnackBar(
                       content: Text(
                         state.message,
                       ),

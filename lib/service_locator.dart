@@ -27,6 +27,7 @@ import 'package:pawsome/domain/location/usecases/get_location.dart';
 import 'package:pawsome/domain/pet/repository/pet.dart';
 import 'package:pawsome/domain/pet/usecases/listen_to_pet_adoption.dart';
 import 'package:pawsome/domain/pet/usecases/register_pet.dart';
+import 'package:pawsome/domain/pet/usecases/retrieve_single_pet.dart';
 import 'package:pawsome/presentation/adoption/bloc/adoption_cubit.dart';
 import 'package:pawsome/presentation/adoption/bloc/pet_list_view_selection_cubit.dart';
 import 'package:pawsome/presentation/bloc/app_update/app_update_cubit.dart';
@@ -91,7 +92,7 @@ Future<void> initializeDependencies() async {
   sl.registerFactory(() => AdoptionCubit(sl(), sl()));
   sl.registerFactory(() => AppUpdateCubit(sl(), sl()));
   sl.registerFactory(() => ImagePickerCubit(sl(), sl()));
-  sl.registerFactory(() => RegisterPetCubit(sl(), sl(), sl(), sl()));
+  sl.registerFactory(() => RegisterPetCubit(sl(), sl(), sl(), sl(), sl()));
 
   // Usecases
   sl.registerLazySingleton<ListenToAuthChangesUseCase>(
@@ -130,4 +131,6 @@ Future<void> initializeDependencies() async {
   sl.registerLazySingleton<RegisterPetUseCase>(() => RegisterPetUseCase(sl()));
   sl.registerLazySingleton<RegisterPetImageUseCase>(
       () => RegisterPetImageUseCase(sl()));
+  sl.registerLazySingleton<RetrieveSinglePetUseCase>(
+      () => RetrieveSinglePetUseCase(sl()));
 }

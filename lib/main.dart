@@ -105,6 +105,7 @@ class _MyAppState extends State<MyApp> {
           ),
           child: BlocBuilder<AuthCubit, AuthState>(
             builder: (context, state) {
+              print(state);
               if (state is AuthInitial || state is AuthLoading) {
                 return Scaffold(
                   backgroundColor: Colors.white,

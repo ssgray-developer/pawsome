@@ -39,13 +39,6 @@ class AdoptionFormField extends StatefulWidget {
 
 class _AdoptionFormFieldState extends State<AdoptionFormField> {
   @override
-  void dispose() {
-    widget.focusNode.dispose();
-    widget.controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
@@ -60,43 +53,45 @@ class _AdoptionFormFieldState extends State<AdoptionFormField> {
                   )
                 ]
               : null),
-      child: TextFormField(
+      child: Form(
         key: widget.globalKey,
-        textAlign: widget.isTextCentered ? TextAlign.center : TextAlign.start,
-        enableInteractiveSelection: widget.interactionEnabled,
-        inputFormatters: widget.isSeparatorNeeded
-            ? [
-                ThousandsSeparatorInputFormatter(),
-                FilteringTextInputFormatter.deny(RegExp(r'^0+')),
-                LengthLimitingTextInputFormatter(widget.maxCharacters)
-                // FilteringTextInputFormatter.digitsOnly
-              ]
-            : null,
-        keyboardType: widget.textInputType,
-        textInputAction: widget.textInputAction,
-        focusNode: widget.focusNode,
-        controller: widget.controller,
-        validator: widget.validator,
-        // style: const TextStyle(letterSpacing: AppSize.s5),
-        maxLines: widget.maxLines,
-        decoration: InputDecoration(
-          hintText: widget.hintText,
-          fillColor: Colors.white,
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.0),
-            borderSide: BorderSide(
-              color: widget.color,
+        child: TextFormField(
+          textAlign: widget.isTextCentered ? TextAlign.center : TextAlign.start,
+          enableInteractiveSelection: widget.interactionEnabled,
+          inputFormatters: widget.isSeparatorNeeded
+              ? [
+                  ThousandsSeparatorInputFormatter(),
+                  FilteringTextInputFormatter.deny(RegExp(r'^0+')),
+                  LengthLimitingTextInputFormatter(widget.maxCharacters)
+                  // FilteringTextInputFormatter.digitsOnly
+                ]
+              : null,
+          keyboardType: widget.textInputType,
+          textInputAction: widget.textInputAction,
+          focusNode: widget.focusNode,
+          controller: widget.controller,
+          validator: widget.validator,
+          // style: const TextStyle(letterSpacing: AppSize.s5),
+          maxLines: widget.maxLines,
+          decoration: InputDecoration(
+            hintText: widget.hintText,
+            fillColor: Colors.white,
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.0),
+              borderSide: BorderSide(
+                color: widget.color,
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.0),
+              borderSide: BorderSide(
+                color: widget.color,
+                width: 2.0,
+              ),
             ),
           ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.0),
-            borderSide: BorderSide(
-              color: widget.color,
-              width: 2.0,
-            ),
-          ),
+          onEditingComplete: widget.onEditingComplete,
         ),
-        onEditingComplete: widget.onEditingComplete,
       ),
     );
   }

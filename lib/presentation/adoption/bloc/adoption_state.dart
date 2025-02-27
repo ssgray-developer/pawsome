@@ -11,8 +11,8 @@ class AdoptionSuccess extends AdoptionState {
   AdoptionSuccess(this.pets);
 }
 
-class AdoptionFailure extends AdoptionState {
+class AdoptionError extends AdoptionState {
   final String error;
 
-  AdoptionFailure(this.error);
+  AdoptionError(this.error);
 }

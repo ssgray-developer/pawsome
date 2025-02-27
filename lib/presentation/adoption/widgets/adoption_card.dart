@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:pawsome/data/pet/models/pet_model.dart';
+import 'package:pawsome/domain/pet/entity/pet.dart';
 
 import '../../../core/theme/app_strings.dart';
 import '../../../core/utils/functions.dart';
@@ -11,10 +12,9 @@ import '../pages/pet_details.dart';
 import 'like_animation.dart';
 
 class AdoptionCard extends StatefulWidget {
-  final PetModel registeredPetModel;
+  final PetEntity pet;
   final int index;
-  const AdoptionCard(
-      {super.key, required this.registeredPetModel, required this.index});
+  const AdoptionCard({super.key, required this.pet, required this.index});
 
   @override
   State<AdoptionCard> createState() => _AdoptionCardState();
@@ -46,9 +46,8 @@ class _AdoptionCardState extends State<AdoptionCard> {
         onTap: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => PetDetails(
-                  registeredPetViewModel: widget.registeredPetModel,
-                  index: widget.index),
+              builder: (context) =>
+                  PetDetails(pet: widget.pet, index: widget.index),
             ),
           );
         },
@@ -74,7 +73,7 @@ class _AdoptionCardState extends State<AdoptionCard> {
                     child: CachedNetworkImage(
                       // key: UniqueKey(),
                       cacheManager: customCacheManager,
-                      imageUrl: widget.registeredPetModel.photoUrl,
+                      imageUrl: widget.pet.photoUrl,
                       // maxHeightDiskCache: 50,
                       // height: 100,
                       // width: 100,
@@ -107,21 +106,20 @@ class _AdoptionCardState extends State<AdoptionCard> {
                     //   ),
                     // ),
                     Text(
-                      widget.registeredPetModel.name,
+                      widget.pet.name,
                       style: const TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 16),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
-                      getName(context, widget.registeredPetModel.petSpecies),
+                      getName(context, widget.pet.petSpecies),
                       style: const TextStyle(fontSize: 12),
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
-                      (AppStrings.yearOld
-                          .plural(int.parse(widget.registeredPetModel.age))),
+                      (AppStrings.yearOld.plural(int.parse(widget.pet.age))),
                       style: const TextStyle(color: Colors.grey, fontSize: 12),
                     ),
                     Expanded(
@@ -148,7 +146,7 @@ class _AdoptionCardState extends State<AdoptionCard> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  widget.registeredPetModel.gender == 'Male'
+                  widget.pet.gender == 'Male'
                       ? const Icon(
                           Icons.male_rounded,
                           color: Colors.blue,
@@ -187,7 +185,7 @@ class _AdoptionCardState extends State<AdoptionCard> {
                     ),
                   ),
                   Text(
-                    k_m_b_generator(widget.registeredPetModel.likes.length),
+                    k_m_b_generator(widget.pet.likes.length),
                   ),
                 ],
               ),

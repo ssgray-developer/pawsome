@@ -7,10 +7,14 @@ class RegisterPetInitial extends RegisterPetState {}
 
 class RegisterPetLoading extends RegisterPetState {}
 
-class RegisterPetSuccessful extends RegisterPetState {}
+class RegisterPetSuccessful extends RegisterPetState {
+  final PetEntity pet;
 
-class RegisterPetFailure extends RegisterPetState {
+  RegisterPetSuccessful(this.pet);
+}
+
+class RegisterPetError extends RegisterPetState {
   final String message;
 
-  RegisterPetFailure(this.message);
+  RegisterPetError(this.message);
 }

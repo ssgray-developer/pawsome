@@ -19,9 +19,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
     return result.fold((error) {
       return Left(error);
-    }, (data) {
-      return Right(UserModel.fromJson(data).toEntity());
-    });
+    }, (data) => Right(UserModel.fromJson(data).toEntity()));
   }
 
   @override

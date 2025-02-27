@@ -35,7 +35,7 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
           await firebaseFirestore.collection('users').doc(userID).get();
       return Right(snapshot);
     } catch (e) {
-      return const Left('An unknown error has occurred.');
+      return Left('An unknown error has occurred.${e.toString()}');
     }
   }
 
@@ -104,7 +104,7 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
 
       return Right(googleSignInAccount);
     } catch (e) {
-      return const Left('Google sign in failure');
+      return Left('Google sign in failure:} ${e.toString()}');
     }
   }
 

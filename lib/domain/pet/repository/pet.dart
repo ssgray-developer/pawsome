@@ -8,4 +8,5 @@ abstract class PetRepository {
   Stream<Either> listenToPetAdoption(NearbyPetReq params);
   Future<Either> registerPet(PetEntity pet);
   Future<Either> registerPetImage(RegisterPetImageReq pet);
+  Future<Either> retrieveSinglePet(String docId);
 }

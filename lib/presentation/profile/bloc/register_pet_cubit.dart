@@ -5,9 +5,9 @@ import 'package:pawsome/data/pet/models/register_pet_image_req.dart';
 import 'package:pawsome/domain/auth/usecases/get_user_details.dart';
 import 'package:pawsome/domain/location/usecases/get_location.dart';
 import 'package:pawsome/domain/pet/entity/pet.dart';
-import 'package:pawsome/domain/pet/repository/pet.dart';
 import 'package:pawsome/domain/pet/usecases/register_pet.dart';
 import 'package:pawsome/domain/pet/usecases/register_pet_image.dart';
+import 'package:pawsome/domain/pet/usecases/retrieve_single_pet.dart';
 
 import '../../../data/pet/models/pet_registration_req.dart';
 
@@ -18,23 +18,28 @@ class RegisterPetCubit extends Cubit<RegisterPetState> {
   final RegisterPetImageUseCase registerPetImageUseCase;
   final GetUserDetailsUseCase getUserDetailsUseCase;
   final GetLocationUseCase getLocationUseCase;
-  RegisterPetCubit(this.registerPetUseCase, this.registerPetImageUseCase,
-      this.getUserDetailsUseCase, this.getLocationUseCase)
+  final RetrieveSinglePetUseCase retrieveSinglePetUseCase;
+  RegisterPetCubit(
+      this.registerPetUseCase,
+      this.registerPetImageUseCase,
+      this.getUserDetailsUseCase,
+      this.getLocationUseCase,
+      this.retrieveSinglePetUseCase)
       : super(RegisterPetInitial());
 
   Future<void> registerPet(PetRegistrationReq petRegistrationReq) async {
     try {
       emit(RegisterPetLoading());
       final locationResult = await getLocationUseCase.call();
-      locationResult.fold((message) => emit(RegisterPetFailure(message)),
+      locationResult.fold((message) => emit(RegisterPetError(message)),
           (location) async {
         final userResult = await getUserDetailsUseCase.call();
-        userResult.fold((message) => emit(RegisterPetFailure(message)),
+        userResult.fold((message) => emit(RegisterPetError(message)),
             (user) async {
           final petImageUrlResult = await registerPetImageUseCase.call(
               params: RegisterPetImageReq(
                   image: petRegistrationReq.file, userUid: user.uid));
-          petImageUrlResult.fold((message) => emit(RegisterPetFailure(message)),
+          petImageUrlResult.fold((message) => emit(RegisterPetError(message)),
               (url) async {
             final pet = PetEntity(
                 photoUrl: url,
@@ -46,15 +51,21 @@ class RegisterPetCubit extends Cubit<RegisterPetState> {
                 petPrice: petRegistrationReq.price,
                 reason: petRegistrationReq.reason,
                 location: location,
-                date: FieldValue.serverTimestamp(),
+                date: Timestamp.now().toDate(),
                 owner: user.username,
                 ownerUid: user.uid,
                 ownerEmail: user.email,
                 ownerPhotoUrl: user.photoUrl,
                 likes: []);
-            final result = await registerPetUseCase.call(params: pet);
-            result.fold((message) => emit(RegisterPetFailure(message)),
-                (_) => emit(RegisterPetSuccessful()));
+            final registrationResult =
+                await registerPetUseCase.call(params: pet);
+            registrationResult.fold(
+                (message) => emit(RegisterPetError(message)), (docId) async {
+              final docIdResult =
+                  await retrieveSinglePetUseCase.call(params: docId);
+              docIdResult.fold((message) => emit(RegisterPetError(message)),
+                  (pet) => emit(RegisterPetSuccessful(pet)));
+            });
           });
         });
       });

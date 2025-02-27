@@ -11,7 +11,7 @@ class PetEntity {
   final String petPrice;
   final String reason;
   final Map<String, dynamic> location;
-  final FieldValue date;
+  final DateTime? date;
   final String owner;
   final String ownerUid;
   final String ownerEmail;
@@ -49,7 +49,7 @@ extension PetEntityToModel on PetEntity {
       petPrice: petPrice,
       reason: reason,
       location: location,
-      date: date,
+      date: date != null ? Timestamp.fromDate(date!) : null,
       owner: owner,
       ownerUid: ownerUid,
       ownerEmail: ownerEmail,

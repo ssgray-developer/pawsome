@@ -49,8 +49,12 @@ class AuthCubit extends Cubit<AuthState> {
   void listenToAuthChanges() {
     try {
       listenToAuthChangesUseCase().listen((event) {
-        event.fold((message) => emit(AuthError(message)), (user) async {
+        event.fold((message) {
+          print('error is ${message}');
+          emit(AuthError(message));
+        }, (user) async {
           if (user != null) {
+            print('hello');
             await getUserDetails();
           } else {
             // Emit unauthenticated state if no user
@@ -59,6 +63,7 @@ class AuthCubit extends Cubit<AuthState> {
         });
       });
     } catch (e) {
+      print('error is ${e.toString()}');
       emit(AuthError('An error occurred: ${e.toString()}'));
     }
   }
@@ -124,14 +129,18 @@ class AuthCubit extends Cubit<AuthState> {
       final result = await googleSignInUseCase.call();
 
       result.fold(
-        (message) => emit(AuthUnauthenticated()),
+        (message) {
+          print('error is $message');
+          emit(AuthUnauthenticated());
+        },
         (_) async {
           await saveAuthProviderUseCase.call(params: 'google');
           // emit(AuthAuthenticated());
         },
       );
     } catch (e) {
-      emit(AuthError('An error occurred: ${e.toString()}'));
+      print('error is ${e.toString()}');
+      emit(AuthError('An error occurred'));
     }
   }
 
@@ -171,7 +180,10 @@ class AuthCubit extends Cubit<AuthState> {
       final result = await getUserDetailsUseCase.call();
 
       result.fold(
-        (message) => emit(AuthError(message)),
+        (message) {
+          print('error is $message');
+          emit(AuthError(message));
+        },
         (user) => emit(AuthAuthenticated(user)),
       );
     } catch (e) {

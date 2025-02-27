@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:pawsome/data/pet/models/nearby_pet_req.dart';
 import 'package:pawsome/domain/location/usecases/get_location.dart';
+import 'package:pawsome/domain/pet/entity/pet.dart';
 import 'package:pawsome/domain/pet/usecases/listen_to_pet_adoption.dart';
 import 'package:pawsome/data/pet/models/pet_model.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,7 @@ class AdoptionCubit extends Cubit<AdoptionState> {
   final GetLocationUseCase getLocationUseCase;
 
   // Internal stream controller for holding the message stream
-  late Stream<List<PetModel>> petStream = const Stream.empty();
+  late Stream<List<PetEntity>> petStream = const Stream.empty();
   int distance = 5;
   late Position position;
 
@@ -32,7 +33,7 @@ class AdoptionCubit extends Cubit<AdoptionState> {
     locationResult.fold(
       (failure) {
         // If location fetching fails, emit the failure state
-        if (!isClosed) emit(AdoptionFailure(failure));
+        if (!isClosed) emit(AdoptionError(failure));
       },
       (newPosition) {
         // If location fetch is successful, update the position
@@ -45,7 +46,7 @@ class AdoptionCubit extends Cubit<AdoptionState> {
           return either.fold(
             (failure) {
               // Handle the failure case (you can return an empty list or other handling logic)
-              if (!isClosed) emit(AdoptionFailure(failure));
+              if (!isClosed) emit(AdoptionError(failure));
               return [];
             },
             (registeredPets) {

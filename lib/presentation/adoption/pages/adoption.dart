@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:pawsome/core/theme/app_colors.dart';
+import 'package:pawsome/domain/pet/entity/pet.dart';
 import 'package:pawsome/presentation/adoption/bloc/adoption_cubit.dart';
 import 'package:pawsome/presentation/adoption/bloc/pet_list_view_selection_cubit.dart';
 import 'package:pawsome/data/pet/models/pet_model.dart';
@@ -330,9 +331,9 @@ class _AdoptionScreenState extends State<AdoptionScreen>
                     builder: (context, state) {
                       if (state is AdoptionLoading) {}
 
-                      if (state is AdoptionFailure) {}
+                      if (state is AdoptionError) {}
 
-                      return StreamBuilder<List<PetModel>>(
+                      return StreamBuilder<List<PetEntity>>(
                         stream: context.read<AdoptionCubit>().petStream,
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
@@ -386,7 +387,7 @@ class _AdoptionScreenState extends State<AdoptionScreen>
                                   shrinkWrap: true,
                                   itemBuilder: (context, index) {
                                     return AdoptionCard(
-                                      registeredPetModel: pets[index],
+                                      pet: pets[index],
                                       index: index,
                                     );
                                   },

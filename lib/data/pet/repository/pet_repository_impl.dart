@@ -37,4 +37,15 @@ class PetRepositoryImpl implements PetRepository {
       return Left('Error: $e');
     }
   }
+
+  @override
+  Future<Either> retrieveSinglePet(String docId) async {
+    try {
+      final result = await petRemoteDataSource.retrieveSinglePet(docId);
+      return result.fold((error) => Left(error),
+          (data) => Right(PetModel.fromJson(data).toEntity()));
+    } catch (e) {
+      return Left('Error: $e');
+    }
+  }
 }
