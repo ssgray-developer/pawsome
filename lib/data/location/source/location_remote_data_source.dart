@@ -4,7 +4,7 @@ import 'package:geoflutterfire_plus/geoflutterfire_plus.dart';
 import 'package:geolocator/geolocator.dart';
 
 abstract class LocationService {
-  Future<Either> getLocation();
+  Future<Either<String, GeoFirePoint>> getLocation();
 }
 
 class LocationServiceImpl extends LocationService {
@@ -12,7 +12,7 @@ class LocationServiceImpl extends LocationService {
   late LocationPermission permission;
 
   @override
-  Future<Either> getLocation() async {
+  Future<Either<String, GeoFirePoint>> getLocation() async {
     try {
       serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
@@ -37,7 +37,7 @@ class LocationServiceImpl extends LocationService {
       final GeoFirePoint geoFirePoint =
           GeoFirePoint(GeoPoint(position.latitude, position.longitude));
 
-      return Right(geoFirePoint.data);
+      return Right(geoFirePoint);
     } catch (e) {
       return const Left('Unable to get location.');
     }

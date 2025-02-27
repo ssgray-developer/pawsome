@@ -27,7 +27,7 @@ class AdoptionScreen extends StatefulWidget {
 
 class _AdoptionScreenState extends State<AdoptionScreen>
     with SingleTickerProviderStateMixin {
-  final ScrollPhysics _physics = const BouncingScrollPhysics();
+  final ScrollPhysics physics = const BouncingScrollPhysics();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // final Geoflutterfire _geo = Geoflutterfire();
@@ -39,7 +39,7 @@ class _AdoptionScreenState extends State<AdoptionScreen>
   late Stream<List<DocumentSnapshot<Map<String, dynamic>>>> _stream;
 
   // late GeoFirePoint _center;
-  late ScrollController _scrollController;
+  late ScrollController scrollController;
 
   // Animated Icon
   late AnimationController animatedIconController;
@@ -53,14 +53,14 @@ class _AdoptionScreenState extends State<AdoptionScreen>
     super.initState();
     animatedIconController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 500));
-    _scrollController = ScrollController();
+    scrollController = ScrollController();
     // _scrollController.addListener(_scrollListener);
   }
 
   @override
   void dispose() {
     animatedIconController.dispose();
-    _scrollController.dispose();
+    scrollController.dispose();
     // _scrollController.removeListener(_scrollListener);
     super.dispose();
   }
@@ -252,7 +252,7 @@ class _AdoptionScreenState extends State<AdoptionScreen>
             create: (context) => sl<PetListViewSelectionCubit>(),
           ),
           BlocProvider<AdoptionCubit>(
-            create: (context) => sl<AdoptionCubit>()..updateLocation(),
+            create: (context) => sl<AdoptionCubit>()..adoptionStream(),
           ),
         ],
         child: SafeArea(
@@ -261,8 +261,8 @@ class _AdoptionScreenState extends State<AdoptionScreen>
             edgeOffset: 90,
             onRefresh: _refresh,
             child: SingleChildScrollView(
-              controller: _scrollController,
-              physics: _physics,
+              controller: scrollController,
+              physics: physics,
               child: Column(
                 children: [
                   const Padding(

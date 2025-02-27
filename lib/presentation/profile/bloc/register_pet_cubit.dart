@@ -50,7 +50,7 @@ class RegisterPetCubit extends Cubit<RegisterPetState> {
                 petSpecies: petRegistrationReq.species,
                 petPrice: petRegistrationReq.price,
                 reason: petRegistrationReq.reason,
-                location: location,
+                location: location.data,
                 date: Timestamp.now().toDate(),
                 owner: user.username,
                 ownerUid: user.uid,

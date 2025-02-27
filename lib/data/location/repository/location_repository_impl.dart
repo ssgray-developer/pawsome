@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:geoflutterfire_plus/geoflutterfire_plus.dart';
 import 'package:pawsome/data/location/source/location_remote_data_source.dart';
 import 'package:pawsome/domain/location/repository/location.dart';
 
@@ -8,7 +9,7 @@ class LocationRepositoryImpl implements LocationRepository {
   LocationRepositoryImpl(this.locationService);
 
   @override
-  Future<Either> getPosition() async {
+  Future<Either<String, GeoFirePoint>> getPosition() async {
     return await locationService.getLocation();
   }
 }

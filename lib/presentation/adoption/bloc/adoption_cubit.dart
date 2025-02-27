@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:geoflutterfire_plus/geoflutterfire_plus.dart';
 import 'package:pawsome/data/pet/models/nearby_pet_req.dart';
 import 'package:pawsome/domain/location/usecases/get_location.dart';
 import 'package:pawsome/domain/pet/entity/pet.dart';
@@ -16,14 +16,12 @@ class AdoptionCubit extends Cubit<AdoptionState> {
   // Internal stream controller for holding the message stream
   late Stream<List<PetEntity>> petStream = const Stream.empty();
   int distance = 5;
-  late Position position;
+  late GeoFirePoint position;
 
   AdoptionCubit(this.listenToPetAdoptionUseCase, this.getLocationUseCase)
-      : super(AdoptionLoading()) {
-    _initializeLocationAndStream();
-  }
+      : super(AdoptionLoading());
 
-  Future<void> _initializeLocationAndStream() async {
+  Future<void> adoptionStream() async {
     // Emit loading state first
     emit(AdoptionLoading());
 
@@ -37,7 +35,6 @@ class AdoptionCubit extends Cubit<AdoptionState> {
       },
       (newPosition) {
         // If location fetch is successful, update the position
-        position = newPosition;
 
         // Now start listening to pet adoption stream
         petStream = listenToPetAdoptionUseCase(
@@ -45,19 +42,14 @@ class AdoptionCubit extends Cubit<AdoptionState> {
             .map((either) {
           return either.fold(
             (failure) {
-              // Handle the failure case (you can return an empty list or other handling logic)
               if (!isClosed) emit(AdoptionError(failure));
               return [];
             },
             (registeredPets) {
-              // Transform the successful response into a list of RegisteredPetModel
               if (registeredPets.isEmpty) {
                 return [];
               }
-              return registeredPets
-                  .map((pets) =>
-                      PetModel.fromJson(pets)) // Mapping each pet data
-                  .toList();
+              return registeredPets;
             },
           );
         });
@@ -69,7 +61,7 @@ class AdoptionCubit extends Cubit<AdoptionState> {
     );
   }
 
-  Future<Either<String, Position>> updateLocation() async {
+  Future<Either<String, GeoFirePoint>> updateLocation() async {
     final result = await getLocationUseCase.call();
     return result.fold(
       (failure) => Left(failure),

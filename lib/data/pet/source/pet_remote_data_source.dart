@@ -10,7 +10,8 @@ import 'package:uuid/uuid.dart';
 import '../models/nearby_pet_req.dart';
 
 abstract class PetRemoteDataSource {
-  Stream<Either> listenToPetAdoption(NearbyPetReq nearbyPet);
+  Stream<Either<String, List<PetModel>>> listenToPetAdoption(
+      NearbyPetReq nearbyPet);
   Future<Either> registerPet(PetModel pet);
   Future<Either> registerPetImage(RegisterPetImageReq pet);
   Future<Either> retrieveSinglePet(String docId);
@@ -23,35 +24,45 @@ class PetRemoteDataSourceImpl extends PetRemoteDataSource {
   PetRemoteDataSourceImpl(this.firebaseFirestore, this.firebaseStorage);
 
   @override
-  Stream<Either> listenToPetAdoption(NearbyPetReq nearbyPet) {
+  Stream<Either<String, List<PetModel>>> listenToPetAdoption(
+      NearbyPetReq nearbyPet) {
     try {
       CollectionReference collectionReference =
           firebaseFirestore.collection('registeredPets');
-      GeoPoint location =
-          GeoPoint(nearbyPet.position.latitude, nearbyPet.position.longitude);
-      GeoFirePoint center = GeoFirePoint(location);
+      GeoFirePoint center = nearbyPet.position;
       queryBuilder(Query<Object?> query) {
         return query.where('petClass', isEqualTo: nearbyPet.pet);
       }
 
-      GeoPoint geopointFrom(Object? data) {
-        // Safely cast `data` to `Map<String, dynamic>` inside the function
+      GeoPoint geoPointFrom(Object? data) {
         final mapData = data as Map<String, dynamic>;
-        return mapData['geo']['geopoint'] as GeoPoint;
+        // print(mapData);
+        return (mapData['location'] as Map<String, dynamic>)['geopoint']
+            as GeoPoint;
       }
 
-      Stream stream = GeoCollectionReference(collectionReference)
-          .subscribeWithinWithDistance(
-              center: center,
-              radiusInKm: nearbyPet.radius.toDouble(),
-              field: 'location',
-              strictMode: true,
-              queryBuilder: queryBuilder,
-              geopointFrom: geopointFrom);
+      Stream<List<GeoDocumentSnapshot>> stream =
+          GeoCollectionReference(collectionReference)
+              .subscribeWithinWithDistance(
+                  center: center,
+                  radiusInKm: nearbyPet.radius.toDouble(),
+                  field: 'location',
+                  strictMode: true,
+                  queryBuilder: queryBuilder,
+                  geopointFrom: geoPointFrom);
 
-      return stream.map((event) => Right<String, dynamic>(event));
+      return stream.map((event) {
+        return Right(
+          event.map((snapshot) {
+            // Ensure data is retrieved as a Map<String, dynamic>
+            final documentData = snapshot.documentSnapshot.data();
+            return PetModel.fromJson(documentData);
+          }).toList(),
+        );
+      });
     } catch (e) {
-      return Stream.value(Left<String, dynamic>('Error: $e'));
+      // Return an error message wrapped in Left
+      return Stream.value(Left<String, List<PetModel>>('Error: $e'));
     }
   }
 

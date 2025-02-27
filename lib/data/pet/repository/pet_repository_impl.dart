@@ -15,8 +15,17 @@ class PetRepositoryImpl implements PetRepository {
   PetRepositoryImpl(this.petRemoteDataSource);
 
   @override
-  Stream<Either> listenToPetAdoption(NearbyPetReq nearbyPet) {
-    return petRemoteDataSource.listenToPetAdoption(nearbyPet);
+  Stream<Either<String, List<PetEntity>>> listenToPetAdoption(
+      NearbyPetReq nearbyPet) {
+    return petRemoteDataSource.listenToPetAdoption(nearbyPet).map((either) {
+      return either.fold((error) => Left(error), (data) {
+        final petEntities = data.map((item) {
+          return item.toEntity();
+        }).toList();
+
+        return Right(petEntities);
+      });
+    });
   }
 
   @override
