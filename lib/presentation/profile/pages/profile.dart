@@ -154,7 +154,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => BlocProvider(
                                   create: (context) => sl<RegisterPetCubit>(),
-                                  child: PetAdoptionListing(),
+                                  child: const PetAdoptionListing(),
                                 )));
                       },
                     ),

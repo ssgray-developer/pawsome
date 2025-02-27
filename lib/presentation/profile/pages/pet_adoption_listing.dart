@@ -101,6 +101,12 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
     super.dispose();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    context.read<ImagePickerCubit>().clearImage();
+  }
+
   void petClassSelected(String? value) {
     firstSpeciesKey.currentState
         ?.changeSelectedItem(context.tr(AppStrings.unknown));
@@ -131,10 +137,10 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
           age: petAgeTextEditingController.text.trim(),
           petClass: petClassKey.currentState!.getSelectedItem!,
           species: firstSpeciesKey.currentState!.getSelectedItem! +
-                      secondSpeciesKey.currentState!.getSelectedItem! ==
-                  context.tr(AppStrings.unknown)
-              ? ''
-              : ' & ${secondSpeciesKey.currentState!.getSelectedItem!}',
+              (secondSpeciesKey.currentState!.getSelectedItem! ==
+                      context.tr(AppStrings.unknown)
+                  ? ''
+                  : ' & ${secondSpeciesKey.currentState!.getSelectedItem!}'),
           currency: currencyCode,
           price: priceTextEditingController.text.trim(),
           reason: reasonTextEditingController.text.trim());
@@ -142,104 +148,6 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
       context.read<RegisterPetCubit>().registerPet(petRegistrationReq);
     }
   }
-
-  // void registerPet(BuildContext context, String uid, String ownerName,
-  //     String ownerUid, String ownerEmail, String ownerPhotoUrl) async {
-  //   setState(() => isLoading = true);
-  //   if (image == null) {
-  //     showDialog(
-  //         context: context,
-  //         builder: (context) {
-  //           isLoading = false;
-  //           if (!Platform.isIOS) {
-  //             return AlertDialog(
-  //               title: Text(context.tr(AppStrings.errorRegister)),
-  //               content: Text(context.tr(AppStrings.selectPetImage)),
-  //             );
-  //           } else {
-  //             return CupertinoAlertDialog(
-  //               title: Text(context.tr(AppStrings.errorRegister)),
-  //               content: Text(context.tr(AppStrings.selectPetImage)),
-  //             );
-  //           }
-  //         });
-  //     return;
-  //   } else if (petNameTextEditingController.text.trim().isEmpty) {
-  //     scrollToField(petNameFocusNode, 0);
-  //   } else if (petAgeTextEditingController.text.trim().isEmpty) {
-  //     scrollToField(petAgeFocusNode, 80);
-  //   } else if (currencyCode == '-') {
-  //     popCurrencyPicker();
-  //   } else if (priceTextEditingController.text.trim().isEmpty) {
-  //     scrollToField(priceFocusNode, null);
-  //   } else if (descriptionTextEditingController.text.trim().isEmpty) {
-  //     scrollToField(reasonFocusNode, null);
-  //   } else {
-  //   try {
-  //     if (await checkConnectivity()) {
-  //       Position currentLocation = await LocationModel.determinePosition();
-  //       await FirestoreMethods.uploadRegisteredPet(
-  //               _image!,
-  //               uid,
-  //               selectedGender.name,
-  //               petNameTextEditingController.text.trim(),
-  //               petAgeTextEditingController.text,
-  //               selectedPetClass,
-  //               getPetSpecies(),
-  //               getPetPrice(),
-  //               descriptionTextEditingController.text.trim(),
-  //               ownerName,
-  //               ownerUid,
-  //               ownerEmail,
-  //               currentLocation,
-  //               ownerPhotoUrl)
-  //           .then((value) {
-  //         if (value == 'success') {
-  //           Navigator.pop(context, AppStrings.petRegisteredSuccessfully.tr());
-  //         } else {
-  //           // showSnackBar(context, value, defaultColor: false);
-  //         }
-  //       });
-  //     } else {
-  //       // showSnackBar(context, AppStrings.noConnection.tr(),
-  //       //     defaultColor: false);
-  //     }
-  //   } catch (e) {
-  //     // showSnackBar(context, e.toString(), defaultColor: false);
-  //   }
-  //   }
-  //   setState(() => isLoading = false);
-  // }
-
-  // String getPetSpecies() {
-  // if (isHybrid == false ||
-  //     secondSpeciesKey.currentState!.getSelectedItem! ==
-  //         AppStrings.unknown.tr()) {
-  //   final int index = selectedSpeciesList.indexWhere((element) =>
-  //       element == firstSpeciesKey.currentState!.getSelectedItem!);
-  //   final String firstSpeciesValue =
-  //       animalMap[selectedPetClass.tr()]![1][index];
-  //   return firstSpeciesValue;
-  // } else if (firstSpeciesKey.currentState!.getSelectedItem! ==
-  //     secondSpeciesKey.currentState!.getSelectedItem!) {
-  //   final int index = _selectedSpeciesList.indexWhere((element) =>
-  //       element == firstSpeciesKey.currentState!.getSelectedItem!);
-  //   final String firstSpeciesValue =
-  //       animalMap[selectedPetClass.tr()]![1][index];
-  //   return firstSpeciesValue;
-  // } else {
-  //   final int firstIndex = _selectedSpeciesList.indexWhere((element) =>
-  //       element == firstSpeciesKey.currentState!.getSelectedItem!);
-  //   final int secondIndex = _selectedSpeciesList.indexWhere((element) =>
-  //       element == secondSpeciesKey.currentState!.getSelectedItem!);
-  //   final String firstSpeciesValue =
-  //       animalMap[selectedPetClass.tr()]![1][firstIndex];
-  //   final String secondSpeciesValue =
-  //       animalMap[selectedPetClass.tr()]![1][secondIndex];
-  //
-  //   return '$firstSpeciesValue & $secondSpeciesValue';
-  // }
-  // }
 
   void popCurrencyPicker() {
     showCurrencyPicker(
@@ -320,6 +228,8 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
 
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         } else if (state is RegisterPetSuccessful) {
+          context.read<ImagePickerCubit>().clearImage();
+
           Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (context) => PetDetails(
               pet: state.pet,
@@ -335,6 +245,7 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
                 leading: BackButton(
                   onPressed: () {
                     Navigator.pop(context);
+                    context.read<ImagePickerCubit>().clearImage();
                   },
                 ),
                 title: Text(context.tr(AppStrings.registerAdoption)),

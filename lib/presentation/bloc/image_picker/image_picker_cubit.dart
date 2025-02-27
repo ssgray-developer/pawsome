@@ -28,4 +28,8 @@ class ImagePickerCubit extends Cubit<ImagePickerState> {
       },
     );
   }
+
+  void clearImage() {
+    emit(ImagePickerInitial());
+  }
 }
