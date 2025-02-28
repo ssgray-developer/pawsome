@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../../core/theme/app_colors.dart';
+
 class AdoptionFormField extends StatefulWidget {
   final GlobalKey globalKey;
   final FocusNode focusNode;
@@ -89,6 +91,13 @@ class _AdoptionFormFieldState extends State<AdoptionFormField> {
                 width: 2.0,
               ),
             ),
+            errorStyle: TextStyle(color: AppColors.red),
+            errorBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: AppColors.red, width: 2),
+                borderRadius: BorderRadius.circular(12.0)),
+            focusedErrorBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: AppColors.red, width: 2),
+                borderRadius: BorderRadius.circular(12.0)),
           ),
           onEditingComplete: widget.onEditingComplete,
         ),

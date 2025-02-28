@@ -16,6 +16,7 @@ import '../core/theme/app_colors.dart';
 import '../core/theme/app_languages.dart';
 import '../firebase_options.dart';
 import '../service_locator.dart';
+import 'core/utils/navigator_observer.dart';
 
 Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -51,6 +52,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
   String getCountryCodeFromDevice() {
     Locale currentLocale = WidgetsBinding.instance.platformDispatcher.locale;
     String countryCode = currentLocale.countryCode ?? 'US';
@@ -91,6 +94,10 @@ class _MyAppState extends State<MyApp> {
         locale: context.locale,
         debugShowCheckedModeBanner: false,
         title: 'Pawsome',
+        navigatorKey: navigatorKey, // Set the navigator key here
+        navigatorObservers: [
+          MyNavigatorObserver(navigatorKey) // Pass the context to the observer
+        ],
         home: UpgradeAlert(
           dialogStyle: Platform.isIOS
               ? UpgradeDialogStyle.cupertino
@@ -105,7 +112,6 @@ class _MyAppState extends State<MyApp> {
           ),
           child: BlocBuilder<AuthCubit, AuthState>(
             builder: (context, state) {
-              print(state);
               if (state is AuthInitial || state is AuthLoading) {
                 return Scaffold(
                   backgroundColor: Colors.white,

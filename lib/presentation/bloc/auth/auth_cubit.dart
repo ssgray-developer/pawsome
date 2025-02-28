@@ -50,11 +50,9 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       listenToAuthChangesUseCase().listen((event) {
         event.fold((message) {
-          print('error is ${message}');
           emit(AuthError(message));
         }, (user) async {
           if (user != null) {
-            print('hello');
             await getUserDetails();
           } else {
             // Emit unauthenticated state if no user
@@ -63,7 +61,6 @@ class AuthCubit extends Cubit<AuthState> {
         });
       });
     } catch (e) {
-      print('error is ${e.toString()}');
       emit(AuthError('An error occurred: ${e.toString()}'));
     }
   }
@@ -130,7 +127,6 @@ class AuthCubit extends Cubit<AuthState> {
 
       result.fold(
         (message) {
-          print('error is $message');
           emit(AuthUnauthenticated());
         },
         (_) async {
@@ -139,7 +135,6 @@ class AuthCubit extends Cubit<AuthState> {
         },
       );
     } catch (e) {
-      print('error is ${e.toString()}');
       emit(AuthError('An error occurred'));
     }
   }
@@ -181,7 +176,6 @@ class AuthCubit extends Cubit<AuthState> {
 
       result.fold(
         (message) {
-          print('error is $message');
           emit(AuthError(message));
         },
         (user) => emit(AuthAuthenticated(user)),

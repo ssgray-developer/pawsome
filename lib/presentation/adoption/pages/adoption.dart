@@ -9,14 +9,12 @@ import 'package:pawsome/core/theme/app_colors.dart';
 import 'package:pawsome/domain/pet/entity/pet.dart';
 import 'package:pawsome/presentation/adoption/bloc/adoption_cubit.dart';
 import 'package:pawsome/presentation/adoption/bloc/pet_list_view_selection_cubit.dart';
-import 'package:pawsome/data/pet/models/pet_model.dart';
 import 'package:pawsome/presentation/adoption/widgets/pet_list_view.dart';
 import 'package:pawsome/presentation/adoption/widgets/search_textfield.dart';
 
 import '../../../core/theme/app_strings.dart';
 import '../../../service_locator.dart';
 import '../widgets/adoption_card.dart';
-import '../widgets/custom_app_bar.dart';
 
 class AdoptionScreen extends StatefulWidget {
   const AdoptionScreen({super.key});
@@ -358,7 +356,6 @@ class _AdoptionScreenState extends State<AdoptionScreen>
                               ),
                             );
                           } else if (snapshot.hasError) {
-                            print(snapshot.error);
                             return Center(
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
