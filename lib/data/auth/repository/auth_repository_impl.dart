@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pawsome/data/auth/models/user.dart';
 import 'package:pawsome/data/auth/source/auth_local_data_source.dart';
+import '../../../core/utils/failure.dart';
 import '../../../domain/auth/entity/user.dart';
 import '../../../domain/auth/repository/auth.dart';
 import '../models/user_sign_in_req.dart';
@@ -14,12 +15,17 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl(this.authRemoteDataSource, this.authLocalDataSource);
 
   @override
-  Future<Either<String, UserEntity>> getUserDetails() async {
+  Future<Either> getUserDetails() async {
     final result = await authRemoteDataSource.getUserDetails();
 
     return result.fold((error) {
       return Left(error);
-    }, (data) => Right(UserModel.fromJson(data).toEntity()));
+    }, (data) {
+      if (data.data() != null) {
+        return Right(UserModel.fromJson(data).toEntity());
+      }
+      return const Left('User data is not found.');
+    });
   }
 
   @override
@@ -70,5 +76,10 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Either> sendPasswordResetEmail(String email) async {
     return await authRemoteDataSource.sendPasswordResetEmail(email);
+  }
+
+  @override
+  Future<Either> registerUser(UserEntity user) async {
+    return await authRemoteDataSource.registerUser(user.toModel());
   }
 }

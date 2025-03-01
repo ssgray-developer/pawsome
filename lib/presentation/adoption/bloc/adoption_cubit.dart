@@ -5,7 +5,6 @@ import 'package:pawsome/data/pet/models/nearby_pet_req.dart';
 import 'package:pawsome/domain/location/usecases/get_location.dart';
 import 'package:pawsome/domain/pet/entity/pet.dart';
 import 'package:pawsome/domain/pet/usecases/listen_to_pet_adoption.dart';
-import 'package:pawsome/data/pet/models/pet_model.dart';
 import 'package:flutter/material.dart';
 part 'adoption_state.dart';
 
@@ -15,28 +14,23 @@ class AdoptionCubit extends Cubit<AdoptionState> {
 
   // Internal stream controller for holding the message stream
   late Stream<List<PetEntity>> petStream = const Stream.empty();
-  int distance = 5;
+  int distance = 1;
   late GeoFirePoint position;
 
   AdoptionCubit(this.listenToPetAdoptionUseCase, this.getLocationUseCase)
-      : super(AdoptionLoading());
+      : super(AdoptionInitial());
 
   Future<void> adoptionStream() async {
     // Emit loading state first
-    emit(AdoptionLoading());
 
     // Fetch the current location
     final locationResult = await updateLocation();
 
     locationResult.fold(
       (failure) {
-        // If location fetching fails, emit the failure state
         if (!isClosed) emit(AdoptionError(failure));
       },
-      (newPosition) {
-        // If location fetch is successful, update the position
-
-        // Now start listening to pet adoption stream
+      (_) {
         petStream = listenToPetAdoptionUseCase(
                 params: NearbyPetReq(position: position, radius: distance))
             .map((either) {
@@ -46,6 +40,7 @@ class AdoptionCubit extends Cubit<AdoptionState> {
               return [];
             },
             (registeredPets) {
+              emit(AdoptionSuccess());
               if (registeredPets.isEmpty) {
                 return [];
               }

@@ -327,7 +327,27 @@ class _AdoptionScreenState extends State<AdoptionScreen>
                   ),
                   BlocBuilder<AdoptionCubit, AdoptionState>(
                     builder: (context, state) {
-                      if (state is AdoptionLoading) {}
+                      print(state);
+                      if (state is AdoptionLoading) {
+                        return Center(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 25, vertical: 10),
+                            child: Container(
+                                padding: const EdgeInsets.all(10.0),
+                                height: 120.0,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  color: Theme.of(context).colorScheme.surface,
+                                ),
+                                child: Center(
+                                  child: SpinKitThreeBounce(
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                )),
+                          ),
+                        );
+                      }
 
                       if (state is AdoptionError) {}
 

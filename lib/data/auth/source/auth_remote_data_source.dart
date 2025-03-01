@@ -3,11 +3,13 @@ import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:pawsome/core/utils/failure.dart';
+import 'package:pawsome/data/auth/models/user.dart';
 import '../models/user_sign_in_req.dart';
 
 abstract class AuthRemoteDataSource {
   Stream<User?> listenToAuthChanges();
-  Future<Either> getUserDetails();
+  Future<Either<Failure, DocumentSnapshot>> getUserDetails();
   Future<Either> signOut();
   Future<Either> signIn(UserSignInReq user);
   Future<Either> signInWithGoogle();
@@ -15,8 +17,10 @@ abstract class AuthRemoteDataSource {
   Future<Either> signInWithFacebook();
   Future<Either> signOutFromFacebook();
   Future<Either> sendPasswordResetEmail(String email);
+  Future<Either> registerUser(UserModel user);
 }
 
+//TODO: Utilize failure class
 class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
   final GoogleSignIn googleSignIn;
   final FirebaseAuth firebaseAuth;
@@ -27,15 +31,15 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
       this.facebookAuth, this.firebaseFirestore);
 
   @override
-  Future<Either> getUserDetails() async {
+  Future<Either<Failure, DocumentSnapshot>> getUserDetails() async {
     try {
       String userID = firebaseAuth.currentUser?.uid ?? '';
-      if (userID.isEmpty) return const Left('User is not logged in.');
+      if (userID.isEmpty) return Left(Failure('User is not logged in.'));
       DocumentSnapshot snapshot =
           await firebaseFirestore.collection('users').doc(userID).get();
       return Right(snapshot);
     } catch (e) {
-      return Left('An unknown error has occurred.${e.toString()}');
+      return Left(Failure('An unknown error has occurred.${e.toString()}'));
     }
   }
 
@@ -43,6 +47,7 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
   Future<Either> signOut() async {
     try {
       await firebaseAuth.signOut();
+      print('signed out');
       return const Right('Sign out successfully.');
     } catch (e) {
       return const Left('An unknown error has occurred.');
@@ -88,7 +93,7 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
   }
 
   @override
-  Future<Either> signInWithGoogle() async {
+  Future<Either<String, GoogleSignInAccount>> signInWithGoogle() async {
     try {
       GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
 
@@ -184,6 +189,19 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
         message = 'Error sending password reset email: ${e.message}';
       }
       return Left(message);
+    }
+  }
+
+  @override
+  Future<Either> registerUser(UserModel user) async {
+    try {
+      await firebaseFirestore
+          .collection('users')
+          .doc(user.uid)
+          .set(user.toJson());
+      return const Right('User registered successfully.');
+    } catch (e) {
+      return Left('User registration error: ${e.toString()}');
     }
   }
 }

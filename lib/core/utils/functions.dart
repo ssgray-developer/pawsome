@@ -98,3 +98,7 @@ String compareUserId(String firstId, String secondId) {
   }
   return res;
 }
+
+String getNameFromEmail(String email) {
+  return email.split('@').first;
+}

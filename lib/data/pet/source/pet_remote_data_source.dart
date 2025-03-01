@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -36,7 +34,7 @@ class PetRemoteDataSourceImpl extends PetRemoteDataSource {
 
       GeoPoint geoPointFrom(Object? data) {
         final mapData = data as Map<String, dynamic>;
-        // print(mapData);
+        print(mapData);
         return (mapData['location'] as Map<String, dynamic>)['geopoint']
             as GeoPoint;
       }

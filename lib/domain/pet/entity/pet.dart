@@ -37,7 +37,7 @@ class PetEntity {
   });
 }
 
-extension PetEntityToModel on PetEntity {
+extension PetEntityXModel on PetEntity {
   PetModel toModel() {
     return PetModel(
       photoUrl: photoUrl,

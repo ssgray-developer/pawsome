@@ -1,3 +1,5 @@
+import 'package:pawsome/data/auth/models/user.dart';
+
 class UserEntity {
   final String email;
   final String uid;
@@ -15,4 +17,17 @@ class UserEntity {
       required this.username,
       required this.petList,
       required this.isSuspended});
+}
+
+extension UserXModel on UserEntity {
+  UserModel toModel() {
+    return UserModel(
+        email: email,
+        uid: uid,
+        photoUrl: photoUrl,
+        chatId: chatId,
+        username: username,
+        petList: petList,
+        isSuspended: isSuspended);
+  }
 }

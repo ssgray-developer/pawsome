@@ -20,6 +20,7 @@ import 'package:pawsome/domain/app/usecases/retrieve_lost_data.dart';
 import 'package:pawsome/domain/auth/usecases/get_auth_provider.dart';
 import 'package:pawsome/domain/auth/usecases/get_user_details.dart';
 import 'package:pawsome/domain/auth/usecases/listen_to_auth_changes.dart';
+import 'package:pawsome/domain/auth/usecases/register_user.dart';
 import 'package:pawsome/domain/auth/usecases/send_password_reset_email.dart';
 import 'package:pawsome/domain/auth/usecases/save_auth_provider.dart';
 import 'package:pawsome/domain/location/repository/location.dart';
@@ -86,7 +87,7 @@ Future<void> initializeDependencies() async {
 
   // Cubit
   sl.registerFactory<AuthCubit>(() => AuthCubit(
-      sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()));
+      sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()));
   sl.registerFactory(() => ConnectivityCubit());
   sl.registerFactory(() => PetListViewSelectionCubit());
   sl.registerFactory(() => AdoptionCubit(sl(), sl()));
@@ -133,4 +134,6 @@ Future<void> initializeDependencies() async {
       () => RegisterPetImageUseCase(sl()));
   sl.registerLazySingleton<RetrieveSinglePetUseCase>(
       () => RetrieveSinglePetUseCase(sl()));
+  sl.registerLazySingleton<RegisterUserUseCase>(
+      () => RegisterUserUseCase(sl()));
 }

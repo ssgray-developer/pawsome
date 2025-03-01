@@ -31,6 +31,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
     getAppVersion();
   }
 
+  Future<void> signOut() async {
+    await context.read<AuthCubit>().signOut();
+
+    // Use Future.delayed or navigate safely after the async operation
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        // Safe to call Phoenix.rebirth(context) after the async operation completes
+        Phoenix.rebirth(context);
+      }
+    });
+  }
+
   Future<void> getAppVersion() async {
     final PackageInfo packageInfo = await PackageInfo.fromPlatform();
     setState(() {
@@ -202,16 +214,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       height: 30,
                     ),
                     TextButton(
-                      onPressed: () async {
-                        await context.read<AuthCubit>().signOut();
-
-                        // Use Future.delayed or navigate safely after the async operation
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          if (mounted) {
-                            // Safe to call Phoenix.rebirth(context) after the async operation completes
-                            Phoenix.rebirth(context);
-                          }
-                        });
+                      onPressed: () {
+                        signOut();
                       },
                       style: TextButton.styleFrom(padding: EdgeInsets.zero),
                       child: Text(

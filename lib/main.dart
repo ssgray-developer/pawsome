@@ -112,6 +112,7 @@ class _MyAppState extends State<MyApp> {
           ),
           child: BlocBuilder<AuthCubit, AuthState>(
             builder: (context, state) {
+              print(state);
               if (state is AuthInitial || state is AuthLoading) {
                 return Scaffold(
                   backgroundColor: Colors.white,
@@ -126,6 +127,7 @@ class _MyAppState extends State<MyApp> {
               } else if (state is AuthUnauthenticated) {
                 return const LoginScreen();
               } else if (state is AuthError) {
+                print(state.message);
                 return const LoginScreen();
               }
               return const LoginScreen();

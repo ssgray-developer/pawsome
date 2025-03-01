@@ -101,12 +101,6 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
     super.dispose();
   }
 
-  // @override
-  // void didChangeDependencies() {
-  //   super.didChangeDependencies();
-  //   context.read<ImagePickerCubit>().clearImage();
-  // }
-
   void petClassSelected(String? value) {
     firstSpeciesKey.currentState
         ?.changeSelectedItem(context.tr(AppStrings.unknown));
