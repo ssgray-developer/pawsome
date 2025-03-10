@@ -36,6 +36,11 @@ class PetModel {
     required this.likes,
   });
 
+  @override
+  String toString() {
+    return 'PetModel(id: $ownerUid, name: $name)';
+  }
+
   factory PetModel.fromJson(Map<String, dynamic> json) {
     return PetModel(
       photoUrl: json["photoUrl"],

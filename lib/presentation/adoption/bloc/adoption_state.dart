@@ -3,11 +3,15 @@ part of 'adoption_cubit.dart';
 @immutable
 abstract class AdoptionState {}
 
-class AdoptionInitial extends AdoptionState {}
-
 class AdoptionLoading extends AdoptionState {}
 
-class AdoptionSuccess extends AdoptionState {}
+class AdoptionEmpty extends AdoptionState {}
+
+class AdoptionSuccess extends AdoptionState {
+  final List<PetEntity> petList;
+
+  AdoptionSuccess(this.petList);
+}
 
 class AdoptionError extends AdoptionState {
   final String error;

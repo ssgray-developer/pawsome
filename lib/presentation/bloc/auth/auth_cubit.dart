@@ -54,7 +54,6 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       listenToAuthChangesUseCase().listen((user) async {
         if (user != null) {
-          print(user.email);
           await getUserDetails(user);
         } else {
           emit(AuthUnauthenticated());
@@ -87,8 +86,6 @@ class AuthCubit extends Cubit<AuthState> {
       if (currentState is AuthAuthenticated) {
         final authProvider = await getAuthProviderUseCase.call();
         authProvider.fold((message) {}, (result) async {
-          print(123);
-          print(result);
           switch (result) {
             case 'google':
               // Perform Google sign-out
@@ -129,7 +126,7 @@ class AuthCubit extends Cubit<AuthState> {
 
       googleResult.fold(
         (message) async {
-          emit(AuthUnauthenticated());
+          emit(AuthError(message));
         },
         (_) async {
           await saveAuthProviderUseCase.call(params: 'google');

@@ -13,17 +13,15 @@ class AdoptionCubit extends Cubit<AdoptionState> {
   final GetLocationUseCase getLocationUseCase;
 
   // Internal stream controller for holding the message stream
-  late Stream<List<PetEntity>> petStream = const Stream.empty();
-  int distance = 1;
+  // late Stream<List<PetEntity>> petStream = const Stream.empty();
+  int distance = 20;
   late GeoFirePoint position;
+  String? pet = 'Dog';
 
   AdoptionCubit(this.listenToPetAdoptionUseCase, this.getLocationUseCase)
-      : super(AdoptionInitial());
+      : super(AdoptionLoading());
 
   Future<void> adoptionStream() async {
-    // Emit loading state first
-
-    // Fetch the current location
     final locationResult = await updateLocation();
 
     locationResult.fold(
@@ -31,27 +29,16 @@ class AdoptionCubit extends Cubit<AdoptionState> {
         if (!isClosed) emit(AdoptionError(failure));
       },
       (_) {
-        petStream = listenToPetAdoptionUseCase(
-                params: NearbyPetReq(position: position, radius: distance))
-            .map((either) {
-          return either.fold(
-            (failure) {
-              if (!isClosed) emit(AdoptionError(failure));
-              return [];
-            },
-            (registeredPets) {
-              emit(AdoptionSuccess());
-              if (registeredPets.isEmpty) {
-                return [];
-              }
-              return registeredPets;
-            },
-          );
+        listenToPetAdoptionUseCase(
+                params: NearbyPetReq(
+                    position: position, radius: distance, pet: pet))
+            .listen((data) {
+          if (data.isEmpty) {
+            emit(AdoptionLoading());
+          } else {
+            emit(AdoptionSuccess(data));
+          }
         });
-
-        // Optionally emit success with initial empty list if you want to show
-        // initial loading before stream starts emitting results
-        if (!isClosed) emit(AdoptionLoading());
       },
     );
   }
@@ -67,10 +54,10 @@ class AdoptionCubit extends Cubit<AdoptionState> {
     );
   }
 
-  @override
-  Future<void> close() {
-    // Close the stream properly and perform any necessary cleanup
-    petStream = const Stream.empty();
-    return super.close();
-  }
+  // @override
+  // Future<void> close() {
+  //   // Close the stream properly and perform any necessary cleanup
+  //   petStream = const Stream.empty();
+  //   return super.close();
+  // }
 }

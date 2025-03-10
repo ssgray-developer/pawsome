@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pawsome/core/theme/app_colors.dart';
+import 'package:pawsome/presentation/adoption/bloc/adoption_cubit.dart';
 import 'package:pawsome/presentation/adoption/pages/adoption.dart';
 import 'package:pawsome/presentation/home/widgets/paw_button.dart';
 import 'package:pawsome/presentation/message/pages/message.dart';
 import 'package:pawsome/presentation/profile/pages/profile.dart';
 import 'package:pawsome/presentation/shorts/pages/shorts.dart';
 import 'package:pawsome/presentation/store/pages/store.dart';
+import '../../../service_locator.dart';
 import '../widgets/bnb_custom_painter.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -113,7 +116,10 @@ class _HomeScreenState extends State<HomeScreen>
       case 1:
         return const ShortsScreen();
       case 2:
-        return const AdoptionScreen();
+        return BlocProvider(
+          create: (context) => sl<AdoptionCubit>(),
+          child: const AdoptionScreen(),
+        );
       case 3:
         return const MessageScreen();
       default:

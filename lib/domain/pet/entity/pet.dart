@@ -35,6 +35,11 @@ class PetEntity {
     required this.ownerPhotoUrl,
     required this.likes,
   });
+
+  @override
+  String toString() {
+    return 'PetEntity(id: $ownerUid, name: $name)';
+  }
 }
 
 extension PetEntityXModel on PetEntity {

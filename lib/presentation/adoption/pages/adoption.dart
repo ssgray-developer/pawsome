@@ -347,85 +347,49 @@ class _AdoptionScreenState extends State<AdoptionScreen>
                                 )),
                           ),
                         );
+                      } else if (state is AdoptionError) {
+                        return Center(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 25, vertical: 10),
+                            child: Text(
+                              'Oops, seems like an error has occurred.',
+                              style: TextStyle(color: AppColors.black),
+                            ),
+                          ),
+                        );
+                      } else if (state is AdoptionSuccess) {
+                        // sortAdoptionList();
+                        // for (DocumentSnapshot document in adoptionCardList!) {
+                        //   print(document.data());
+                        // }
+                        return ListView.builder(
+                          padding: const EdgeInsets.all(0),
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: state.petList.length,
+                          scrollDirection: Axis.vertical,
+                          cacheExtent: 9999,
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            return AdoptionCard(
+                              pet: state.petList[index],
+                              index: index,
+                            );
+                          },
+                        );
+                      } else if (state is AdoptionEmpty) {
+                        return SizedBox(
+                          height: MediaQuery.of(context).size.height / 2,
+                          child: Center(
+                            child: Text(
+                              context.tr(AppStrings.noPetsNearby),
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                          ),
+                        );
+                      } else {
+                        return Container();
                       }
-
-                      if (state is AdoptionError) {}
-
-                      return StreamBuilder<List<PetEntity>>(
-                        stream: context.read<AdoptionCubit>().petStream,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return Center(
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 25, vertical: 10),
-                                child: Container(
-                                    padding: const EdgeInsets.all(10.0),
-                                    height: 120.0,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(15.0),
-                                      color:
-                                          Theme.of(context).colorScheme.surface,
-                                    ),
-                                    child: Center(
-                                      child: SpinKitThreeBounce(
-                                        color: Theme.of(context).primaryColor,
-                                      ),
-                                    )),
-                              ),
-                            );
-                          } else if (snapshot.hasError) {
-                            return Center(
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 25, vertical: 10),
-                                child: Text(
-                                  'Oops, seems like an error has occurred.',
-                                  style: TextStyle(color: AppColors.black),
-                                ),
-                              ),
-                            );
-                          } else if (snapshot.connectionState ==
-                              ConnectionState.active) {
-                            if (snapshot.hasData) {
-                              if (snapshot.data!.isNotEmpty) {
-                                final pets = snapshot.data ?? [];
-                                // sortAdoptionList();
-                                // for (DocumentSnapshot document in adoptionCardList!) {
-                                //   print(document.data());
-                                // }
-                                return ListView.builder(
-                                  padding: const EdgeInsets.all(0),
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  itemCount: pets.length,
-                                  scrollDirection: Axis.vertical,
-                                  cacheExtent: 9999,
-                                  shrinkWrap: true,
-                                  itemBuilder: (context, index) {
-                                    return AdoptionCard(
-                                      pet: pets[index],
-                                      index: index,
-                                    );
-                                  },
-                                );
-                              } else {
-                                return SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height / 2,
-                                  child: Center(
-                                    child: Text(
-                                      context.tr(AppStrings.noPetsNearby),
-                                      style: const TextStyle(fontSize: 16),
-                                    ),
-                                  ),
-                                );
-                              }
-                            }
-                          }
-                          return Container();
-                        },
-                      );
                     },
                   ),
                   // petData.shouldShowLoadingCard

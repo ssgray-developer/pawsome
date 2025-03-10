@@ -1,4 +1,3 @@
-
 import 'package:dartz/dartz.dart';
 import 'package:pawsome/data/pet/models/pet_model.dart';
 import 'package:pawsome/data/pet/models/register_pet_image_req.dart';
@@ -14,16 +13,10 @@ class PetRepositoryImpl implements PetRepository {
   PetRepositoryImpl(this.petRemoteDataSource);
 
   @override
-  Stream<Either<String, List<PetEntity>>> listenToPetAdoption(
-      NearbyPetReq nearbyPet) {
-    return petRemoteDataSource.listenToPetAdoption(nearbyPet).map((either) {
-      return either.fold((error) => Left(error), (data) {
-        final petEntities = data.map((item) {
-          return item.toEntity();
-        }).toList();
-
-        return Right(petEntities);
-      });
+  Stream<List<PetEntity>> listenToPetAdoption(NearbyPetReq nearbyPet) {
+    return petRemoteDataSource.listenToPetAdoption(nearbyPet).map((petModels) {
+      // Use the extension to convert each PetModel to PetEntity
+      return petModels.map((petModel) => petModel.toEntity()).toList();
     });
   }
 

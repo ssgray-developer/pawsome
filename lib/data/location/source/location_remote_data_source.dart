@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:geoflutterfire_plus/geoflutterfire_plus.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:pawsome/data/pet/source/pet_remote_data_source.dart';
 
 abstract class LocationService {
   Future<Either<String, GeoFirePoint>> getLocation();
@@ -10,6 +11,9 @@ abstract class LocationService {
 class LocationServiceImpl extends LocationService {
   late bool serviceEnabled;
   late LocationPermission permission;
+  final PetRemoteDataSource petRemoteDataSource;
+
+  LocationServiceImpl(this.petRemoteDataSource);
 
   @override
   Future<Either<String, GeoFirePoint>> getLocation() async {
@@ -36,6 +40,8 @@ class LocationServiceImpl extends LocationService {
 
       final GeoFirePoint geoFirePoint =
           GeoFirePoint(GeoPoint(position.latitude, position.longitude));
+
+      print('got the current position');
 
       return Right(geoFirePoint);
     } catch (e) {

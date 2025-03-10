@@ -74,7 +74,7 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<AuthLocalDataSource>(AuthLocalDataSourceImpl(sl()));
   sl.registerSingleton<PetRemoteDataSource>(
       PetRemoteDataSourceImpl(sl(), sl()));
-  sl.registerSingleton<LocationService>(LocationServiceImpl());
+  sl.registerSingleton<LocationService>(LocationServiceImpl(sl()));
   sl.registerSingleton<AppLocalDataSource>(AppLocalDataSourceImpl(sl(), sl()));
   sl.registerSingleton<AppRemoteDataSource>(AppRemoteDataSourceImpl(sl()));
 
