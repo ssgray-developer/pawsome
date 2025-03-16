@@ -20,7 +20,7 @@ class AppRepositoryImpl implements AppRepository {
   }
 
   @override
-  Future<Either<String,XFile>> pickImage() async {
+  Future<Either<String, XFile>> pickImage() async {
     return await appLocalDataSource.pickImage();
   }
 
@@ -32,5 +32,15 @@ class AppRepositoryImpl implements AppRepository {
   @override
   Future<Either> cropImage(String imagePath) async {
     return await appLocalDataSource.cropImage(imagePath);
+  }
+
+  @override
+  Future<String> getOriginalText(String text) async {
+    return await appLocalDataSource.getOriginalText(text);
+  }
+
+  @override
+  Future<Either> loadTranslations(String languageCode) async {
+    return await appLocalDataSource.loadTranslations(languageCode);
   }
 }

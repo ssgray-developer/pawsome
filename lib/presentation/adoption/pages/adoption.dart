@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:pawsome/core/theme/app_colors.dart';
-import 'package:pawsome/domain/pet/entity/pet.dart';
 import 'package:pawsome/presentation/adoption/bloc/adoption_cubit.dart';
 import 'package:pawsome/presentation/adoption/bloc/pet_list_view_selection_cubit.dart';
 import 'package:pawsome/presentation/adoption/widgets/pet_list_view.dart';
@@ -26,23 +25,13 @@ class AdoptionScreen extends StatefulWidget {
 class _AdoptionScreenState extends State<AdoptionScreen>
     with SingleTickerProviderStateMixin {
   final ScrollPhysics physics = const BouncingScrollPhysics();
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // final Geoflutterfire _geo = Geoflutterfire();
+  // List<DocumentSnapshot>? adoptionCardList;
 
-  var _collectionReference;
-
-  List<DocumentSnapshot>? adoptionCardList;
-
-  late Stream<List<DocumentSnapshot<Map<String, dynamic>>>> _stream;
-
-  // late GeoFirePoint _center;
   late ScrollController scrollController;
-
-  // Animated Icon
   late AnimationController animatedIconController;
 
-  String? selectedValue;
+  // String? selectedValue;
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -258,163 +247,143 @@ class _AdoptionScreenState extends State<AdoptionScreen>
             color: Theme.of(context).primaryColor,
             edgeOffset: 90,
             onRefresh: _refresh,
-            child: SingleChildScrollView(
-              controller: scrollController,
-              physics: physics,
-              child: Column(
-                children: [
-                  const Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 30.0, vertical: 10),
+            child: Column(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 10),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: SearchTextField(),
+                      ),
+                    ],
+                  ),
+                ),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Container(
+                    padding: const EdgeInsets.only(left: 10),
+                    // margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                    height: 60,
                     child: Row(
                       children: [
-                        Expanded(
-                          child: SearchTextField(),
+                        BlocBuilder<PetListViewSelectionCubit, int?>(
+                          builder: (context, selectedIndex) {
+                            return AnimatedContainer(
+                              duration: const Duration(milliseconds: 300),
+                              width: selectedIndex != null ? 20 : 0,
+                              child: GestureDetector(
+                                child: AnimatedIcon(
+                                    color: selectedIndex != null
+                                        ? Colors.red
+                                        : Colors.transparent,
+                                    icon: AnimatedIcons.menu_close,
+                                    progress: animatedIconController),
+                                onTap: () {
+                                  HapticFeedback.mediumImpact();
+                                  animatedIconController.reverse();
+                                  context
+                                      .read<PetListViewSelectionCubit>()
+                                      .selectPet(null);
+                                },
+                              ),
+                            );
+                          },
+                        ),
+                        Flexible(
+                          child: PetListView(
+                            triggerAnimation: () {
+                              // petData.setAnimatedIconColor = Colors.red;
+                              animatedIconController.forward();
+                            },
+                          ),
                         ),
                       ],
                     ),
                   ),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Container(
-                      padding: const EdgeInsets.only(left: 10),
-                      // margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                      height: 60,
-                      child: Row(
-                        children: [
-                          BlocBuilder<PetListViewSelectionCubit, int?>(
-                            builder: (context, selectedIndex) {
-                              return AnimatedContainer(
-                                duration: const Duration(milliseconds: 300),
-                                width: selectedIndex != null ? 20 : 0,
-                                child: GestureDetector(
-                                  child: AnimatedIcon(
-                                      color: selectedIndex != null
-                                          ? Colors.red
-                                          : Colors.transparent,
-                                      icon: AnimatedIcons.menu_close,
-                                      progress: animatedIconController),
-                                  onTap: () {
-                                    HapticFeedback.mediumImpact();
-                                    animatedIconController.reverse();
-                                    context
-                                        .read<PetListViewSelectionCubit>()
-                                        .selectPet(null);
-                                  },
-                                ),
+                ),
+                // const SizedBox(
+                //   height: 10,
+                // ),
+                Divider(
+                  thickness: 2,
+                  color: Colors.grey[300],
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    controller: scrollController,
+                    physics: physics,
+                    padding: EdgeInsets.only(bottom: 80),
+                    child: BlocBuilder<AdoptionCubit, AdoptionState>(
+                      builder: (context, state) {
+                        if (state is AdoptionLoading) {
+                          return Center(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 25, vertical: 10),
+                              child: Container(
+                                  padding: const EdgeInsets.all(10.0),
+                                  height: 120.0,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15.0),
+                                    color:
+                                        Theme.of(context).colorScheme.surface,
+                                  ),
+                                  child: Center(
+                                    child: SpinKitThreeBounce(
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                                  )),
+                            ),
+                          );
+                        } else if (state is AdoptionError) {
+                          return Center(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 25, vertical: 10),
+                              child: Text(
+                                'Oops, seems like an error has occurred.',
+                                style: TextStyle(color: AppColors.black),
+                              ),
+                            ),
+                          );
+                        } else if (state is AdoptionSuccess) {
+                          // sortAdoptionList();
+                          // for (DocumentSnapshot document in adoptionCardList!) {
+                          //   print(document.data());
+                          // }
+                          return ListView.builder(
+                            padding: const EdgeInsets.all(0),
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: state.petList.length,
+                            scrollDirection: Axis.vertical,
+                            cacheExtent: 9999,
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              return AdoptionCard(
+                                pet: state.petList[index],
+                                index: index,
                               );
                             },
-                          ),
-                          Flexible(
-                            child: PetListView(
-                              triggerAnimation: () {
-                                // petData.setAnimatedIconColor = Colors.red;
-                                animatedIconController.forward();
-                              },
+                          );
+                        } else if (state is AdoptionEmpty) {
+                          return SizedBox(
+                            height: MediaQuery.of(context).size.height / 2,
+                            child: Center(
+                              child: Text(
+                                context.tr(AppStrings.noPetsNearby),
+                                style: const TextStyle(fontSize: 16),
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
+                          );
+                        } else {
+                          return Container();
+                        }
+                      },
                     ),
                   ),
-
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Divider(
-                    thickness: 2,
-                    color: Colors.grey[400],
-                  ),
-                  BlocBuilder<AdoptionCubit, AdoptionState>(
-                    builder: (context, state) {
-                      print(state);
-                      if (state is AdoptionLoading) {
-                        return Center(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 25, vertical: 10),
-                            child: Container(
-                                padding: const EdgeInsets.all(10.0),
-                                height: 120.0,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15.0),
-                                  color: Theme.of(context).colorScheme.surface,
-                                ),
-                                child: Center(
-                                  child: SpinKitThreeBounce(
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                )),
-                          ),
-                        );
-                      } else if (state is AdoptionError) {
-                        return Center(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 25, vertical: 10),
-                            child: Text(
-                              'Oops, seems like an error has occurred.',
-                              style: TextStyle(color: AppColors.black),
-                            ),
-                          ),
-                        );
-                      } else if (state is AdoptionSuccess) {
-                        // sortAdoptionList();
-                        // for (DocumentSnapshot document in adoptionCardList!) {
-                        //   print(document.data());
-                        // }
-                        return ListView.builder(
-                          padding: const EdgeInsets.all(0),
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: state.petList.length,
-                          scrollDirection: Axis.vertical,
-                          cacheExtent: 9999,
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            return AdoptionCard(
-                              pet: state.petList[index],
-                              index: index,
-                            );
-                          },
-                        );
-                      } else if (state is AdoptionEmpty) {
-                        return SizedBox(
-                          height: MediaQuery.of(context).size.height / 2,
-                          child: Center(
-                            child: Text(
-                              context.tr(AppStrings.noPetsNearby),
-                              style: const TextStyle(fontSize: 16),
-                            ),
-                          ),
-                        );
-                      } else {
-                        return Container();
-                      }
-                    },
-                  ),
-                  // petData.shouldShowLoadingCard
-                  //     ? Padding(
-                  //   padding: const EdgeInsets.symmetric(
-                  //       horizontal: 25, vertical: 10),
-                  //   child: petData.shouldShowLoadingCard
-                  //       ? Container(
-                  //       padding: const EdgeInsets.all(10.0),
-                  //       height: 120,
-                  //       decoration: BoxDecoration(
-                  //         borderRadius: BorderRadius.circular(15.0),
-                  //         color:
-                  //         Theme.of(context).colorScheme.background,
-                  //       ),
-                  //       child: Center(
-                  //         child: SpinKitThreeBounce(
-                  //           color: Theme.of(context).primaryColor,
-                  //         ),
-                  //       ))
-                  //       : Container(),
-                  // )
-                  //     : Container()
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),

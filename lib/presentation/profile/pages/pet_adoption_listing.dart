@@ -12,6 +12,7 @@ import 'package:pawsome/core/theme/app_colors.dart';
 import 'package:pawsome/data/pet/models/pet_registration_req.dart';
 import 'package:pawsome/presentation/adoption/pages/pet_details.dart';
 import 'package:pawsome/presentation/bloc/image_picker/image_picker_cubit.dart';
+import 'package:pawsome/presentation/bloc/reverse_lookup/reverse_lookup_cubit.dart';
 import 'package:pawsome/presentation/profile/bloc/register_pet_cubit.dart';
 import '../../../common/animal_list.dart';
 import '../../../core/theme/app_strings.dart';
@@ -116,25 +117,29 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
     firstSpeciesKey.currentState?.openDropDownSearch();
   }
 
-  void registerPet() {
+  Future<void> registerPet(Locale locale) async {
     if ((context.read<ImagePickerCubit>().state is ImagePickerSuccess) &&
         nameFormKey.currentState!.validate() &&
         ageFormKey.currentState!.validate() &&
         currencyCode != '-' &&
         priceFormKey.currentState!.validate() &&
         reasonFormKey.currentState!.validate()) {
+      final reverseLookupCubit = context.read<ReverseLookupCubit>();
+
       final petRegistrationReq = PetRegistrationReq(
           file: (context.read<ImagePickerCubit>().state as ImagePickerSuccess)
               .image,
-          gender: selectedGender.name,
+          gender: await reverseLookupCubit.getOriginalText(selectedGender.name),
           name: petNameTextEditingController.text.trim(),
           age: petAgeTextEditingController.text.trim(),
-          petClass: petClassKey.currentState!.getSelectedItem!,
-          species: firstSpeciesKey.currentState!.getSelectedItem! +
+          petClass: await reverseLookupCubit
+              .getOriginalText(petClassKey.currentState!.getSelectedItem!),
+          species: await reverseLookupCubit.getOriginalText(
+                  firstSpeciesKey.currentState!.getSelectedItem!) +
               (secondSpeciesKey.currentState!.getSelectedItem! ==
                       context.tr(AppStrings.unknown)
                   ? ''
-                  : ' & ${secondSpeciesKey.currentState!.getSelectedItem!}'),
+                  : ' & ${await reverseLookupCubit.getOriginalText(secondSpeciesKey.currentState!.getSelectedItem!)}'),
           currency: currencyCode,
           price: priceTextEditingController.text.trim(),
           reason: reasonTextEditingController.text.trim());
@@ -184,6 +189,8 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
 
   @override
   Widget build(BuildContext context) {
+    final locale = EasyLocalization.of(context)!.locale;
+
     final genderToggleChildren = [
       Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -655,7 +662,7 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
                               textDirection: TextDirection.rtl,
                               child: ElevatedButton.icon(
                                 onPressed: () {
-                                  registerPet();
+                                  registerPet(locale);
                                 },
                                 icon: state is RegisterPetLoading
                                     ? const SpinKitCircle(

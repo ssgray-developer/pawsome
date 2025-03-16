@@ -13,8 +13,11 @@ import 'package:pawsome/data/location/repository/location_repository_impl.dart';
 import 'package:pawsome/data/location/source/location_remote_data_source.dart';
 import 'package:pawsome/data/pet/repository/pet_repository_impl.dart';
 import 'package:pawsome/data/pet/source/pet_remote_data_source.dart';
+import 'package:pawsome/data/reverse_lookup_service.dart';
 import 'package:pawsome/domain/app/repository/app.dart';
 import 'package:pawsome/domain/app/usecases/crop_image.dart';
+import 'package:pawsome/domain/app/usecases/get_original_text.dart';
+import 'package:pawsome/domain/app/usecases/load_translations.dart';
 import 'package:pawsome/domain/app/usecases/remote_version_check.dart';
 import 'package:pawsome/domain/app/usecases/retrieve_lost_data.dart';
 import 'package:pawsome/domain/auth/usecases/get_auth_provider.dart';
@@ -24,6 +27,7 @@ import 'package:pawsome/domain/auth/usecases/register_user.dart';
 import 'package:pawsome/domain/auth/usecases/send_password_reset_email.dart';
 import 'package:pawsome/domain/auth/usecases/save_auth_provider.dart';
 import 'package:pawsome/domain/location/repository/location.dart';
+import 'package:pawsome/domain/location/usecases/get_distance_between.dart';
 import 'package:pawsome/domain/location/usecases/get_location.dart';
 import 'package:pawsome/domain/pet/repository/pet.dart';
 import 'package:pawsome/domain/pet/usecases/listen_to_pet_adoption.dart';
@@ -35,6 +39,7 @@ import 'package:pawsome/presentation/bloc/app_update/app_update_cubit.dart';
 import 'package:pawsome/presentation/bloc/auth/auth_cubit.dart';
 import 'package:pawsome/presentation/bloc/connectivity/connectivity_cubit.dart';
 import 'package:pawsome/presentation/bloc/image_picker/image_picker_cubit.dart';
+import 'package:pawsome/presentation/bloc/reverse_lookup/reverse_lookup_cubit.dart';
 import 'package:pawsome/presentation/profile/bloc/register_pet_cubit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'data/app/repository/app_repository_impl.dart';
@@ -67,6 +72,7 @@ Future<void> initializeDependencies() async {
   sl.registerLazySingleton<GoogleSignIn>(() => GoogleSignIn());
   sl.registerLazySingleton<ImagePicker>(() => ImagePicker());
   sl.registerLazySingleton<ImageCropper>(() => ImageCropper());
+  sl.registerLazySingleton<ReverseLookupService>(() => ReverseLookupService());
 
   // External
   sl.registerSingleton<AuthRemoteDataSource>(
@@ -75,7 +81,8 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<PetRemoteDataSource>(
       PetRemoteDataSourceImpl(sl(), sl()));
   sl.registerSingleton<LocationService>(LocationServiceImpl(sl()));
-  sl.registerSingleton<AppLocalDataSource>(AppLocalDataSourceImpl(sl(), sl()));
+  sl.registerSingleton<AppLocalDataSource>(
+      AppLocalDataSourceImpl(sl(), sl(), sl()));
   sl.registerSingleton<AppRemoteDataSource>(AppRemoteDataSourceImpl(sl()));
 
   // Repository
@@ -90,10 +97,11 @@ Future<void> initializeDependencies() async {
       sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()));
   sl.registerFactory(() => ConnectivityCubit());
   sl.registerFactory(() => PetListViewSelectionCubit());
-  sl.registerFactory(() => AdoptionCubit(sl(), sl()));
+  sl.registerFactory(() => AdoptionCubit(sl(), sl(), sl()));
   sl.registerFactory(() => AppUpdateCubit(sl(), sl()));
   sl.registerFactory(() => ImagePickerCubit(sl(), sl()));
   sl.registerFactory(() => RegisterPetCubit(sl(), sl(), sl(), sl(), sl()));
+  sl.registerFactory(() => ReverseLookupCubit(sl(), sl()));
 
   // Usecases
   sl.registerLazySingleton<ListenToAuthChangesUseCase>(
@@ -136,4 +144,10 @@ Future<void> initializeDependencies() async {
       () => RetrieveSinglePetUseCase(sl()));
   sl.registerLazySingleton<RegisterUserUseCase>(
       () => RegisterUserUseCase(sl()));
+  sl.registerLazySingleton<GetOriginalTextUseCase>(
+      () => GetOriginalTextUseCase(sl()));
+  sl.registerLazySingleton<LoadTranslationsUseCase>(
+      () => LoadTranslationsUseCase(sl()));
+  sl.registerLazySingleton<GetDistanceBetweenUseCase>(
+      () => GetDistanceBetweenUseCase(sl()));
 }

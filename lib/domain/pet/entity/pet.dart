@@ -40,6 +40,10 @@ class PetEntity {
   String toString() {
     return 'PetEntity(id: $ownerUid, name: $name)';
   }
+
+  GeoPoint getGeoPoint() {
+    return location['geopoint'] as GeoPoint;
+  }
 }
 
 extension PetEntityXModel on PetEntity {

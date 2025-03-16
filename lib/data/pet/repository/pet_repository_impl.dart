@@ -15,7 +15,6 @@ class PetRepositoryImpl implements PetRepository {
   @override
   Stream<List<PetEntity>> listenToPetAdoption(NearbyPetReq nearbyPet) {
     return petRemoteDataSource.listenToPetAdoption(nearbyPet).map((petModels) {
-      // Use the extension to convert each PetModel to PetEntity
       return petModels.map((petModel) => petModel.toEntity()).toList();
     });
   }

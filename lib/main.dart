@@ -10,6 +10,7 @@ import 'package:pawsome/core/theme/app_themes.dart';
 import 'package:pawsome/presentation/auth/pages/login.dart';
 import 'package:pawsome/presentation/bloc/auth/auth_cubit.dart';
 import 'package:pawsome/presentation/bloc/image_picker/image_picker_cubit.dart';
+import 'package:pawsome/presentation/bloc/reverse_lookup/reverse_lookup_cubit.dart';
 import 'package:pawsome/presentation/home/pages/home.dart';
 import 'package:upgrader/upgrader.dart';
 import '../core/theme/app_colors.dart';
@@ -71,6 +72,8 @@ class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    final locale = EasyLocalization.of(context)!.locale;
+
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -78,6 +81,15 @@ class _MyAppState extends State<MyApp> {
         ),
         BlocProvider(
           create: (context) => sl<ImagePickerCubit>(),
+        ),
+        BlocProvider(
+          create: (context) {
+            final cubit = sl<ReverseLookupCubit>();
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              cubit.loadTranslations(locale.toString());
+            });
+            return cubit;
+          },
         ),
         // BlocProvider(
         //   create: (context) => sl<AppUpdateCubit>()..checkForUpdate(),
@@ -112,7 +124,6 @@ class _MyAppState extends State<MyApp> {
           ),
           child: BlocBuilder<AuthCubit, AuthState>(
             builder: (context, state) {
-              print(state);
               if (state is AuthInitial || state is AuthLoading) {
                 return Scaffold(
                   backgroundColor: Colors.white,
@@ -127,7 +138,6 @@ class _MyAppState extends State<MyApp> {
               } else if (state is AuthUnauthenticated) {
                 return const LoginScreen();
               } else if (state is AuthError) {
-                print(state.message);
                 return const LoginScreen();
               }
               return const LoginScreen();

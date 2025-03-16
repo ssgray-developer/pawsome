@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:meta/meta.dart';
 import 'package:pawsome/domain/app/usecases/crop_image.dart';
 import 'package:pawsome/domain/app/usecases/pick_image.dart';

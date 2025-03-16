@@ -47,7 +47,6 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
   Future<Either> signOut() async {
     try {
       await firebaseAuth.signOut();
-      print('signed out');
       return const Right('Sign out successfully.');
     } catch (e) {
       return const Left('An unknown error has occurred.');

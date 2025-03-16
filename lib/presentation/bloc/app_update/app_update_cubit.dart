@@ -1,4 +1,4 @@
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:pawsome/domain/app/usecases/local_version_check.dart';
 import 'package:pawsome/domain/app/usecases/remote_version_check.dart';

@@ -6,11 +6,13 @@ import 'package:pawsome/data/pet/source/pet_remote_data_source.dart';
 
 abstract class LocationService {
   Future<Either<String, GeoFirePoint>> getLocation();
+  String getDistanceBetween(GeoPoint geoPoint);
 }
 
 class LocationServiceImpl extends LocationService {
   late bool serviceEnabled;
   late LocationPermission permission;
+  late Position origin;
   final PetRemoteDataSource petRemoteDataSource;
 
   LocationServiceImpl(this.petRemoteDataSource);
@@ -36,16 +38,26 @@ class LocationServiceImpl extends LocationService {
             'Location permissions are permanently denied, we cannot request permissions.');
       }
 
-      final position = await Geolocator.getCurrentPosition();
+      origin = await Geolocator.getCurrentPosition();
 
       final GeoFirePoint geoFirePoint =
-          GeoFirePoint(GeoPoint(position.latitude, position.longitude));
-
-      print('got the current position');
+          GeoFirePoint(GeoPoint(origin.latitude, origin.longitude));
 
       return Right(geoFirePoint);
     } catch (e) {
       return const Left('Unable to get location.');
+    }
+  }
+
+  @override
+  String getDistanceBetween(GeoPoint geoPoint) {
+    try {
+      final distance = Geolocator.distanceBetween(geoPoint.latitude,
+              geoPoint.longitude, origin.latitude, origin.longitude) /
+          1000;
+      return double.parse(distance.toStringAsFixed(1)) as String;
+    } catch (e) {
+      return '0';
     }
   }
 }
