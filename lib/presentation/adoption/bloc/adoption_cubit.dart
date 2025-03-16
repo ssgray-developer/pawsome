@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,6 +20,7 @@ class AdoptionCubit extends Cubit<AdoptionState> {
   int distance = 20;
   late GeoFirePoint position;
   String? pet = 'dog';
+  StreamSubscription? subscription;
 
   AdoptionCubit(this.listenToPetAdoptionUseCase, this.getLocationUseCase,
       this.getDistanceBetweenUseCase)
@@ -31,7 +34,7 @@ class AdoptionCubit extends Cubit<AdoptionState> {
         if (!isClosed) emit(AdoptionError(failure));
       },
       (_) {
-        listenToPetAdoptionUseCase(
+        subscription = listenToPetAdoptionUseCase(
                 params: NearbyPetReq(
                     position: position, radius: distance, pet: pet))
             .listen((data) {
@@ -59,5 +62,11 @@ class AdoptionCubit extends Cubit<AdoptionState> {
   Future<String> getDistanceBetween(GeoPoint geoPoint) async {
     final distance = await getDistanceBetweenUseCase.call(params: geoPoint);
     return distance;
+  }
+
+  @override
+  Future<void> close() {
+    subscription?.cancel();
+    return super.close();
   }
 }

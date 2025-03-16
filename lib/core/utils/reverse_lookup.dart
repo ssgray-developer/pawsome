@@ -1,25 +1,21 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
 
-class ReverseLookupService {
-  static final ReverseLookupService _instance =
-      ReverseLookupService._internal();
+class ReverseLookup {
+  static final ReverseLookup _instance = ReverseLookup._internal();
   Map<String, String> _reverseMap = {};
 
-  factory ReverseLookupService() {
+  factory ReverseLookup() {
     return _instance;
   }
 
-  ReverseLookupService._internal();
+  ReverseLookup._internal();
 
-  // Load the translations into reverse map (this is simplified)
   Future<void> loadTranslations(String languageCode) async {
-    print('prepping data');
     final translations = await _loadTranslationFile(languageCode);
     final reverseMap = <String, String>{};
 
     translations.forEach((key, value) {
-      print(key);
       if (value != null && value is String) {
         reverseMap[value] = key;
       }
@@ -32,8 +28,9 @@ class ReverseLookupService {
 
   // Function to load translation JSON
   Future<Map<String, dynamic>> _loadTranslationFile(String languageCode) async {
-    final jsonString =
-        await rootBundle.loadString('assets/translations/$languageCode.json');
+    final revisedLanguageCode = languageCode.replaceAll('_', '-');
+    final jsonString = await rootBundle
+        .loadString('assets/translations/$revisedLanguageCode.json');
     final Map<String, dynamic> translations = json.decode(jsonString);
     return translations;
   }

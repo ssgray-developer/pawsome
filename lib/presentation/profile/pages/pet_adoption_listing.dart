@@ -9,10 +9,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:pawsome/common/enums.dart';
 import 'package:pawsome/core/theme/app_colors.dart';
+import 'package:pawsome/core/utils/reverse_lookup.dart';
 import 'package:pawsome/data/pet/models/pet_registration_req.dart';
 import 'package:pawsome/presentation/adoption/pages/pet_details.dart';
 import 'package:pawsome/presentation/bloc/image_picker/image_picker_cubit.dart';
-import 'package:pawsome/presentation/bloc/reverse_lookup/reverse_lookup_cubit.dart';
 import 'package:pawsome/presentation/profile/bloc/register_pet_cubit.dart';
 import '../../../common/animal_list.dart';
 import '../../../core/theme/app_strings.dart';
@@ -38,6 +38,7 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
 
   final List<bool> selectedGenderList = [true, false];
   late Map<String, List<List<String>>> animalMap;
+  final reverseLookup = ReverseLookup();
 
   late GlobalKey<FormState> nameFormKey;
   late GlobalKey<FormState> ageFormKey;
@@ -117,29 +118,27 @@ class PetAdoptionListingState extends State<PetAdoptionListing> {
     firstSpeciesKey.currentState?.openDropDownSearch();
   }
 
-  Future<void> registerPet(Locale locale) async {
+  void registerPet(Locale locale) {
     if ((context.read<ImagePickerCubit>().state is ImagePickerSuccess) &&
         nameFormKey.currentState!.validate() &&
         ageFormKey.currentState!.validate() &&
         currencyCode != '-' &&
         priceFormKey.currentState!.validate() &&
         reasonFormKey.currentState!.validate()) {
-      final reverseLookupCubit = context.read<ReverseLookupCubit>();
-
       final petRegistrationReq = PetRegistrationReq(
           file: (context.read<ImagePickerCubit>().state as ImagePickerSuccess)
               .image,
-          gender: await reverseLookupCubit.getOriginalText(selectedGender.name),
+          gender: reverseLookup.getOriginalText(selectedGender.name),
           name: petNameTextEditingController.text.trim(),
           age: petAgeTextEditingController.text.trim(),
-          petClass: await reverseLookupCubit
+          petClass: reverseLookup
               .getOriginalText(petClassKey.currentState!.getSelectedItem!),
-          species: await reverseLookupCubit.getOriginalText(
+          species: reverseLookup.getOriginalText(
                   firstSpeciesKey.currentState!.getSelectedItem!) +
               (secondSpeciesKey.currentState!.getSelectedItem! ==
                       context.tr(AppStrings.unknown)
                   ? ''
-                  : ' & ${await reverseLookupCubit.getOriginalText(secondSpeciesKey.currentState!.getSelectedItem!)}'),
+                  : ' & ${reverseLookup.getOriginalText(secondSpeciesKey.currentState!.getSelectedItem!)}'),
           currency: currencyCode,
           price: priceTextEditingController.text.trim(),
           reason: reasonTextEditingController.text.trim());

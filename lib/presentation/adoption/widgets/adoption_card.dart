@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:pawsome/domain/auth/entity/user.dart';
 import 'package:pawsome/domain/pet/entity/pet.dart';
 import 'package:pawsome/presentation/adoption/bloc/adoption_cubit.dart';
 import '../../../core/theme/app_strings.dart';
@@ -14,7 +15,9 @@ import 'like_animation.dart';
 class AdoptionCard extends StatefulWidget {
   final PetEntity pet;
   final int index;
-  const AdoptionCard({super.key, required this.pet, required this.index});
+  final UserEntity user;
+  const AdoptionCard(
+      {super.key, required this.pet, required this.index, required this.user});
 
   @override
   State<AdoptionCard> createState() => _AdoptionCardState();
@@ -157,7 +160,7 @@ class _AdoptionCardState extends State<AdoptionCard> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        widget.pet.gender == 'Male'
+                        widget.pet.gender == 'male'
                             ? const Icon(
                                 Icons.male_rounded,
                                 color: Colors.blue,
@@ -176,18 +179,19 @@ class _AdoptionCardState extends State<AdoptionCard> {
                           child: IconButton(
                             padding: const EdgeInsets.all(0),
                             alignment: Alignment.centerRight,
-                            icon: Icon(Icons.abc),
-                            // widget.snap['likes'].contains(user.uid)
-                            //     ? const Icon(
-                            //   Icons.favorite_outlined,
-                            //   color: Colors.pink,
-                            //   size: 28.0,
-                            // )
-                            //     : const Icon(
-                            //   Icons.favorite_outline,
-                            //   color: Colors.pink,
-                            //   size: 28.0,
-                            // ),
+                            icon:
+                                // Icon(Icons.abc),
+                                widget.pet.likes.contains(widget.user.uid)
+                                    ? const Icon(
+                                        Icons.favorite_outlined,
+                                        color: Colors.pink,
+                                        size: 28.0,
+                                      )
+                                    : const Icon(
+                                        Icons.favorite_outline,
+                                        color: Colors.pink,
+                                        size: 28.0,
+                                      ),
                             onPressed: () async {
                               // await FirestoreMethods.likePost(widget.snap['postId'],
                               //     user.uid, widget.snap['likes']);

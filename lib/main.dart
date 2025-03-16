@@ -7,10 +7,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:pawsome/core/theme/app_themes.dart';
+import 'package:pawsome/core/utils/reverse_lookup.dart';
 import 'package:pawsome/presentation/auth/pages/login.dart';
 import 'package:pawsome/presentation/bloc/auth/auth_cubit.dart';
 import 'package:pawsome/presentation/bloc/image_picker/image_picker_cubit.dart';
-import 'package:pawsome/presentation/bloc/reverse_lookup/reverse_lookup_cubit.dart';
 import 'package:pawsome/presentation/home/pages/home.dart';
 import 'package:upgrader/upgrader.dart';
 import '../core/theme/app_colors.dart';
@@ -53,6 +53,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  final reverseLookup = ReverseLookup();
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   String getCountryCodeFromDevice() {
@@ -73,23 +74,18 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     final locale = EasyLocalization.of(context)!.locale;
+    reverseLookup.loadTranslations(locale.toString());
 
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => sl<AuthCubit>()..listenToAuthChanges(),
+          create: (context) {
+            return sl<AuthCubit>()..listenToAuthChanges();
+          },
         ),
+
         BlocProvider(
           create: (context) => sl<ImagePickerCubit>(),
-        ),
-        BlocProvider(
-          create: (context) {
-            final cubit = sl<ReverseLookupCubit>();
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              cubit.loadTranslations(locale.toString());
-            });
-            return cubit;
-          },
         ),
         // BlocProvider(
         //   create: (context) => sl<AppUpdateCubit>()..checkForUpdate(),
@@ -134,7 +130,9 @@ class _MyAppState extends State<MyApp> {
                   ),
                 );
               } else if (state is AuthAuthenticated) {
-                return const HomeScreen();
+                return HomeScreen(
+                  user: state.user,
+                );
               } else if (state is AuthUnauthenticated) {
                 return const LoginScreen();
               } else if (state is AuthError) {

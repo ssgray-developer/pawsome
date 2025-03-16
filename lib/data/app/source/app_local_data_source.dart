@@ -3,24 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:pawsome/data/reverse_lookup_service.dart';
 
 abstract class AppLocalDataSource {
   Future<Either> versionCheck();
   Future<Either<String, XFile>> pickImage();
   Future<Either> retrieveLostData();
   Future<Either> cropImage(String imagePath);
-  Future<String> getOriginalText(String text);
-  Future<Either> loadTranslations(String languageCode);
 }
 
 class AppLocalDataSourceImpl extends AppLocalDataSource {
   final ImagePicker imagePicker;
   final ImageCropper imageCropper;
-  final ReverseLookupService reverseLookupService;
 
-  AppLocalDataSourceImpl(
-      this.imagePicker, this.imageCropper, this.reverseLookupService);
+  AppLocalDataSourceImpl(this.imagePicker, this.imageCropper);
 
   @override
   Future<Either> versionCheck() async {
@@ -98,26 +93,6 @@ class AppLocalDataSourceImpl extends AppLocalDataSource {
       } else {
         return const Left('No image was cropped.');
       }
-    } catch (e) {
-      return const Left('An unknown error has occurred.');
-    }
-  }
-
-  @override
-  Future<String> getOriginalText(String text) async {
-    try {
-      final originalText = reverseLookupService.getOriginalText(text);
-      return originalText;
-    } catch (e) {
-      return 'An unknown error has occurred.';
-    }
-  }
-
-  @override
-  Future<Either> loadTranslations(String languageCode) async {
-    try {
-      reverseLookupService.loadTranslations(languageCode);
-      return const Right('Done load file.');
     } catch (e) {
       return const Left('An unknown error has occurred.');
     }

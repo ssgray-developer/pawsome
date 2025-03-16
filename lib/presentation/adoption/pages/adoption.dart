@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:pawsome/core/theme/app_colors.dart';
+import 'package:pawsome/domain/auth/entity/user.dart';
 import 'package:pawsome/presentation/adoption/bloc/adoption_cubit.dart';
 import 'package:pawsome/presentation/adoption/bloc/pet_list_view_selection_cubit.dart';
 import 'package:pawsome/presentation/adoption/widgets/pet_list_view.dart';
@@ -16,7 +17,8 @@ import '../../../service_locator.dart';
 import '../widgets/adoption_card.dart';
 
 class AdoptionScreen extends StatefulWidget {
-  const AdoptionScreen({super.key});
+  final UserEntity user;
+  const AdoptionScreen({super.key, required this.user});
 
   @override
   State<AdoptionScreen> createState() => _AdoptionScreenState();
@@ -313,9 +315,10 @@ class _AdoptionScreenState extends State<AdoptionScreen>
                   child: SingleChildScrollView(
                     controller: scrollController,
                     physics: physics,
-                    padding: EdgeInsets.only(bottom: 80),
+                    padding: const EdgeInsets.only(bottom: 100),
                     child: BlocBuilder<AdoptionCubit, AdoptionState>(
                       builder: (context, state) {
+                        print(state);
                         if (state is AdoptionLoading) {
                           return Center(
                             child: Padding(
@@ -363,6 +366,7 @@ class _AdoptionScreenState extends State<AdoptionScreen>
                               return AdoptionCard(
                                 pet: state.petList[index],
                                 index: index,
+                                user: widget.user,
                               );
                             },
                           );

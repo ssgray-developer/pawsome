@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pawsome/core/theme/app_colors.dart';
+import 'package:pawsome/domain/auth/entity/user.dart';
 import 'package:pawsome/presentation/adoption/bloc/adoption_cubit.dart';
 import 'package:pawsome/presentation/adoption/pages/adoption.dart';
 import 'package:pawsome/presentation/home/widgets/paw_button.dart';
@@ -12,7 +13,8 @@ import '../../../service_locator.dart';
 import '../widgets/bnb_custom_painter.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final UserEntity user;
+  const HomeScreen({super.key, required this.user});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -118,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen>
       case 2:
         return BlocProvider(
           create: (context) => sl<AdoptionCubit>(),
-          child: const AdoptionScreen(),
+          child: AdoptionScreen(user: widget.user),
         );
       case 3:
         return const MessageScreen();

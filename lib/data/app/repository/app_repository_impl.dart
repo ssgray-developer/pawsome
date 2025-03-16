@@ -33,14 +33,4 @@ class AppRepositoryImpl implements AppRepository {
   Future<Either> cropImage(String imagePath) async {
     return await appLocalDataSource.cropImage(imagePath);
   }
-
-  @override
-  Future<String> getOriginalText(String text) async {
-    return await appLocalDataSource.getOriginalText(text);
-  }
-
-  @override
-  Future<Either> loadTranslations(String languageCode) async {
-    return await appLocalDataSource.loadTranslations(languageCode);
-  }
 }
