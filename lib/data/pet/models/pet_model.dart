@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pawsome/domain/pet/entity/pet.dart';
 
 class PetModel {
+  String? postId;
   final String photoUrl;
   final String gender;
   final String name;
@@ -19,6 +20,7 @@ class PetModel {
   final List likes;
 
   PetModel({
+    this.postId,
     required this.photoUrl,
     required this.gender,
     required this.name,
@@ -39,6 +41,10 @@ class PetModel {
   @override
   String toString() {
     return 'PetModel(id: $ownerUid, name: $name)';
+  }
+
+  void setPostId(String postId) {
+    this.postId = postId;
   }
 
   factory PetModel.fromJson(Map<String, dynamic> json) {
@@ -85,6 +91,7 @@ class PetModel {
 extension PetModelToEntity on PetModel {
   PetEntity toEntity() {
     return PetEntity(
+      postId: postId,
       photoUrl: photoUrl,
       gender: gender,
       name: name,

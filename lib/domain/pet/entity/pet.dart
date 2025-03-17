@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pawsome/data/pet/models/pet_model.dart';
 
 class PetEntity {
+  String? postId;
   final String photoUrl;
   final String gender;
   final String name;
@@ -19,6 +20,7 @@ class PetEntity {
   final List likes;
 
   PetEntity({
+    this.postId,
     required this.photoUrl,
     required this.gender,
     required this.name,
@@ -49,6 +51,8 @@ class PetEntity {
 extension PetEntityXModel on PetEntity {
   PetModel toModel() {
     return PetModel(
+
+      postId: postId,
       photoUrl: photoUrl,
       gender: gender,
       name: name,

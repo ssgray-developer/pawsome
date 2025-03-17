@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:pawsome/data/pet/models/like_adoption_req.dart';
 import 'package:pawsome/domain/auth/entity/user.dart';
 import 'package:pawsome/domain/pet/entity/pet.dart';
 import 'package:pawsome/presentation/adoption/bloc/adoption_cubit.dart';
@@ -173,8 +174,8 @@ class _AdoptionCardState extends State<AdoptionCard> {
                           child: Container(),
                         ),
                         LikeAnimation(
-                          isAnimating: false,
-                          // widget.snap['likes'].contains(user.uid),
+                          isAnimating:
+                              widget.pet.likes.contains(widget.user.uid),
                           smallLike: true,
                           child: IconButton(
                             padding: const EdgeInsets.all(0),
@@ -193,8 +194,12 @@ class _AdoptionCardState extends State<AdoptionCard> {
                                         size: 28.0,
                                       ),
                             onPressed: () async {
-                              // await FirestoreMethods.likePost(widget.snap['postId'],
-                              //     user.uid, widget.snap['likes']);
+                              await context
+                                  .read<AdoptionCubit>()
+                                  .likeAdoptionPost(LikeAdoptionReq(
+                                      postId: widget.pet.postId!,
+                                      uid: widget.user.uid,
+                                      likes: widget.pet.likes));
                               HapticFeedback.mediumImpact();
                             },
                           ),

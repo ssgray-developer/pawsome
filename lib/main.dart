@@ -130,9 +130,7 @@ class _MyAppState extends State<MyApp> {
                   ),
                 );
               } else if (state is AuthAuthenticated) {
-                return HomeScreen(
-                  user: state.user,
-                );
+                return HomeScreen(user: state.user);
               } else if (state is AuthUnauthenticated) {
                 return const LoginScreen();
               } else if (state is AuthError) {

@@ -28,6 +28,7 @@ import 'package:pawsome/domain/location/repository/location.dart';
 import 'package:pawsome/domain/location/usecases/get_distance_between.dart';
 import 'package:pawsome/domain/location/usecases/get_location.dart';
 import 'package:pawsome/domain/pet/repository/pet.dart';
+import 'package:pawsome/domain/pet/usecases/like_adoption_post.dart';
 import 'package:pawsome/domain/pet/usecases/listen_to_pet_adoption.dart';
 import 'package:pawsome/domain/pet/usecases/register_pet.dart';
 import 'package:pawsome/domain/pet/usecases/retrieve_single_pet.dart';
@@ -93,7 +94,7 @@ Future<void> initializeDependencies() async {
       sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()));
   sl.registerFactory(() => ConnectivityCubit());
   sl.registerFactory(() => PetListViewSelectionCubit());
-  sl.registerFactory(() => AdoptionCubit(sl(), sl(), sl()));
+  sl.registerFactory(() => AdoptionCubit(sl(), sl(), sl(), sl()));
   sl.registerFactory(() => AppUpdateCubit(sl(), sl()));
   sl.registerFactory(() => ImagePickerCubit(sl(), sl()));
   sl.registerFactory(() => RegisterPetCubit(sl(), sl(), sl(), sl(), sl()));
@@ -141,4 +142,6 @@ Future<void> initializeDependencies() async {
       () => RegisterUserUseCase(sl()));
   sl.registerLazySingleton<GetDistanceBetweenUseCase>(
       () => GetDistanceBetweenUseCase(sl()));
+  sl.registerLazySingleton<LikeAdoptionPostUseCase>(
+      () => LikeAdoptionPostUseCase(sl()));
 }

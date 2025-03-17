@@ -5,6 +5,7 @@ import 'package:geoflutterfire_plus/geoflutterfire_plus.dart';
 import 'package:pawsome/data/pet/models/pet_model.dart';
 import 'package:pawsome/data/pet/models/register_pet_image_req.dart';
 import 'package:uuid/uuid.dart';
+import '../models/like_adoption_req.dart';
 import '../models/nearby_pet_req.dart';
 
 abstract class PetRemoteDataSource {
@@ -12,6 +13,7 @@ abstract class PetRemoteDataSource {
   Future<Either> registerPet(PetModel pet);
   Future<Either> registerPetImage(RegisterPetImageReq pet);
   Future<Either> retrieveSinglePet(String docId);
+  Future<Either> likeAdoptionPost(LikeAdoptionReq likeReq);
 }
 
 class PetRemoteDataSourceImpl extends PetRemoteDataSource {
@@ -50,18 +52,17 @@ class PetRemoteDataSourceImpl extends PetRemoteDataSource {
 
     return stream.map((geoDocs) {
       return geoDocs.map((geoDoc) {
-        // Convert the GeoDocumentSnapshot to a Map<String, dynamic>
         final data = geoDoc.documentSnapshot.data() as Map<String, dynamic>;
 
         // Add the GeoPoint into the location map
         final geoPoint = data['location']['geopoint'] as GeoPoint;
         data['location'] = {
-          'geopoint':
-              geoPoint, // You can store it in the location map like this
+          'geopoint': geoPoint,
         };
 
-        // Use PetModel's factory method to convert the data into a PetModel
-        return PetModel.fromJson(data);
+        final petModel = PetModel.fromJson(data);
+        petModel.setPostId(geoDoc.documentSnapshot.id);
+        return petModel;
       }).toList();
     });
   }
@@ -108,6 +109,34 @@ class PetRemoteDataSourceImpl extends PetRemoteDataSource {
       DocumentSnapshot snapshot =
           await firebaseFirestore.collection('registeredPets').doc(docId).get();
       return Right(snapshot.data());
+    } catch (e) {
+      return const Left('Failed to retrieve pet details.');
+    }
+  }
+
+  @override
+  Future<Either> likeAdoptionPost(LikeAdoptionReq likeReq) async {
+    try {
+      if (likeReq.likes.contains(likeReq.uid)) {
+        await firebaseFirestore
+            .collection('registeredPets')
+            .doc(likeReq.postId)
+            .update(
+          {
+            'likes': FieldValue.arrayRemove([likeReq.uid])
+          },
+        );
+      } else {
+        await firebaseFirestore
+            .collection('registeredPets')
+            .doc(likeReq.postId)
+            .update(
+          {
+            'likes': FieldValue.arrayUnion([likeReq.uid])
+          },
+        );
+      }
+      return const Right('Like post successful.');
     } catch (e) {
       return const Left('Failed to retrieve pet details.');
     }

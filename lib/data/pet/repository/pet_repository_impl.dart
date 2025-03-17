@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:pawsome/data/pet/models/like_adoption_req.dart';
 import 'package:pawsome/data/pet/models/pet_model.dart';
 import 'package:pawsome/data/pet/models/register_pet_image_req.dart';
 import 'package:pawsome/data/pet/source/pet_remote_data_source.dart';
@@ -44,6 +45,15 @@ class PetRepositoryImpl implements PetRepository {
       final result = await petRemoteDataSource.retrieveSinglePet(docId);
       return result.fold((error) => Left(error),
           (data) => Right(PetModel.fromJson(data).toEntity()));
+    } catch (e) {
+      return Left('Error: $e');
+    }
+  }
+
+  @override
+  Future<Either> likeAdoptionPost(LikeAdoptionReq likeReq) async {
+    try {
+      return await petRemoteDataSource.likeAdoptionPost(likeReq);
     } catch (e) {
       return Left('Error: $e');
     }
