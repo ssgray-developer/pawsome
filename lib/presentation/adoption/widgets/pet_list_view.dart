@@ -6,6 +6,7 @@ import 'package:pawsome/presentation/adoption/bloc/pet_list_view_selection_cubit
 
 import '../../../core/theme/app_strings.dart';
 import '../../../domain/pet/entity/pet_item.dart';
+import '../bloc/adoption_cubit.dart';
 import 'pet_button.dart';
 
 class PetListView extends StatelessWidget {
@@ -110,6 +111,7 @@ class PetListView extends StatelessWidget {
                   onPressed: () {
                     HapticFeedback.mediumImpact();
                     context.read<PetListViewSelectionCubit>().selectPet(index);
+                    context.read<AdoptionCubit>().filterPet(pet.name);
                     triggerAnimation();
                   },
                 ),
