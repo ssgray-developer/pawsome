@@ -1,6 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pawsome/common/animal_list.dart';
+import 'package:pawsome/core/utils/reverse_lookup.dart';
+import 'package:pawsome/presentation/adoption/bloc/adoption_cubit.dart';
 
 class SearchTextField extends StatefulWidget {
   const SearchTextField({super.key});
@@ -11,6 +14,7 @@ class SearchTextField extends StatefulWidget {
 
 class _SearchTextFieldState extends State<SearchTextField> {
   late FocusNode _focusNode;
+  final reverseLookup = ReverseLookup();
   bool _isFocused = false;
 
   @override
@@ -33,24 +37,60 @@ class _SearchTextFieldState extends State<SearchTextField> {
 
   @override
   Widget build(BuildContext context) {
+    final pet = context.watch<AdoptionCubit>().pet;
+
     return Material(
       elevation: 5,
       borderRadius: BorderRadius.circular(30.0),
       child: Autocomplete(
+          key: ValueKey(pet),
           optionsBuilder: (TextEditingValue textEditingValue) {
-            if (textEditingValue.text.isEmpty) {
-              return (birdSpecies +
-                      catSpecies +
-                      dogSpecies +
-                      ferretSpecies +
-                      fishSpecies +
-                      horseSpecies +
-                      guineaPigSpecies +
-                      iguanaSpecies +
-                      mouseRatSpecies +
-                      otterSpecies +
-                      rabbitSpecies +
-                      tortoiseSpecies)
+            if (pet == 'bird') {
+              return birdSpecies
+                  .where((element) => element != 'unknown')
+                  .map((element) => context.tr(element));
+            } else if (pet == 'cat') {
+              return catSpecies
+                  .where((element) => element != 'unknown')
+                  .map((element) => context.tr(element));
+            } else if (pet == 'dog') {
+              return dogSpecies
+                  .where((element) => element != 'unknown')
+                  .map((element) => context.tr(element));
+            } else if (pet == 'ferret') {
+              return ferretSpecies
+                  .where((element) => element != 'unknown')
+                  .map((element) => context.tr(element));
+            } else if (pet == 'fish') {
+              return fishSpecies
+                  .where((element) => element != 'unknown')
+                  .map((element) => context.tr(element));
+            } else if (pet == 'guineaPig') {
+              return guineaPigSpecies
+                  .where((element) => element != 'unknown')
+                  .map((element) => context.tr(element));
+            } else if (pet == 'horse') {
+              return horseSpecies
+                  .where((element) => element != 'unknown')
+                  .map((element) => context.tr(element));
+            } else if (pet == 'iguana') {
+              return iguanaSpecies
+                  .where((element) => element != 'unknown')
+                  .map((element) => context.tr(element));
+            } else if (pet == 'mouseRat') {
+              return mouseRatSpecies
+                  .where((element) => element != 'unknown')
+                  .map((element) => context.tr(element));
+            } else if (pet == 'otter') {
+              return otterSpecies
+                  .where((element) => element != 'unknown')
+                  .map((element) => context.tr(element));
+            } else if (pet == 'rabbit') {
+              return rabbitSpecies
+                  .where((element) => element != 'unknown')
+                  .map((element) => context.tr(element));
+            } else if (pet == 'tortoise') {
+              return tortoiseSpecies
                   .where((element) => element != 'unknown')
                   .map((element) => context.tr(element));
             }
@@ -73,7 +113,12 @@ class _SearchTextFieldState extends State<SearchTextField> {
                         .contains(textEditingValue.text.toLowerCase()))
                 .map((element) => context.tr(element));
           },
-          onSelected: (String selection) {},
+          onSelected: (String selection) {
+            context
+                .read<AdoptionCubit>()
+                .filterPetSpecies(reverseLookup.getOriginalText(selection));
+            FocusScope.of(context).unfocus();
+          },
           optionsViewBuilder: (BuildContext context,
               AutocompleteOnSelected<String> onSelected,
               Iterable<String> options) {
@@ -124,6 +169,12 @@ class _SearchTextFieldState extends State<SearchTextField> {
                   child: Icon(Icons.search_rounded),
                 ),
                 prefixIconColor: Colors.black,
+                suffixIcon: IconButton(
+                    onPressed: () {
+                      textEditingController.clear();
+                      context.read<AdoptionCubit>().filterPetSpecies(null);
+                    },
+                    icon: const Icon(Icons.cancel_outlined)),
                 filled: true,
                 // To fill the background with a color
                 fillColor: Colors.grey.shade100,

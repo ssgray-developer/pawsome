@@ -23,7 +23,7 @@ class AdoptionCubit extends Cubit<AdoptionState> {
   int distance = 5;
   late GeoFirePoint position;
   String? pet;
-  String? petSpecies;
+  String? petSpec;
   StreamSubscription? subscription;
 
   AdoptionCubit(this.listenToPetAdoptionUseCase, this.getLocationUseCase,
@@ -42,7 +42,10 @@ class AdoptionCubit extends Cubit<AdoptionState> {
       (_) {
         subscription = listenToPetAdoptionUseCase(
                 params: NearbyPetReq(
-                    position: position, radius: distance, pet: pet))
+                    position: position,
+                    radius: distance,
+                    petClass: pet,
+                    petSpecies: petSpec))
             .listen((data) {
           if (data.isEmpty) {
             emit(AdoptionEmpty());
@@ -80,8 +83,13 @@ class AdoptionCubit extends Cubit<AdoptionState> {
     );
   }
 
-  void filterPet(String? petSpecies) {
-    pet = petSpecies;
+  void filterPetClass(String? petClass) {
+    pet = petClass;
+    adoptionStream();
+  }
+
+  void filterPetSpecies(String? petSpecies) {
+    petSpec = petSpecies;
     adoptionStream();
   }
 

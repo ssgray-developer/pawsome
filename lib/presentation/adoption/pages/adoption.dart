@@ -292,7 +292,12 @@ class _AdoptionScreenState extends State<AdoptionScreen>
                                 context
                                     .read<PetListViewSelectionCubit>()
                                     .selectPet(null);
-                                context.read<AdoptionCubit>().filterPet(null);
+                                context
+                                    .read<AdoptionCubit>()
+                                    .filterPetClass(null);
+                                context
+                                    .read<AdoptionCubit>()
+                                    .filterPetSpecies(null);
                               },
                             ),
                           );

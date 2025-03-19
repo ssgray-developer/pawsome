@@ -111,7 +111,8 @@ class PetListView extends StatelessWidget {
                   onPressed: () {
                     HapticFeedback.mediumImpact();
                     context.read<PetListViewSelectionCubit>().selectPet(index);
-                    context.read<AdoptionCubit>().filterPet(pet.name);
+                    context.read<AdoptionCubit>().filterPetSpecies(null);
+                    context.read<AdoptionCubit>().filterPetClass(pet.name);
                     triggerAnimation();
                   },
                 ),

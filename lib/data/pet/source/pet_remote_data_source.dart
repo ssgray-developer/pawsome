@@ -28,8 +28,14 @@ class PetRemoteDataSourceImpl extends PetRemoteDataSource {
         firebaseFirestore.collection('registeredPets');
     GeoFirePoint center = nearbyPet.position;
     queryBuilder(Query<Object?> query) {
-      if (nearbyPet.pet != null) {
-        return query.where('petClass', isEqualTo: nearbyPet.pet);
+      if (nearbyPet.petClass != null && nearbyPet.petSpecies != null) {
+        return query
+            .where('petClass', isEqualTo: nearbyPet.petClass)
+            .where('petSpecies', isEqualTo: nearbyPet.petSpecies);
+      } else if (nearbyPet.petClass != null && nearbyPet.petSpecies == null) {
+        return query.where('petClass', isEqualTo: nearbyPet.petClass);
+      } else if (nearbyPet.petClass == null && nearbyPet.petSpecies != null) {
+        return query.where('petSpecies', isEqualTo: nearbyPet.petSpecies);
       } else {
         return query;
       }
