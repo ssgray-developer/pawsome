@@ -55,7 +55,7 @@ class LocationServiceImpl extends LocationService {
       final distance = Geolocator.distanceBetween(geoPoint.latitude,
               geoPoint.longitude, origin.latitude, origin.longitude) /
           1000;
-      return double.parse(distance.toStringAsFixed(1)) as String;
+      return distance.toStringAsFixed(1);
     } catch (e) {
       return '0';
     }

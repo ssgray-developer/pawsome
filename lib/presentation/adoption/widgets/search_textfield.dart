@@ -51,8 +51,7 @@ class _SearchTextFieldState extends State<SearchTextField> {
                       otterSpecies +
                       rabbitSpecies +
                       tortoiseSpecies)
-                  .where((element) =>
-                      element != 'unknown') // Filter out 'unknown' first
+                  .where((element) => element != 'unknown')
                   .map((element) => context.tr(element));
             }
             return (birdSpecies +
@@ -68,7 +67,7 @@ class _SearchTextFieldState extends State<SearchTextField> {
                     rabbitSpecies +
                     tortoiseSpecies)
                 .where((String pet) =>
-                    pet != 'unknown' && // Filter out 'unknown'
+                    pet != 'unknown' &&
                     pet
                         .toLowerCase()
                         .contains(textEditingValue.text.toLowerCase()))
@@ -84,7 +83,7 @@ class _SearchTextFieldState extends State<SearchTextField> {
                 elevation: 4.0,
                 borderRadius: BorderRadius.circular(10.0),
                 child: Container(
-                  width: 300,
+                  width: 280,
                   constraints: const BoxConstraints(
                     maxHeight: 300, // Increased height of dropdown
                   ),
@@ -125,16 +124,9 @@ class _SearchTextFieldState extends State<SearchTextField> {
                   child: Icon(Icons.search_rounded),
                 ),
                 prefixIconColor: Colors.black,
-                suffixIcon: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Icons.filter_alt_off_rounded)),
-                ),
-                suffixIconColor: Colors.black,
                 filled: true,
                 // To fill the background with a color
-                fillColor: Colors.white,
+                fillColor: Colors.grey.shade100,
                 // White background color
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30.0), // Rounded corners

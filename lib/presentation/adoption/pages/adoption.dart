@@ -9,6 +9,7 @@ import 'package:pawsome/core/theme/app_colors.dart';
 import 'package:pawsome/domain/auth/entity/user.dart';
 import 'package:pawsome/presentation/adoption/bloc/adoption_cubit.dart';
 import 'package:pawsome/presentation/adoption/bloc/pet_list_view_selection_cubit.dart';
+import 'package:pawsome/presentation/adoption/widgets/distance_filter.dart';
 import 'package:pawsome/presentation/adoption/widgets/pet_list_view.dart';
 import 'package:pawsome/presentation/adoption/widgets/search_textfield.dart';
 
@@ -252,12 +253,16 @@ class _AdoptionScreenState extends State<AdoptionScreen>
           child: Column(
             children: [
               const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 10),
+                padding:
+                    EdgeInsets.only(left: 30, right: 30, top: 10, bottom: 10),
                 child: Row(
                   children: [
                     Expanded(
+                      flex: 8,
                       child: SearchTextField(),
                     ),
+                    Expanded(flex: 1, child: SizedBox()),
+                    Expanded(flex: 2, child: DistanceFilter()),
                   ],
                 ),
               ),

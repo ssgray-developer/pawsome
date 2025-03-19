@@ -563,8 +563,8 @@ class AppStrings {
 final List<String> distanceItem = [
   '5',
   '10',
-  '15',
   '20',
-  '25',
   '30',
+  '40',
+  '50',
 ];

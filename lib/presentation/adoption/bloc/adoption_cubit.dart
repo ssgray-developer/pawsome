@@ -23,6 +23,7 @@ class AdoptionCubit extends Cubit<AdoptionState> {
   int distance = 5;
   late GeoFirePoint position;
   String? pet;
+  String? petSpecies;
   StreamSubscription? subscription;
 
   AdoptionCubit(this.listenToPetAdoptionUseCase, this.getLocationUseCase,
@@ -33,8 +34,6 @@ class AdoptionCubit extends Cubit<AdoptionState> {
     subscription?.cancel();
 
     final locationResult = await updateLocation();
-
-    print('here');
 
     locationResult.fold(
       (failure) {
@@ -83,6 +82,11 @@ class AdoptionCubit extends Cubit<AdoptionState> {
 
   void filterPet(String? petSpecies) {
     pet = petSpecies;
+    adoptionStream();
+  }
+
+  void filterDistance(String distanceSelected) {
+    distance = int.parse(distanceSelected);
     adoptionStream();
   }
 
